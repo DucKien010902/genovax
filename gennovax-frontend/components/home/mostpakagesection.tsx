@@ -154,7 +154,7 @@ const PopularPackages: React.FC = () => {
         {/* Tiêu đề Section */}
         <div className="text-center mb-10 lg:mb-12">
           {/* Dấu ngã ~ (SVG) */}
-          <svg
+          {/* <svg
             className="mx-auto h-6 w-auto text-blue-400"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 400 20"
@@ -164,7 +164,7 @@ const PopularPackages: React.FC = () => {
             strokeLinecap="round"
           >
             <path d="M0 10 Q 20 0, 40 10 T 80 10 T 120 10 T 160 10 T 200 10 T 240 10 T 280 10 T 320 10 T 360 10 T 400 10" />
-          </svg>
+          </svg> */}
           <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mt-2">
             GÓI XÉT NGHIỆM PHỔ BIẾN
           </h1>

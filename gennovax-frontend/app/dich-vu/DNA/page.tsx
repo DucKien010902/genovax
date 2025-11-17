@@ -208,7 +208,7 @@ const FeatureBlock: React.FC<FeatureBlockProps> = ({
   children,
   reverse = false,
 }) => (
-  <div className="container mx-auto max-w-7xl px-4 py-16">
+  <div className="container mx-auto max-w-6xl px-4 py-16">
     <div 
       className={`flex flex-col items-center gap-12 md:gap-16 lg:gap-24 ${
         reverse ? 'md:flex-row-reverse' : 'md:flex-row'

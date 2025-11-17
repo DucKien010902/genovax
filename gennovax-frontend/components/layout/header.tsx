@@ -31,8 +31,9 @@ export const menuData: MenuItem[] = [
     subItems: [
       // { label: "Về GennovaX", href: "/gioi-thieu" },
       { label: "Sứ mệnh & Tầm nhìn", href: "/gioi-thieu/#tam-nhin-va-su-menh" },
-      { label: "Đội ngũ chuyên gia", href: "/gioi-thieu" },
-      { label: "Đối tác chiến lược", href: "/gioi-thieu" },
+      { label: "Hệ thống GennovaX", href: "/gioi-thieu/#he-thong-gennovax" },
+      { label: "Đội ngũ chuyên gia", href: "/gioi-thieu/#doi-ngu-va-thanh-tuu" },
+      { label: "Đối tác chiến lược", href: "/gioi-thieu/#doi-tac-va-thuyet-bi" },
       // { label: "Đội ngũ chuyên gia", href: "/gioi-thieu" },
     ],
   },

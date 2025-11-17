@@ -16,7 +16,7 @@ type Props = {
 // Hoặc Hardcode:
 const FloatingContact: React.FC = () => {
   const phoneNumber = "0936 654 456"; // <-- Thay số điện thoại của bạn
-  const zaloOA = "12345678"; // <-- Thay ID Zalo OA hoặc SĐT Zalo của bạn
+  const zaloOA = "0936654456"; // <-- Thay ID Zalo OA hoặc SĐT Zalo của bạn
 
   return (
     // Container cố định ở góc dưới bên phải
