@@ -1,47 +1,46 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 // import Image from 'next/image'; // Nên dùng 'next/image' khi deploy
 
 // Danh sách các ảnh sẽ hiển thị
 // Sắp xếp: 2 ảnh đội ngũ, sau đó 2 ảnh chứng nhận
 const galleryImages = [
   {
-    src: 'https://res.cloudinary.com/da6f4dmql/image/upload/v1763106322/Screenshot_24_iqpbms.png',
-    alt: 'Đội ngũ chuyên gia GennovaX 1',
+    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1763106322/Screenshot_24_iqpbms.png",
+    alt: "Đội ngũ chuyên gia GennovaX 1",
   },
   {
-    src: 'https://res.cloudinary.com/da6f4dmql/image/upload/v1763106320/Screenshot_23_lexs37.png',
-    alt: 'Đội ngũ chuyên gia GennovaX 2',
+    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1763106320/Screenshot_23_lexs37.png",
+    alt: "Đội ngũ chuyên gia GennovaX 2",
   },
   {
-    src: 'https://res.cloudinary.com/da6f4dmql/image/upload/v1763106320/Screenshot_21_uw3zmg.png',
-    alt: 'Thành tựu và Chứng nhận GennovaX 1',
+    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1763106320/Screenshot_21_uw3zmg.png",
+    alt: "Thành tựu và Chứng nhận GennovaX 1",
   },
   {
-    src: 'https://res.cloudinary.com/da6f4dmql/image/upload/v1763106320/Screenshot_22_zeejdk.png',
-    alt: 'Thành tựu và Chứng nhận GennovaX 2',
+    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1763106320/Screenshot_22_zeejdk.png",
+    alt: "Thành tựu và Chứng nhận GennovaX 2",
   },
 ];
 
 // Màu sắc (để nhất quán)
 const brandColors = {
-  primary: '#0D47A1', 
+  primary: "#0D47A1",
 };
 
 export default function ExpertsAndAchievements() {
   return (
-    <section 
+    <section
       id="doi-ngu-va-thanh-tuu" // Bạn có thể đổi ID này nếu muốn
       className="w-full bg-gray-50 py-24" // Nền xám nhạt
     >
       <div className="container mx-auto max-w-7xl px-4">
-        
         {/* Theo yêu cầu "chỉ để ảnh, không text giải thích", 
           tôi sẽ thêm một tiêu đề duy nhất để định danh section 
         */}
-        <h2 
-          className="mb-16 text-center text-4xl font-extrabold" 
+        <h2
+          className="mb-16 text-center text-4xl font-extrabold"
           style={{ color: brandColors.primary }}
         >
           Đội Ngũ Chuyên Gia & Thành Tựu
@@ -51,9 +50,8 @@ export default function ExpertsAndAchievements() {
           và 1 cột trên mobile (grid-cols-1)
         */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          
           {galleryImages.map((image) => (
-            <div 
+            <div
               key={image.src}
               className="rounded-xl bg-white p-4 shadow-xl transition-shadow duration-300 hover:shadow-2xl"
             >
@@ -66,7 +64,6 @@ export default function ExpertsAndAchievements() {
               />
             </div>
           ))}
-
         </div>
       </div>
     </section>

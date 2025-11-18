@@ -1,33 +1,31 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 // Cài đặt: npm install lucide-react
-import { 
-  CheckCircle, 
-  ChevronRight, 
-  Database, 
-  FlaskConical, 
-  MapPin, 
+import {
+  CheckCircle,
+  ChevronRight,
+  Database,
+  FlaskConical,
+  MapPin,
   ShieldCheck,
   FileText,
   CalendarDays,
-  AlertTriangle // Thêm icon cho phần Lưu ý
-} from 'lucide-react';
+  AlertTriangle, // Thêm icon cho phần Lưu ý
+} from "lucide-react";
 
 // --- COMPONENT CHÍNH TRANG DỊCH VỤ ADN ---
 
 export default function GennovaxDnaService() {
   return (
-    <section className="w-full bg-white text-gray-800">
-      
+    <section className="w-full bg-white text-gray-800 pt-20">
       {/* === 1. HERO SECTION === */}
       {/* Sử dụng Ảnh web-11.png */}
       <HeroSection />
 
       {/* === 2. CÁC KHỐI TÍNH NĂNG (BỐ CỤC SO LE) === */}
       <div className="py-20 bg-gray-50">
-        
         {/* Khối 1: Lợi thế & Cam kết (Ảnh web_Artboard 5 copy.png) */}
         <FeatureBlock
           imageSrc="/images/ADN/Ảnh web_Artboard 5 copy.png"
@@ -36,7 +34,9 @@ export default function GennovaxDnaService() {
           subtitle="Chính xác 99.9999% - Bảo mật tuyệt đối"
         >
           <p className="mb-6 text-lg text-gray-600">
-            Chúng tôi hiểu rằng kết quả xét nghiệm ADN là thông tin vô cùng quan trọng. Vì vậy, GennovaX cam kết mang đến dịch vụ với chất lượng và tiêu chuẩn cao nhất.
+            Chúng tôi hiểu rằng kết quả xét nghiệm ADN là thông tin vô cùng quan
+            trọng. Vì vậy, GennovaX cam kết mang đến dịch vụ với chất lượng và
+            tiêu chuẩn cao nhất.
           </p>
           <ul className="space-y-4">
             <FeatureListItem
@@ -61,7 +61,9 @@ export default function GennovaxDnaService() {
           reverse={true} // Đảo bố cục
         >
           <p className="mb-6 text-lg text-gray-600">
-            Giải pháp an toàn tuyệt đối cho mẹ và bé, cho phép xác định quan hệ cha-con sớm mà không cần thủ thuật xâm lấn (như chọc ối), loại bỏ mọi rủi ro.
+            Giải pháp an toàn tuyệt đối cho mẹ và bé, cho phép xác định quan hệ
+            cha-con sớm mà không cần thủ thuật xâm lấn (như chọc ối), loại bỏ
+            mọi rủi ro.
           </p>
           <ul className="space-y-4">
             <FeatureListItem
@@ -85,7 +87,9 @@ export default function GennovaxDnaService() {
           subtitle="Kết quả được chấp thuận tại các cơ quan hành chính"
         >
           <p className="mb-6 text-lg text-gray-600">
-            Với kinh nghiệm xử lý trên 120.000 trường hợp, kết quả của GennovaX có giá trị pháp lý cao, được tin dùng trong các thủ tục dân sự và hành chính.
+            Với kinh nghiệm xử lý trên 120.000 trường hợp, kết quả của GennovaX
+            có giá trị pháp lý cao, được tin dùng trong các thủ tục dân sự và
+            hành chính.
           </p>
           <ul className="space-y-4">
             <FeatureListItem
@@ -110,7 +114,9 @@ export default function GennovaxDnaService() {
           reverse={true} // Đảo bố cục
         >
           <p className="mb-6 text-lg text-gray-600">
-            Hệ thống điểm thu mẫu của GennovaX trải dài khắp cả nước, cùng dịch vụ hỗ trợ thu mẫu tận nơi, giúp bạn tiết kiệm thời gian và chi phí đi lại.
+            Hệ thống điểm thu mẫu của GennovaX trải dài khắp cả nước, cùng dịch
+            vụ hỗ trợ thu mẫu tận nơi, giúp bạn tiết kiệm thời gian và chi phí
+            đi lại.
           </p>
           <ul className="space-y-4">
             <FeatureListItem
@@ -125,7 +131,6 @@ export default function GennovaxDnaService() {
             />
           </ul>
         </FeatureBlock>
-
       </div>
 
       {/* === 3. QUY TRÌNH (Ảnh web_Artboard 4 copy.png) === */}
@@ -134,7 +139,6 @@ export default function GennovaxDnaService() {
 
       {/* === 4. BẢNG GIÁ DỊCH VỤ (PHẦN ĐÃ SỬA LỖI) === */}
       <PricingTableSection />
-
     </section>
   );
 }
@@ -143,16 +147,19 @@ export default function GennovaxDnaService() {
 
 // 1. Hero Section
 const HeroSection = () => (
-  <div className="relative w-full overflow-hidden text-white" style={{ minHeight: '600px' }}>
+  <div
+    className="relative w-full overflow-hidden text-white"
+    style={{ minHeight: "600px" }}
+  >
     {/* Ảnh nền */}
-    <img 
-      src="/images/ADN/Ảnh web-11.png" 
+    <img
+      src="/images/ADN/Ảnh web-11.png"
       alt="Xét nghiệm ADN Huyết thống GennovaX"
       className="absolute inset-0 h-full w-full object-cover"
     />
     {/* Lớp phủ màu tối */}
     <div className="absolute inset-0 bg-blue-900/40"></div>
-    
+
     {/* Nội dung */}
     <div className="container relative z-10 mx-auto flex h-full min-h-[600px] max-w-7xl flex-col justify-center px-4 py-20 text-left">
       <h1 className="text-5xl font-extrabold leading-tight md:text-7xl">
@@ -160,27 +167,28 @@ const HeroSection = () => (
         <br />
         ADN Huyết Thống
       </h1>
-      <div 
-        className="my-6 w-24 h-1.5" 
-        style={{ backgroundColor: '#0891B2' }} // Màu teal
+      <div
+        className="my-6 w-24 h-1.5"
+        style={{ backgroundColor: "#0891B2" }} // Màu teal
       ></div>
       <p className="max-w-xl text-2xl font-light text-gray-100">
         Chính xác – Bảo mật – Hợp pháp
       </p>
       <p className="mt-4 max-w-xl text-lg text-gray-200">
-        GennovaX cung cấp dịch vụ xét nghiệm ADN huyết thống chuẩn quốc tế, với trên 
-        <span className="font-bold text-white"> 120.000 trường hợp</span> đã xác nhận 
-        thân nhân qua ADN.
+        GennovaX cung cấp dịch vụ xét nghiệm ADN huyết thống chuẩn quốc tế, với
+        trên
+        <span className="font-bold text-white"> 120.000 trường hợp</span> đã xác
+        nhận thân nhân qua ADN.
       </p>
       <div className="mt-10 flex flex-wrap gap-4">
-        <Link 
-          href="/contact" 
+        <Link
+          href="/contact"
           className="rounded-full bg-cyan-500 px-8 py-3.5 text-base font-bold text-white shadow-lg transition duration-300 hover:bg-cyan-400"
         >
           Đặt hẹn tư vấn
         </Link>
-        <Link 
-          href="/services" 
+        <Link
+          href="/services"
           className="rounded-full bg-white/20 px-8 py-3.5 text-base font-bold text-white backdrop-blur-sm transition duration-300 hover:bg-white/30"
         >
           Xem bảng giá
@@ -209,9 +217,9 @@ const FeatureBlock: React.FC<FeatureBlockProps> = ({
   reverse = false,
 }) => (
   <div className="container mx-auto max-w-6xl px-4 py-16">
-    <div 
+    <div
       className={`flex flex-col items-center gap-12 md:gap-16 lg:gap-24 ${
-        reverse ? 'md:flex-row-reverse' : 'md:flex-row'
+        reverse ? "md:flex-row-reverse" : "md:flex-row"
       }`}
     >
       {/* Cột Ảnh */}
@@ -222,21 +230,19 @@ const FeatureBlock: React.FC<FeatureBlockProps> = ({
           className="w-full h-auto rounded-lg object-contain shadow-xl"
         />
       </div>
-      
+
       {/* Cột Nội dung */}
       <div className="w-full md:w-1/2">
-        <p 
-          className="text-base font-bold uppercase tracking-wide" 
-          style={{ color: '#0891B2' }} // Màu teal
+        <p
+          className="text-base font-bold uppercase tracking-wide"
+          style={{ color: "#0891B2" }} // Màu teal
         >
           {subtitle}
         </p>
         <h2 className="mt-2 text-4xl font-extrabold text-blue-900 md:text-5xl">
           {title}
         </h2>
-        <div className="mt-8">
-          {children}
-        </div>
+        <div className="mt-8">{children}</div>
       </div>
     </div>
   </div>
@@ -249,16 +255,16 @@ interface FeatureListItemProps {
   description: string;
 }
 
-const FeatureListItem: React.FC<FeatureListItemProps> = ({ 
-  icon: Icon, 
-  title, 
-  description 
+const FeatureListItem: React.FC<FeatureListItemProps> = ({
+  icon: Icon,
+  title,
+  description,
 }) => (
   <li className="flex items-start">
     <div className="flex-shrink-0">
-      <div 
+      <div
         className="flex h-12 w-12 items-center justify-center rounded-full text-white"
-        style={{ backgroundColor: '#0D47A1' }} // Màu xanh đậm
+        style={{ backgroundColor: "#0D47A1" }} // Màu xanh đậm
       >
         <Icon className="h-6 w-6" />
       </div>
@@ -398,7 +404,9 @@ const PricingTableSection = () => {
               </tr>
               <tr className="bg-white">
                 {/* Hàng 3 của Gói 3 (3 <td>) */}
-                <td className={`${tdContentStyle} bg-gray-100`}>Dành cho 3 mẫu</td>
+                <td className={`${tdContentStyle} bg-gray-100`}>
+                  Dành cho 3 mẫu
+                </td>
                 <td className={`${tdTimeStyle} bg-gray-100`}>1-2 ngày</td>
                 <td className={`${tdPriceStyle} bg-gray-100`}>5.500.000</td>
               </tr>
@@ -466,10 +474,9 @@ const PricingTableSection = () => {
               </tr>
               <tr className="bg-white">
                 {/* Hàng 2 của Gói 7 (3 <td>) */}
-                <td className={`${tdStyle}`}></td> {/* Cột nội dung phụ (trống) */}
-                <td className={`${tdTimeStyle}`}>
-                  3-5 ngày làm việc
-                </td>
+                <td className={`${tdStyle}`}></td>{" "}
+                {/* Cột nội dung phụ (trống) */}
+                <td className={`${tdTimeStyle}`}>3-5 ngày làm việc</td>
                 <td className={`${tdPriceStyle}`}>25.000.000</td>
               </tr>
               <tr className="bg-blue-50">

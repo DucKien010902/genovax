@@ -1,19 +1,24 @@
 "use client";
 
 import Footer from "@/components/layout/footer";
-import Navbar from "@/components/layout/header";
+// ✅ THAY ĐỔI: Import `Header` (hoặc giữ `Navbar` nếu bạn export default as Navbar)
+import Header from "@/components/layout/header"; 
 import { AnimatePresence, motion, useAnimationFrame } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import PageTransitionWrapper from "./PageTransitionWrapper"; // ← thêm
+import PageTransitionWrapper from "./PageTransitionWrapper";
+import FloatingContact from "../home/contactbotton";
 
+// (Component LoadingSpinner không đổi)
 function LoadingSpinner() {
   const numDots = 7;
   const radius = 40;
-  const colors = ["#3b82f6","#3b82f6","#3b82f6","#3b82f6","#3b82f6","#3b82f6","#3b82f6"];
+  const colors = [
+    "#3b82f6", "#3b82f6", "#3b82f6", "#3b82f6", "#3b82f6", "#3b82f6", "#3b82f6",
+  ];
 
   const [angles, setAngles] = useState(
-    Array.from({ length: numDots }, (_, i) => (i / numDots) * 2 * Math.PI)
+    Array.from({ length: numDots }, (_, i) => (i / numDots) * 2 * Math.PI),
   );
 
   useAnimationFrame(() => {
@@ -28,7 +33,6 @@ function LoadingSpinner() {
         alt="Genlive"
         className="w-16 h-16 rounded-full z-10"
       />
-
       {angles.map((angle, i) => {
         const x = radius * Math.cos(angle);
         const y = radius * Math.sin(angle);
@@ -47,22 +51,35 @@ function LoadingSpinner() {
   );
 }
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+export default function ClientLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Scroll effect cho trang chủ
+  // ✅ THAY ĐỔI: Logic scroll effect
   useEffect(() => {
-    if (pathname !== "/") return;
+    // Chỉ áp dụng cho trang chủ
+    if (pathname !== "/") {
+      setIsScrolled(true); // Các trang khác luôn ở trạng thái "solid"
+      return;
+    }
 
-    const handleScroll = () => setIsScrolled(window.scrollY > 100);
+    // Ngưỡng scroll là 200px
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 200);
+    };
+
+    handleScroll(); // Kiểm tra ngay lúc tải trang (phòng trường hợp F5)
+    
     window.addEventListener("scroll", handleScroll);
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
-  // Loading spinner khi chuyển trang
+  // Loading spinner (Giữ nguyên)
   useEffect(() => {
     setIsLoading(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -71,7 +88,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     return () => clearTimeout(timer);
   }, [pathname]);
 
-  const shouldBeScrolled = pathname !== "/" || isScrolled;
+  // ✅ THAY ĐỔI: Tính toán trạng thái transparent
+  // Chỉ trong suốt NẾU: ở trang chủ VÀ chưa scroll qua 200px
+  const isTransparent = (pathname === "/") && !isScrolled;
 
   return (
     <>
@@ -89,8 +108,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         )}
       </AnimatePresence>
 
-      <Navbar  />
-
+      {/* ✅ THAY ĐỔI: Truyền prop `isTransparent` */}
+      <Header isTransparent={isTransparent} />
+      
+      <FloatingContact />
       {/* Page transition wrapper */}
       <PageTransitionWrapper>{children}</PageTransitionWrapper>
 

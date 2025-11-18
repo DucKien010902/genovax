@@ -149,22 +149,16 @@ const PackageCard: React.FC<{ pkg: PackageDetails }> = ({ pkg }) => {
 const PopularPackages: React.FC = () => {
   return (
     // Giảm padding section một chút
-    <section className="py-10 lg:py-15 bg-gray-50">
+    <section
+      className="py-10 lg:py-15"
+      style={{
+        background:
+          "linear-gradient(to bottom, white 0%, #e0f7fa 50%, white 100%)",
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Tiêu đề Section */}
         <div className="text-center mb-10 lg:mb-12">
-          {/* Dấu ngã ~ (SVG) */}
-          {/* <svg
-            className="mx-auto h-6 w-auto text-blue-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 400 20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-          >
-            <path d="M0 10 Q 20 0, 40 10 T 80 10 T 120 10 T 160 10 T 200 10 T 240 10 T 280 10 T 320 10 T 360 10 T 400 10" />
-          </svg> */}
           <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mt-2">
             GÓI XÉT NGHIỆM PHỔ BIẾN
           </h1>

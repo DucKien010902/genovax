@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 "use client";
 
 import { PhoneCall } from "lucide-react";
@@ -16,6 +15,7 @@ export type MenuItem = {
 };
 
 export const menuData: MenuItem[] = [
+  // ... (Dữ liệu menu của bạn không đổi) ...
   {
     label: "Sản phẩm",
     href: "/dich-vu",
@@ -29,12 +29,16 @@ export const menuData: MenuItem[] = [
     label: "Giới thiệu",
     href: "/about",
     subItems: [
-      // { label: "Về GennovaX", href: "/gioi-thieu" },
       { label: "Sứ mệnh & Tầm nhìn", href: "/gioi-thieu/#tam-nhin-va-su-menh" },
       { label: "Hệ thống GennovaX", href: "/gioi-thieu/#he-thong-gennovax" },
-      { label: "Đội ngũ chuyên gia", href: "/gioi-thieu/#doi-ngu-va-thanh-tuu" },
-      { label: "Đối tác chiến lược", href: "/gioi-thieu/#doi-tac-va-thuyet-bi" },
-      // { label: "Đội ngũ chuyên gia", href: "/gioi-thieu" },
+      {
+        label: "Đội ngũ chuyên gia",
+        href: "/gioi-thieu/#doi-ngu-va-thanh-tuu",
+      },
+      {
+        label: "Đối tác chiến lược",
+        href: "/gioi-thieu/#doi-tac-va-thuyet-bi",
+      },
     ],
   },
   {
@@ -74,7 +78,11 @@ export const menuData: MenuItem[] = [
 
 // --- 2. Component DropdownMenuItem (CHO DESKTOP) ---
 
-const DesktopDropdownMenuItem: React.FC<{ item: MenuItem }> = ({ item }) => {
+// ✅ THAY ĐỔI: Nhận thêm prop `isTransparent`
+const DesktopDropdownMenuItem: React.FC<{
+  item: MenuItem;
+  isTransparent: boolean;
+}> = ({ item, isTransparent }) => {
   const hasSubItems = item.subItems && item.subItems.length > 0;
 
   return (
@@ -82,15 +90,25 @@ const DesktopDropdownMenuItem: React.FC<{ item: MenuItem }> = ({ item }) => {
     <div className="group relative h-full flex items-center">
       <Link
         href={item.href}
-        className="flex items-center text-gray-700 font-medium px-4 py-2 hover:text-blue-500 transition duration-150"
+        // ✅ THAY ĐỔI: Đổi màu chữ dựa trên `isTransparent`
+        className={`flex items-center font-medium px-4 py-2 transition-colors duration-150 ${
+          isTransparent
+            ? "text-white hover:text-gray-200" // Trạng thái trong suốt
+            : "text-gray-700 hover:text-blue-500" // Trạng thái solid
+        }`}
       >
         {item.label}
         {hasSubItems && (
-          <CaretDownFill className="ml-1 w-3 h-3 text-gray-400 transition-transform duration-300 group-hover:rotate-180" />
+          // ✅ THAY ĐỔI: Đổi màu icon caret
+          <CaretDownFill
+            className={`ml-1 w-3 h-3 transition-all duration-300 ${
+              isTransparent ? "text-gray-300" : "text-gray-400"
+            } group-hover:rotate-180`}
+          />
         )}
       </Link>
 
-      {/* Dropdown Menu - Desktop */}
+      {/* Dropdown Menu - Desktop (Không đổi) */}
       {hasSubItems && (
         <div
           className="absolute top-full left-1/2 -translate-x-1/2 pt-5
@@ -115,7 +133,7 @@ const DesktopDropdownMenuItem: React.FC<{ item: MenuItem }> = ({ item }) => {
 };
 
 // --- 3. Component MobileSidebarMenu (CHO MOBILE) ---
-
+// (Không cần thay đổi, vì sidebar luôn là nền trắng)
 const MobileSidebarMenu: React.FC<{
   menuData: MenuItem[];
   isOpen: boolean;
@@ -217,13 +235,21 @@ const MobileSidebarMenu: React.FC<{
 
 // --- 4. Component Header Chính (RESPONSIVE) ---
 
-const Header: React.FC = () => {
+// ✅ THAY ĐỔI: Nhận prop `isTransparent`
+const Header: React.FC<{ isTransparent: boolean }> = ({ isTransparent }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleCloseMenu = () => setIsMenuOpen(false);
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-20 border-t-4 border-t-blue-500/10">
+    // ✅ THAY ĐỔI: Thay đổi className của Header
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isTransparent
+          ? "bg-transparent border-t-transparent" // Trạng thái trong suốt
+          : "bg-white shadow-md border-t-4 border-t-blue-500/10" // Trạng thái solid
+      }`}
+    >
       {/* breakpoint lg (1024px) */}
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
@@ -240,15 +266,23 @@ const Header: React.FC = () => {
             </div>
             {/* Logo 1: Gene Solutions */}
             <Link href="/" className="flex flex-col items-start leading-tight">
-              <span className="text-sm lg:text-xl font-bold text-blue-800">
+              {/* ✅ THAY ĐỔI: Đổi màu chữ Logo */}
+              <span
+                className={`text-sm lg:text-xl font-bold transition-colors ${
+                  isTransparent ? "text-white" : "text-blue-800"
+                }`}
+              >
                 GENNOVAX
               </span>
-              <span className="text-[10px] lg:text-xs text-blue-800 font-[cursive]">
+              {/* ✅ THAY ĐỔI: Đổi màu chữ Slogan */}
+              <span
+                className={`text-[10px] lg:text-xs font-[cursive] transition-colors ${
+                  isTransparent ? "text-white" : "text-blue-800"
+                }`}
+              >
                 Đích đến của niềm tin
               </span>
             </Link>
-
-            {/* Logo 2: Genetics Institute */}
           </div>
 
           {/* Navigation Menu & Call to Action */}
@@ -258,18 +292,23 @@ const Header: React.FC = () => {
               <ul className="flex h-full space-x-1">
                 {menuData.map((item) => (
                   <li key={item.label}>
-                    <DesktopDropdownMenuItem item={item} />
+                    {/* ✅ THAY ĐỔI: Truyền prop `isTransparent` xuống */}
+                    <DesktopDropdownMenuItem
+                      item={item}
+                      isTransparent={isTransparent}
+                    />
                   </li>
                 ))}
               </ul>
             </nav>
 
             {/* CTA Button - CHỈ HIỂN THỊ TRÊN DESKTOP (lg:) */}
+            {/* (Nút CTA màu cam này đã nổi bật, không cần đổi) */}
             <button
               className="hidden lg:block px-6 py-2.5 rounded-full font-bold text-white
-                         bg-gradient-to-r from-amber-400 to-orange-500 shadow-lg
-                         shadow-orange-500/50 hover:from-amber-500 hover:to-orange-600
-                         transition duration-300 transform hover:scale-[1.03] whitespace-nowrap"
+                       bg-gradient-to-r from-amber-400 to-orange-500 shadow-lg cursor-pointer
+                       shadow-orange-500/50 hover:from-amber-500 hover:to-orange-600
+                       transition duration-300 transform hover:scale-[1.03] whitespace-nowrap"
             >
               <span className="inline-block text-lg align-middle mr-2">
                 <PhoneCall />
@@ -278,9 +317,14 @@ const Header: React.FC = () => {
             </button>
 
             {/* Nút 3 gạch (Hamburger) - CHỈ HIỂN THỊ TRÊN MOBILE (ẩn trên lg:) */}
+            {/* ✅ THAY ĐỔI: Đổi màu icon hamburger */}
             <button
               onClick={() => setIsMenuOpen(true)}
-              className="lg:hidden p-2 text-gray-700 hover:text-blue-500"
+              className={`lg:hidden p-2 transition-colors ${
+                isTransparent
+                  ? "text-white hover:text-gray-200"
+                  : "text-gray-700 hover:text-blue-500"
+              }`}
             >
               <List size={30} />
             </button>

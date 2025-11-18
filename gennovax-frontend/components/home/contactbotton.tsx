@@ -28,12 +28,16 @@ const FloatingContact: React.FC = () => {
           href={`tel:${phoneNumber}`}
           aria-label="Gọi điện cho chúng tôi"
           className="w-12 h-12 lg:w-14 lg:h-14 rounded-full
-                     bg-green-500 hover:bg-green-600
+                     bg-white hover:bg-blue-200
                      flex items-center justify-center
                      text-white shadow-lg
-                     transition-all duration-300 transform hover:scale-110"
+                     transition-all duration-300 transform hover:scale-120"
         >
-          <TelephoneFill size={28} />
+          <img
+            src="https://www.iconarchive.com/download/i103454/paomedia/small-n-flat/phone.1024.png" // <-- hardcode đường dẫn ảnh Zalo
+            alt="zalo"
+            className="w-6 h-6 lg:w-8 lg:h-8"
+          />
         </a>
 
         {/* Nút Zalo */}
@@ -46,9 +50,13 @@ const FloatingContact: React.FC = () => {
                      bg-blue-500 hover:bg-blue-600
                      flex items-center justify-center
                      text-white shadow-lg
-                     transition-all duration-300 transform hover:scale-110"
+                     transition-all duration-300 transform hover:scale-120"
         >
-          <SiZalo size={28} />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/2048px-Icon_of_Zalo.svg.png" // <-- hardcode đường dẫn ảnh Zalo
+            alt="zalo"
+            className="w-6 h-6 lg:w-8 lg:h-8"
+          />
         </a>
       </div>
     </div>

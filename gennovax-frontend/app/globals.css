@@ -29,10 +29,10 @@ body {
   color: var(--foreground);
   font-family: "Inter", sans-serif; /* set Inter làm font chính */
 }
-html, body {
+html,
+body {
   scroll-behavior: smooth !important;
 }
-
 
 /* Animation cuộn */
 @keyframes scroll-left {

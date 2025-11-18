@@ -7,6 +7,8 @@ import FloatingContact from "@/components/home/contactbotton";
 import HeroSection from "@/components/home/herosection";
 import PopularPackages from "@/components/home/mostpakagesection";
 import OtherServices from "@/components/home/otherservicesection";
+import ExpertOpinions from "@/components/home/commentsection";
+import OurServiceSystem from "@/components/home/systemsection";
 
 // --- Thành phần App chính (Tập hợp tất cả) ---
 // Đây là component chính bạn sẽ export
@@ -14,11 +16,13 @@ const LandingPageDongHung: React.FC = () => {
   return (
     <div className="bg-white text-gray-800 font-sans antialiased">
       {/* <Header /> */}
-      <FloatingContact />
+      {/* <FloatingContact /> */}
       <main>
         <HeroSection />
         <PopularPackages />
         <OtherServices />
+        <OurServiceSystem />
+        <ExpertOpinions />
         <AboutGennovax />
       </main>
       {/* <Footer /> */}

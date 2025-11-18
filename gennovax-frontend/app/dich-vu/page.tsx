@@ -150,7 +150,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-dan-su-1-2ngay",
     name: "Xét nghiệm ADN Cha-Con/Mẹ-Con (Dân sự)",
-    description: "Xét nghiệm tự nguyện xác định quan hệ cha-con hoặc mẹ-con. (Áp dụng cho 2 mẫu)",
+    description:
+      "Xét nghiệm tự nguyện xác định quan hệ cha-con hoặc mẹ-con. (Áp dụng cho 2 mẫu)",
     returnTime: "1-2 ngày",
     price: 2500000,
     category: "ADN",
@@ -158,7 +159,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-dan-su-4h",
     name: "Xét nghiệm ADN Cha-Con/Mẹ-Con (Dân sự - Nhanh)",
-    description: "Xét nghiệm tự nguyện xác định quan hệ cha-con hoặc mẹ-con. (Áp dụng cho 2 mẫu)",
+    description:
+      "Xét nghiệm tự nguyện xác định quan hệ cha-con hoặc mẹ-con. (Áp dụng cho 2 mẫu)",
     returnTime: "04 giờ",
     price: 5000000,
     category: "ADN",
@@ -166,7 +168,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-hanh-chinh-1-2ngay",
     name: "Xét nghiệm ADN (Hành chính)",
-    description: "Làm giấy khai sinh, nhận cha cho con, nhận con ngoài giá thú. (Áp dụng cho 2 mẫu)",
+    description:
+      "Làm giấy khai sinh, nhận cha cho con, nhận con ngoài giá thú. (Áp dụng cho 2 mẫu)",
     returnTime: "1-2 ngày",
     price: 3500000,
     category: "ADN",
@@ -174,7 +177,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-hanh-chinh-4h",
     name: "Xét nghiệm ADN (Hành chính - Nhanh)",
-    description: "Làm giấy khai sinh, nhận cha cho con, nhận con ngoài giá thú. (Áp dụng cho 2 mẫu)",
+    description:
+      "Làm giấy khai sinh, nhận cha cho con, nhận con ngoài giá thú. (Áp dụng cho 2 mẫu)",
     returnTime: "04 giờ",
     price: 6000000,
     category: "ADN",
@@ -182,7 +186,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-phap-ly-2-mau-1-2ngay",
     name: "Xét nghiệm ADN (Pháp lý - 2 mẫu)",
-    description: "Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 2 mẫu/1 kết quả)",
+    description:
+      "Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 2 mẫu/1 kết quả)",
     returnTime: "1-2 ngày",
     price: 4500000,
     category: "ADN",
@@ -190,7 +195,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-phap-ly-2-mau-4h",
     name: "Xét nghiệm ADN (Pháp lý - 2 mẫu - Nhanh)",
-    description: "Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 2 mẫu/1 kết quả)",
+    description:
+      "Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 2 mẫu/1 kết quả)",
     returnTime: "04 giờ",
     price: 7000000,
     category: "ADN",
@@ -198,7 +204,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-phap-ly-3-mau-1-2ngay",
     name: "Xét nghiệm ADN (Pháp lý - 3 mẫu)",
-    description: "Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 3 mẫu/1 kết quả)",
+    description:
+      "Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 3 mẫu/1 kết quả)",
     returnTime: "1-2 ngày",
     price: 5500000,
     category: "ADN",
@@ -206,7 +213,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-phap-ly-3-mau-4h",
     name: "Xét nghiệm ADN (Pháp lý - 3 mẫu - Nhanh)",
-    description: "Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 3 mẫu/1 kết quả)",
+    description:
+      "Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 3 mẫu/1 kết quả)",
     returnTime: "04 giờ",
     price: 8000000,
     category: "ADN",
@@ -214,7 +222,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-nst-y",
     name: "Xét nghiệm ADN theo NST Y",
-    description: "Ông Nội-Cháu trai; Chú/Bác ruột-Cháu trai; Anh em trai cùng dòng họ nội.",
+    description:
+      "Ông Nội-Cháu trai; Chú/Bác ruột-Cháu trai; Anh em trai cùng dòng họ nội.",
     returnTime: "1-2 ngày",
     price: 4000000,
     category: "ADN",
@@ -222,7 +231,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-nst-x",
     name: "Xét nghiệm ADN theo NST X",
-    description: "Bà Nội-Cháu Gái; Chị Em gái cùng bố; chị em gái cùng bố và cùng mẹ.",
+    description:
+      "Bà Nội-Cháu Gái; Chị Em gái cùng bố; chị em gái cùng bố và cùng mẹ.",
     returnTime: "1-3 ngày",
     price: 4500000,
     category: "ADN",
@@ -230,7 +240,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-dong-me",
     name: "Xác định quan hệ huyết thống theo dòng Mẹ",
-    description: "Anh trai-em gái cùng Mẹ, dì cháu, cậu cháu (xét nghiệm ADN ti thể).",
+    description:
+      "Anh trai-em gái cùng Mẹ, dì cháu, cậu cháu (xét nghiệm ADN ti thể).",
     returnTime: "3-5 ngày",
     price: 5000000,
     category: "ADN",
@@ -258,7 +269,8 @@ const ServicesData: PackageDetails[] = [
   {
     id: "adn-phu-thu-mau-kho",
     name: "Phụ thu xét nghiệm ADN mẫu khó",
-    description: "Phụ thu áp dụng cho các mẫu đặc biệt như: bàn chải đánh răng, răng sữa, quần lót, tinh dịch...",
+    description:
+      "Phụ thu áp dụng cho các mẫu đặc biệt như: bàn chải đánh răng, răng sữa, quần lót, tinh dịch...",
     targetAudience: "Phụ thu / 1 mẫu",
     returnTime: "Cộng thêm thời gian xử lý mẫu",
     price: 1000000,
@@ -402,7 +414,7 @@ const Services: React.FC = () => {
     >
       {/* PHẦN 1: HERO MỚI (Từ ảnh) */}
       <div
-        className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 pt-16 lg:pt-12 pb-12 text-center bg-blue-700/80"
+        className="max-w-full mx-auto px-4 mt-20 sm:px-6 lg:px-8 pt-16 lg:pt-12 pb-12 text-center bg-blue-700/80"
         style={{
           backgroundImage: `url('/images/bgrHome.jpg')`, // <-- Thay ảnh nền tại đây
         }}
