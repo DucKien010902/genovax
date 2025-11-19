@@ -170,7 +170,7 @@ const HeroSection = () => (
           Đặt hẹn tư vấn
         </Link>
         <Link
-          href="/services"
+          href="/dich-vu/NIPT/#bang-gia"
           className="rounded-full bg-white/20 px-8 py-3.5 text-base font-bold text-white backdrop-blur-sm transition duration-300 hover:bg-white/30"
         >
           Xem bảng giá
@@ -371,7 +371,7 @@ const ProcessSection: React.FC<SectionProps> = ({ brandColors }) => (
 
 // --- COMPONENT CON 5: PRICING TABLE SECTION (SECTION 4) ---
 const PricingTableSection: React.FC<SectionProps> = ({ brandColors }) => (
-  <section className="flex flex-col items-center pt-0 ax-w-6xl mx-auto ">
+  <section className="flex flex-col items-center pt-0 ax-w-6xl mx-auto " id="bang-gia">
     <h2
       className="mb-6 text-center text-4xl font-extrabold md:text-5xl"
       style={{ color: brandColors.primary }}
@@ -517,7 +517,6 @@ export default function NiptLandingPage() {
       <div className="relative z-10 container mx-auto max-w-6xl space-y-24 px-4 py-10 md:py-16">
         {/* 2. Lắp ráp Intro Section */}
         <IntroSection brandColors={brandColors} />
-        <PricingTableSection brandColors={brandColors} />
 
         {/* 3. Lắp ráp Why Us Section */}
         <WhyUsSection brandColors={brandColors} />
@@ -526,6 +525,7 @@ export default function NiptLandingPage() {
         {/* 4. Lắp ráp Process Section */}
         <ProcessSection brandColors={brandColors} />
         <Process2Section brandColors={brandColors} />
+        <PricingTableSection brandColors={brandColors} />
 
         {/* 5. Lắp ráp Pricing Table Section */}
       </div>

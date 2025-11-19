@@ -188,7 +188,7 @@ const HeroSection = () => (
           Đặt hẹn tư vấn
         </Link>
         <Link
-          href="/services"
+          href="/dich-vu/DNA/#bang-gia"
           className="rounded-full bg-white/20 px-8 py-3.5 text-base font-bold text-white backdrop-blur-sm transition duration-300 hover:bg-white/30"
         >
           Xem bảng giá
@@ -309,7 +309,7 @@ const PricingTableSection = () => {
   const tdSttStyle = `${tdStyle} text-center text-lg font-bold text-blue-900`;
 
   return (
-    <div className="bg-gray-50 py-20 md:py-24 md:pt-0">
+    <div id="bang-gia" className="bg-gray-50 py-20 md:py-24 md:pt-0">
       <div className="container mx-auto max-w-7xl px-4">
         <h2 className="text-center text-4xl font-extrabold text-blue-900 md:text-5xl">
           Bảng giá dịch vụ ADN

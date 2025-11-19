@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 // import Image from 'next/image'; // Nên dùng 'next/image' khi deploy
-import { Quote } from "lucide-react";
+import { Quote } from 'lucide-react';
 
 // --- KIỂU DỮ LIỆU ---
 interface Expert {
@@ -19,40 +19,40 @@ const allExperts: Expert[] = [
   // 2 chuyên gia đầu tiên (từ ảnh)
   {
     id: 1,
-    name: "TS.BS Phan Cảnh Duy",
-    title: "Phó Trưởng khoa Xét nghiệm",
-    affiliation: "Trung tâm Ung Bướu, Bệnh viện Trung ương Huế",
-    image: "https://placehold.co/100x100/EBF8FF/3182CE?text=TS.BS+Duy", // Thay bằng ảnh thật
+    name: 'TS.BS Phan Cảnh Duy',
+    title: 'Phó Trưởng khoa Xét nghiệm',
+    affiliation: 'Trung tâm Ung Bướu, Bệnh viện Trung ương Huế',
+    image: 'https://placehold.co/100x100/EBF8FF/3182CE?text=TS.BS+Duy', // Thay bằng ảnh thật
     quote:
-      "Tầm soát ung thư bằng xét nghiệm gen cho thấy sự phát triển vượt bậc của y sinh học. Đây là cơ hội thuận lợi để người bệnh có thể tìm ra phương thức xử lý khi phát hiện ở giai đoạn sớm...",
+      'Tầm soát ung thư bằng xét nghiệm gen cho thấy sự phát triển vượt bậc của y sinh học. Đây là cơ hội thuận lợi để người bệnh có thể tìm ra phương thức xử lý khi phát hiện ở giai đoạn sớm...',
   },
   {
     id: 2,
-    name: "GS.TS Phạm Như Hiệp",
-    title: "Giám đốc Bệnh viện",
-    affiliation: "Bệnh viện Trung ương Huế",
-    image: "https://placehold.co/100x100/EBF8FF/3182CE?text=GS.TS+Hiệp", // Thay bằng ảnh thật
+    name: 'GS.TS Phạm Như Hiệp',
+    title: 'Giám đốc Bệnh viện',
+    affiliation: 'Bệnh viện Trung ương Huế',
+    image: 'https://placehold.co/100x100/EBF8FF/3182CE?text=GS.TS+Hiệp', // Thay bằng ảnh thật
     quote:
-      "Giữa bối cảnh đại dịch COVID-19, tầm soát ung thư bằng xét nghiệm gen như muốn gióng lên hồi chuông báo động rằng bệnh nhân ung thư nói chung cũng như ung thư vú nói riêng...",
+      'Giữa bối cảnh đại dịch COVID-19, tầm soát ung thư bằng xét nghiệm gen như muốn gióng lên hồi chuông báo động rằng bệnh nhân ung thư nói chung cũng như ung thư vú nói riêng...',
   },
   // 2 chuyên gia thêm vào
   {
     id: 3,
-    name: "PGS.TS Trần Hồng Vân",
-    title: "Phó Trưởng khoa Xét nghiệm",
-    affiliation: "Bệnh viện Đại học Y Hà Nội",
-    image: "https://placehold.co/100x100/EBF8FF/3182CE?text=PGS.TS+Vân", // Thay bằng ảnh thật
+    name: 'PGS.TS Trần Hồng Vân',
+    title: 'Phó Trưởng khoa Xét nghiệm',
+    affiliation: 'Bệnh viện Đại học Y Hà Nội',
+    image: 'https://placehold.co/100x100/EBF8FF/3182CE?text=PGS.TS+Vân', // Thay bằng ảnh thật
     quote:
-      "Việc ứng dụng công nghệ gen trong y học chính xác mở ra tương lai mới. Nó không chỉ giúp phát hiện bệnh sớm mà còn định hướng điều trị trúng đích hiệu quả cho bệnh nhân.",
+      'Việc ứng dụng công nghệ gen trong y học chính xác mở ra tương lai mới. Nó không chỉ giúp phát hiện bệnh sớm mà còn định hướng điều trị trúng đích hiệu quả cho bệnh nhân.',
   },
   {
     id: 4,
-    name: "ThS.BS Bùi Kiều Yến Trang",
-    title: "Bác sĩ di truyền",
-    affiliation: "Bệnh viện Từ Dũ",
-    image: "https://placehold.co/100x100/EBF8FF/3182CE?text=BS.Trang", // Thay bằng ảnh thật
+    name: 'ThS.BS Bùi Kiều Yến Trang',
+    title: 'Bác sĩ di truyền',
+    affiliation: 'Bệnh viện Từ Dũ',
+    image: 'https://placehold.co/100x100/EBF8FF/3182CE?text=BS.Trang', // Thay bằng ảnh thật
     quote:
-      "Sàng lọc NIPT và các xét nghiệm di truyền tiền làm tổ (PGT) đã giúp hàng ngàn cặp vợ chồng thực hiện hóa giấc mơ có một thai kỳ khỏe mạnh và an toàn tuyệt đối.",
+      'Sàng lọc NIPT và các xét nghiệm di truyền tiền làm tổ (PGT) đã giúp hàng ngàn cặp vợ chồng thực hiện hóa giấc mơ có một thai kỳ khỏe mạnh và an toàn tuyệt đối.',
   },
 ];
 
@@ -82,6 +82,7 @@ export default function ExpertOpinions() {
       className="relative w-full overflow-hidden py-16"
     >
       {/* Ảnh Nền */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         // THAY THẾ: /images/expert-background.jpg
         src="https://res.cloudinary.com/da6f4dmql/image/upload/v1763437102/a%CC%82sssa_lyar4l.jpg"
@@ -95,11 +96,8 @@ export default function ExpertOpinions() {
       <div className="container relative z-10 mx-auto max-w-6xl px-4">
         {/* Tiêu đề Section */}
         <div className="mb-0 text-left">
-          {" "}
-          {/* ✅ Giảm margin-bottom: 16 -> 12 */}
           <h2 className="text-3xl font-extrabold text-white md:text-4xl">
-            {" "}
-            {/* ✅ Giảm font: 4xl/5xl -> 3xl/4xl */}Ý KIẾN CHUYÊN GIA
+            Ý KIẾN CHUYÊN GIA
           </h2>
           {/* Đường gạch ngang */}
           <div className="mt-4 h-1.5 w-24 rounded-full bg-cyan-400"></div>
@@ -114,13 +112,12 @@ export default function ExpertOpinions() {
               className="h-16 w-16 text-cyan-400/50"
               fill="currentColor"
             />
-            {/* ✅ Giảm font: 2xl/3xl -> xl/2xl */}
+            {/* ✅ SỬA LỖI: Đã thay dấu " bằng &quot; để tránh lỗi biên dịch */}
             <p className="mt-4 text-xl font-light italic leading-relaxed md:text-2xl">
-              {/* ✅ THAY ĐỔI: Sửa "Gene Solutions" -> "GennovaX" */}
-              "Trong suốt hành trình 8 năm, **GennovaX** tự hào đã đồng hành và
-              giúp đỡ được hàng trăm ngàn thai phụ, bệnh nhi, người mắc bệnh ung
-              thư... 2.200.000+ xét nghiệm gen được thực hiện mang đến ảnh hưởng
-              tích cực cho việc sàng lọc và phát hiện bệnh sớm."
+              &quot;Trong suốt hành trình 8 năm, **GennovaX** tự hào đã đồng hành và giúp đỡ
+              được hàng trăm ngàn thai phụ, bệnh nhi, người mắc bệnh ung thư...
+              2.200.000+ xét nghiệm gen được thực hiện mang đến ảnh hưởng
+              tích cực cho việc sàng lọc và phát hiện bệnh sớm.&quot;
             </p>
             {/* ✅ Giảm font: xl -> lg */}
             <p className="mt-6 text-lg font-semibold text-cyan-300">
@@ -131,7 +128,6 @@ export default function ExpertOpinions() {
           {/* === CỘT PHẢI: SLIDER CHUYÊN GIA === */}
           <div className="flex flex-col">
             {/* Vùng chứa 2 Card (Slider) */}
-            {/* ✅ Giảm khoảng cách card: space-y-8 -> space-y-6 */}
             <div className="space-y-6">
               {expertsToShow.map((expert) => (
                 <div
@@ -140,6 +136,7 @@ export default function ExpertOpinions() {
                 >
                   {/* Header của Card (Ảnh + Tên) */}
                   <div className="flex items-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={expert.image}
                       alt={expert.name}
@@ -173,7 +170,7 @@ export default function ExpertOpinions() {
                   key={index}
                   onClick={() => setCurrentPage(index)}
                   className={`h-3 w-3 rounded-full transition-all duration-300
-                    ${currentPage === index ? "w-6 bg-cyan-400" : "bg-white/50 hover:bg-white"}
+                    ${currentPage === index ? 'w-6 bg-cyan-400' : 'bg-white/50 hover:bg-white'}
                   `}
                   aria-label={`Go to slide ${index + 1}`}
                 />

@@ -43,19 +43,17 @@ export const menuData: MenuItem[] = [
   },
   {
     label: "Tin tức",
-    href: "/news",
+    href: "/tin-tuc",
     subItems: [
-      { label: "Tin tức y tế", href: "/news/medical" },
-      { label: "Thông báo", href: "/news/announcements" },
-      { label: "Sự kiện", href: "/news/events" },
+      { label: "Tin tức y tế", href: "/tin-tuc" },
     ],
   },
   {
-    label: "Thư viện",
-    href: "/library",
+    label: "Tài liệu",
+    href: "/tai-lieu",
     subItems: [
-      { label: "Tài liệu khoa học", href: "/library/papers" },
-      { label: "Video & Podcast", href: "/library/media" },
+      { label: "Tài liệu khoa học", href: "/tai-lieu/tai-lieu-khoa-hoc" },
+      { label: "Video & Podcast", href: "/library/video-podcast" },
     ],
   },
   {
@@ -66,14 +64,14 @@ export const menuData: MenuItem[] = [
       { label: "Hợp tác đối tác", href: "/contact/partnership" },
     ],
   },
-  {
-    label: "Thị trường",
-    href: "/market",
-    subItems: [
-      { label: "Giá trị Gen", href: "/market/gen-value" },
-      { label: "Chương trình ưu đãi", href: "/market/promotions" },
-    ],
-  },
+  // {
+  //   label: "Thị trường",
+  //   href: "/market",
+  //   subItems: [
+  //     { label: "Giá trị Gen", href: "/market/gen-value" },
+  //     { label: "Chương trình ưu đãi", href: "/market/promotions" },
+  //   ],
+  // },
 ];
 
 // --- 2. Component DropdownMenuItem (CHO DESKTOP) ---
