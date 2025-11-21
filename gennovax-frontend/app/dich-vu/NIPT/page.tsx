@@ -371,7 +371,10 @@ const ProcessSection: React.FC<SectionProps> = ({ brandColors }) => (
 
 // --- COMPONENT CON 5: PRICING TABLE SECTION (SECTION 4) ---
 const PricingTableSection: React.FC<SectionProps> = ({ brandColors }) => (
-  <section className="flex flex-col items-center pt-0 ax-w-6xl mx-auto " id="bang-gia">
+  <section
+    className="flex flex-col items-center pt-0 ax-w-6xl mx-auto "
+    id="bang-gia"
+  >
     <h2
       className="mb-6 text-center text-4xl font-extrabold md:text-5xl"
       style={{ color: brandColors.primary }}

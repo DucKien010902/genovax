@@ -64,19 +64,18 @@ export default function OurServiceSystem() {
         <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-5 md:gap-16">
           {/* === CỘT ẢNH (40%) === */}
           <div className="md:col-span-2 flex flex-col items-center">
-  <img
-    src="https://res.cloudinary.com/da6f4dmql/image/upload/v1763437814/%E1%BA%A2nh_web-08_cwdzq3.png"
-    alt="Hệ thống dịch vụ GennovaX"
-    className="h-auto w-full rounded-2xl object-cover aspect-square"
-    style={{
-      boxShadow: "0 4px 20px rgba(0, 128, 255, 0.6)" // shadow xanh tỏa đều
-    }}
-  />
-  <p className="mt-4 text-center text-blue-600 text-opacity-80 font-medium">
-    Chuỗi 68 phòng xét nghiệm trên toàn quốc.
-  </p>
-</div>
-
+            <img
+              src="https://res.cloudinary.com/da6f4dmql/image/upload/v1763437814/%E1%BA%A2nh_web-08_cwdzq3.png"
+              alt="Hệ thống dịch vụ GennovaX"
+              className="h-auto w-full rounded-2xl object-cover aspect-square"
+              style={{
+                boxShadow: "0 4px 20px rgba(0, 128, 255, 0.6)", // shadow xanh tỏa đều
+              }}
+            />
+            <p className="mt-4 text-center text-blue-600 text-opacity-80 font-medium">
+              Chuỗi 68 phòng xét nghiệm trên toàn quốc.
+            </p>
+          </div>
 
           {/* === CỘT NỘI DUNG (60%) === */}
           <div className="md:col-span-3">

@@ -21,8 +21,8 @@ const ContactItem: React.FC<{
 }> = ({ icon: Icon, text }) => (
   <div className="flex items-start gap-3">
     <div style={{ marginTop: "4px", flexShrink: 0 }}>
-  <Icon size={16} />
-</div>
+      <Icon size={16} />
+    </div>
 
     <span className="text-gray-300 text-sm">{text}</span>
   </div>
@@ -53,7 +53,6 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Grid 3 cột */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
-          
           {/* === CỘT 1: THÔNG TIN LIÊN HỆ === */}
           <div className="space-y-6">
             <h3 className="text-2xl font-bold text-white">GENNOVAX</h3>
@@ -79,13 +78,22 @@ const Footer: React.FC = () => {
 
             {/* Mạng xã hội */}
             <div className="flex space-x-4 pt-4">
-              <Link href="#" className="text-gray-300 hover:text-white transition">
+              <Link
+                href="#"
+                className="text-gray-300 hover:text-white transition"
+              >
                 <Facebook size={20} />
               </Link>
-              <Link href="#" className="text-gray-300 hover:text-white transition">
+              <Link
+                href="#"
+                className="text-gray-300 hover:text-white transition"
+              >
                 <Youtube size={20} />
               </Link>
-              <Link href="#" className="text-gray-300 hover:text-white transition">
+              <Link
+                href="#"
+                className="text-gray-300 hover:text-white transition"
+              >
                 <Linkedin size={20} />
               </Link>
             </div>
@@ -97,7 +105,7 @@ const Footer: React.FC = () => {
             <p className="text-sm text-gray-300">
               Ghé thăm văn phòng của chúng tôi tại Khu đô thị Nghĩa Đô.
             </p>
-            
+
             {/* Container cho Map */}
             <div className="w-full h-64 rounded-lg overflow-hidden shadow-lg border border-white/10 relative">
               <iframe

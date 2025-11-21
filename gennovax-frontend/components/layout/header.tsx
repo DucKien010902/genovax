@@ -44,16 +44,14 @@ export const menuData: MenuItem[] = [
   {
     label: "Tin tức",
     href: "/tin-tuc",
-    subItems: [
-      { label: "Tin tức y tế", href: "/tin-tuc" },
-    ],
+    subItems: [{ label: "Tin tức y tế", href: "/tin-tuc" }],
   },
   {
     label: "Tài liệu",
     href: "/tai-lieu",
     subItems: [
       { label: "Tài liệu khoa học", href: "/tai-lieu/tai-lieu-khoa-hoc" },
-      { label: "Video & Podcast", href: "/library/video-podcast" },
+      { label: "Khóa học trực tuyến", href: "/tai-lieu/khoa-hoc-edu" },
     ],
   },
   {

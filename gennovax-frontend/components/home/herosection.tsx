@@ -4,7 +4,10 @@ import React from "react";
 
 const HeroSection: React.FC = () => {
   return (
-    <div className="relative w-full h-screen overflow-hidden" style={{top:0}}>
+    <div
+      className="relative w-full h-screen overflow-hidden"
+      style={{ top: 0 }}
+    >
       {/* Video nền full màn hình */}
       <video
         className="absolute inset-0 w-full h-full object-cover"

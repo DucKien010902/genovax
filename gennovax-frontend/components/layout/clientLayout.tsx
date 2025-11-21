@@ -2,7 +2,7 @@
 
 import Footer from "@/components/layout/footer";
 // ✅ THAY ĐỔI: Import `Header` (hoặc giữ `Navbar` nếu bạn export default as Navbar)
-import Header from "@/components/layout/header"; 
+import Header from "@/components/layout/header";
 import { AnimatePresence, motion, useAnimationFrame } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,7 +14,13 @@ function LoadingSpinner() {
   const numDots = 7;
   const radius = 40;
   const colors = [
-    "#3b82f6", "#3b82f6", "#3b82f6", "#3b82f6", "#3b82f6", "#3b82f6", "#3b82f6",
+    "#3b82f6",
+    "#3b82f6",
+    "#3b82f6",
+    "#3b82f6",
+    "#3b82f6",
+    "#3b82f6",
+    "#3b82f6",
   ];
 
   const [angles, setAngles] = useState(
@@ -60,26 +66,24 @@ export default function ClientLayout({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // ✅ THAY ĐỔI: Logic scroll effect
+  // --- THÊM DÒNG NÀY ---
+  const hideLayout =
+    pathname === "/tai-lieu/khoa-hoc-edu" || pathname === "/dang-nhap";
+
+  // Scroll logic
   useEffect(() => {
-    // Chỉ áp dụng cho trang chủ
     if (pathname !== "/") {
-      setIsScrolled(true); // Các trang khác luôn ở trạng thái "solid"
+      setIsScrolled(true);
       return;
     }
 
-    // Ngưỡng scroll là 200px
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 200);
-    };
-
-    handleScroll(); // Kiểm tra ngay lúc tải trang (phòng trường hợp F5)
-    
+    const handleScroll = () => setIsScrolled(window.scrollY > 200);
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
-  // Loading spinner (Giữ nguyên)
+  // Loading spinner
   useEffect(() => {
     setIsLoading(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -88,10 +92,30 @@ export default function ClientLayout({
     return () => clearTimeout(timer);
   }, [pathname]);
 
-  // ✅ THAY ĐỔI: Tính toán trạng thái transparent
-  // Chỉ trong suốt NẾU: ở trang chủ VÀ chưa scroll qua 200px
-  const isTransparent = (pathname === "/") && !isScrolled;
+  const isTransparent = pathname === "/" && !isScrolled;
 
+  // --- RETURN KHÁC NHAU ---
+  if (hideLayout) {
+    // Trang đặc biệt → KHÔNG có header & footer
+    return (
+      <>
+        {isLoading && (
+          <motion.div
+            key="spinner"
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/80 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <LoadingSpinner />
+          </motion.div>
+        )}
+        <PageTransitionWrapper>{children}</PageTransitionWrapper>
+      </>
+    );
+  }
+
+  // --- Layout mặc định ---
   return (
     <>
       <AnimatePresence>
@@ -108,11 +132,10 @@ export default function ClientLayout({
         )}
       </AnimatePresence>
 
-      {/* ✅ THAY ĐỔI: Truyền prop `isTransparent` */}
       <Header isTransparent={isTransparent} />
-      
+
       <FloatingContact />
-      {/* Page transition wrapper */}
+
       <PageTransitionWrapper>{children}</PageTransitionWrapper>
 
       <Footer />
