@@ -10,52 +10,13 @@ import {
   Twitter,
   Link as LinkIcon,
 } from "lucide-react";
-
+import { patauArticle } from "@/data/articals"
+import { useRouter } from "next/navigation";
 // --- 1. DỮ LIỆU MOCK (4 TIN TỨC) ---
 const newsData = [
-  {
-    id: 1,
-    title:
-      "triSure Procare & triSure: Sàng lọc thêm 5 hội chứng vi mất đoạn phổ biến nhất cho thai, giá không đổi.",
-    date: "Ngày 19/11/2025",
-    tags: ["Blog", "Tin nổi bật", "Tin truyền thông"],
-    image:
-      "https://image.plo.vn/w1000/Uploaded/2025/wpdhnwcaj/2021_03_15/giai-nhat-benh-vien-y-duoc_trds.jpg.webp", // Ảnh placeholder
-    excerpt:
-      "Nhằm mang đến cho bác sĩ và thai phụ những giải pháp sàng lọc trước sinh toàn diện, GennovaX chính thức thông báo nâng cấp hai gói NIPT triSure và triSure Procare bằng cách tích hợp thêm các hội chứng vi mất đoạn phổ biến.",
-  },
-  {
-    id: 2,
-    title:
-      "GennovaX và Raffles Medical Group ký kết hợp tác chiến lược trong nghiên cứu thử nghiệm lâm sàng.",
-    date: "Ngày 19/11/2025",
-    tags: ["Tin nổi bật", "Tin truyền thông"],
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0FDDe3s2SmMGutrNPa_-ZRbu4SjKTqOchnw&s",
-    excerpt:
-      "Sáng ngày 22/10/2025, GennovaX và Raffles Medical Group chính thức ký kết biên bản ghi nhớ (MOU) về hợp tác trong tuyển chọn bệnh nhân tham gia các chương trình thử nghiệm lâm sàng quốc tế. Đây là lần đầu tiên...",
-  },
-  {
-    id: 3,
-    title:
-      "BẢN TIN THÁNG 10/2025: CHUYỂN ĐỘNG CỦA NỀN Y HỌC CHÍNH XÁC TẠI CHÂU Á.",
-    date: "Ngày 19/11/2025",
-    tags: ["Tin nổi bật", "Tin truyền thông"],
-    image: "https://placehold.co/600x400/F3E5F5/4A148C?text=Y+Học+Chính+Xác",
-    excerpt:
-      "Bản tin mang đến cho đội ngũ y tế và các chuyên gia trong lĩnh vực di truyền, ung thư học và y học chính xác những thông tin cập nhật nhất về nghiên cứu khoa học, đổi mới công nghệ và hợp tác lâm sàng.",
-  },
-  {
-    id: 4,
-    title:
-      "Dấu ấn GennovaX tại Hội nghị Khoa học Thường niên Bệnh viện Hùng Vương lần 10.",
-    date: "Ngày 19/11/2025",
-    tags: ["Tin nổi bật", "Tin truyền thông"],
-    image: "https://placehold.co/600x400/FFF3E0/E65100?text=Hội+Nghị+Khoa+Học",
-    excerpt:
-      'Ngày 18/10/2025, tại Khách sạn Sheraton Sài Gòn, Bệnh viện Hùng Vương long trọng tổ chức Hội nghị Khoa học Thường niên lần thứ 10 với chủ đề "Góc nhìn mới - Bệnh lý phụ khoa và Thai kỳ nguy cơ cao".',
-  },
+  patauArticle
 ];
+
 
 const categories = ["Tất cả", "Blog", "Tin nổi bật", "Tin truyền thông"];
 
@@ -85,6 +46,7 @@ const NewsHeader = () => (
 
 // --- 3. COMPONENT THẺ TIN TỨC (CARD) ---
 const NewsCard = ({ item }: { item: (typeof newsData)[0] }) => {
+  const router= useRouter()
   return (
     <div className="group w-full rounded-2xl bg-white shadow-md p-4 transition hover:shadow-lg cursor-pointer">
       {/* ==== HÀNG 1: Ảnh + TAG + TITLE ==== */}
@@ -92,7 +54,7 @@ const NewsCard = ({ item }: { item: (typeof newsData)[0] }) => {
         {/* Ảnh bên trái */}
         <div className="w-1/2 aspect-[16/10] rounded-xl overflow-hidden">
           <img
-            src={item.image}
+            src={item.imageMain}
             alt={item.title}
             className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-105 "
           />
@@ -142,7 +104,7 @@ const NewsCard = ({ item }: { item: (typeof newsData)[0] }) => {
           </div>
 
           {/* Button */}
-          <button className="flex items-center gap-1 font-semibold rounded-full bg-[#00BCD4] text-white px-5 py-2 hover:bg-[#0097A7] transition">
+          <button onClick={()=>{router.push(`/tin-tuc/${item.slug}`)}} className="flex items-center gap-1 font-semibold rounded-full bg-[#00BCD4] text-white px-5 py-2 hover:bg-[#0097A7] transition">
             Đọc thêm
             <ArrowRight className="w-4 h-4" />
           </button>

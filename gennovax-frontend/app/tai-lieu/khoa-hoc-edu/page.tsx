@@ -418,18 +418,13 @@ export default function App() {
   const activePhase =
     MOCK_DATA.find((p) => p.id === activePhaseId) || MOCK_DATA[0];
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
 
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-white selection:bg-indigo-500 selection:text-white pb-20">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-white selection:bg-indigo-500 selection:text-white ">
       {/* --- Navbar --- */}
       <header
-        className={`fixed top-0 left-0 right-0 z-40 px-8 transition-all duration-300 ${isScrolled ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-md py-3" : "bg-transparent py-5"}`}
+        className={`fixed top-0 left-0 right-0 z-40 px-8 transition-all bg-white py-4 `}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -456,12 +451,12 @@ export default function App() {
               <a href="#" className="text-indigo-600">
                 Khóa học
               </a>
-              <a href="#" className="hover:text-indigo-600 transition-colors">
+              {/* <a href="#" className="hover:text-indigo-600 transition-colors">
                 Thư viện
               </a>
               <a href="#" className="hover:text-indigo-600 transition-colors">
                 Cộng đồng
-              </a>
+              </a> */}
             </nav>
           </div>
 
@@ -491,7 +486,7 @@ export default function App() {
           <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-12">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs font-bold uppercase tracking-wider mb-4">
-                <Star className="w-3 h-3 fill-current" /> Lộ trình 2024
+                <Star className="w-3 h-3 fill-current" /> Lộ trình 2025
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
                 Xin chào,{" "}

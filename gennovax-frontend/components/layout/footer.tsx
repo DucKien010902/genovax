@@ -126,18 +126,13 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-white">Dịch vụ nổi bật</h3>
             <ul className="space-y-3 pt-2">
-              <QuickLink href="/services/spot-mas-crc">
-                Tầm soát ung thư đại trực tràng (SPOT-MAS)
+              <QuickLink href="/dich-vu/NIPT">
+                Xét nghiệp sàng lọc trước sinh (NIPT)
               </QuickLink>
-              <QuickLink href="/services/spot-mas-lung">
-                Tầm soát ung thư phổi (SPOT-LUNG)
+              <QuickLink href="/dich-vu/DNA">
+                Xét nghiệm gen di truyền (DNA)
               </QuickLink>
-              <QuickLink href="/services/oncofem">
-                Tầm soát ung thư phụ nữ (oncoFEM)
-              </QuickLink>
-              <QuickLink href="/services/genecare">
-                Giải mã gen toàn diện (geneCARE)
-              </QuickLink>
+              
             </ul>
 
             <h3 className="text-2xl font-bold text-white pt-6">Về chúng tôi</h3>

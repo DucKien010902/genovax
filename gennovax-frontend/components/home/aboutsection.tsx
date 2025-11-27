@@ -39,7 +39,7 @@ const PillarItem: React.FC<{
 // --- 2. Component "Về GennovaX" (Chính) ---
 const AboutGennovax: React.FC = () => {
   // Placeholder ảnh lab, bạn hãy thay bằng ảnh thực tế
-  const imageUrl = "/images/aboutGX.jpg";
+  const imageUrl = "https://res.cloudinary.com/da6f4dmql/image/upload/v1764041387/gen-h-Gennovax-cssk_abhgpb.jpg";
 
   return (
     <section className="bg-white py-10 lg:py-15">
@@ -51,7 +51,7 @@ const AboutGennovax: React.FC = () => {
             <span className="text-xl font-bold uppercase text-blue-600">
               VỀ GENNOVAX
             </span>
-            <div className="w-full h-96 relative rounded-3xl shadow-xl overflow-hidden">
+            <div className="w-full h-108 relative rounded-3xl shadow-xl overflow-hidden">
               <Image
                 src={imageUrl}
                 alt="Phòng thí nghiệm GennovaX"
@@ -75,7 +75,7 @@ const AboutGennovax: React.FC = () => {
 
           {/* Cột Phải: Nội dung chi tiết */}
           <div>
-            <h2 className="mt-2 text-2xl lg:text-2xl font-bold text-gray-900 leading-tight">
+            <h2 className=" text-2xl lg:text-2xl font-bold text-gray-900 leading-tight">
               Tiên phong Tương lai Y học qua Lăng kính Di truyền
             </h2>
 

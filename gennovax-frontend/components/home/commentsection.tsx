@@ -114,9 +114,9 @@ export default function ExpertOpinions() {
             />
             {/* ✅ SỬA LỖI: Đã thay dấu " bằng &quot; để tránh lỗi biên dịch */}
             <p className="mt-4 text-xl font-light italic leading-relaxed md:text-2xl">
-              &quot;Trong suốt hành trình 8 năm, **GennovaX** tự hào đã đồng
+              &quot;Trong suốt hành trình, **GennovaX** tự hào đã đồng
               hành và giúp đỡ được hàng trăm ngàn thai phụ, bệnh nhi, người mắc
-              bệnh ung thư... 2.200.000+ xét nghiệm gen được thực hiện mang đến
+              bệnh ung thư... 200.000+ xét nghiệm gen được thực hiện mang đến
               ảnh hưởng tích cực cho việc sàng lọc và phát hiện bệnh sớm.&quot;
             </p>
             {/* ✅ Giảm font: xl -> lg */}

@@ -29,6 +29,7 @@ export const menuData: MenuItem[] = [
     label: "Giới thiệu",
     href: "/about",
     subItems: [
+      { label: "Chuỗi phòng xét nghiệm", href: "/gioi-thieu/danh-sach-phong-kham" },
       { label: "Sứ mệnh & Tầm nhìn", href: "/gioi-thieu/#tam-nhin-va-su-menh" },
       { label: "Hệ thống GennovaX", href: "/gioi-thieu/#he-thong-gennovax" },
       {

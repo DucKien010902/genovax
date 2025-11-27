@@ -160,7 +160,7 @@ const HeroSection = () => (
       <p className="mt-4 max-w-xl text-lg text-gray-200">
         GennovaX cung cấp dịch vụ xét nghiệm sàng lọc trước sinh chuẩn quốc tế,
         với trên
-        <span className="font-bold text-white"> 90.000 trường hợp</span> .
+        <span className="font-bold text-white"> 200.000 trường hợp</span> .
       </p>
       <div className="mt-10 flex flex-wrap gap-4">
         <Link
