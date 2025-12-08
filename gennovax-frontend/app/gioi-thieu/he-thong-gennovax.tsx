@@ -22,7 +22,7 @@ import {
 // 1. Năng Lực Cốt Lõi (Từ Screenshot_18.png)
 const capacityData = {
   image:
-    "https://res.cloudinary.com/da6f4dmql/image/upload/v1763106517/Screenshot_18_j3gfv5.png",
+    "https://res.cloudinary.com/da6f4dmql/image/upload/v1764742688/gen-h-z7287822248537_47046515784e5e419d59740b0d1edc4d_y0x2mk.jpg",
   title: "Năng Lực Cốt Lõi",
   description:
     "GennovaX xây dựng nền tảng vững chắc từ nhân sự chuyên môn cao đến hệ thống trang thiết bị hiện đại, đảm bảo năng lực xử lý khối lượng mẫu lớn mỗi ngày.",

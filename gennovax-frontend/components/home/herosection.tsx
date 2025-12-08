@@ -1,32 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 
 const HeroSection: React.FC = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   return (
-    <div
-      className="relative w-full h-screen overflow-hidden"
-      style={{ top: 0 }}
-    >
-      {/* Video nền full màn hình */}
+    <div className="relative w-full flex justify-center items-center bg-black">
       <video
-        className="absolute inset-0 w-full h-full object-cover"
+        ref={videoRef}
+        className="w-full aspect-[16/9] object-cover"
         src="/videos/introduct.mp4"
+        // controls       // hiển thị các control play/pause/fullscreen
         autoPlay
         loop
         muted
         playsInline
       />
-
-      {/* Overlay màu (tùy chọn) */}
-      {/* <div className="absolute inset-0 bg-blue-900/40 backdrop-blur-[2px]" /> */}
-
-      {/* Text (tùy chọn) */}
-      {/* <div className="relative z-10 flex items-center justify-center h-full">
-        <h1 className="text-white text-4xl lg:text-6xl font-bold drop-shadow-xl">
-          XÉT NGHIỆM NIPT GENNOVAX
-        </h1>
-      </div> */}
     </div>
   );
 };

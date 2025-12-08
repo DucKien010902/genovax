@@ -1,12 +1,14 @@
-// types/clinic.ts
 export interface Clinic {
   id: number;
-  clinicId: string; // Tương ứng với ID trong data gốc
+  clinicId: string;
   name: string;
   address: string;
-  rating: number;
   image: string;
   descriptions: string[];
   mapEmbedUrl?: string;
   isVerified: boolean;
+  timeWork: string; // Trường mới
+  dateWork: string; // Trường mới
+  phoneNumber: string; // Trường mới
+  // Đã xóa rating
 }

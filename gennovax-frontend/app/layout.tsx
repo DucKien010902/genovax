@@ -14,16 +14,6 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: "GennovaX",
   description: "GennovaX - Giải pháp y học di truyền tiên tiến",
-  icons: {
-    icon: [
-      {
-        rel: "icon",
-        url: "/images/genbio1.png",
-        type: "image/png",
-        sizes: "192x192"
-      }
-    ]
-  }
 };
 
 export default function RootLayout({

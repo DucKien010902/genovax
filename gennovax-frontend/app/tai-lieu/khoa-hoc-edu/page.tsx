@@ -418,9 +418,7 @@ export default function App() {
   const activePhase =
     MOCK_DATA.find((p) => p.id === activePhaseId) || MOCK_DATA[0];
 
-
   return (
-
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-white selection:bg-indigo-500 selection:text-white ">
       {/* --- Navbar --- */}
       <header

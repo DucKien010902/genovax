@@ -2,9 +2,10 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 // Cần cài đặt: npm install react-bootstrap-icons
 import { CalendarCheckFill, InfoCircleFill } from "react-bootstrap-icons";
+import ConsultationModal from "./ConsultationModal";
 
 // --- 1. Cấu trúc dữ liệu (TypeScript) ---
 export type PackageDetails = {
@@ -14,99 +15,97 @@ export type PackageDetails = {
   description: string;
   mainImageUrl: string; // Ảnh lớn bên trái
   smallLogoUrl: string; // Logo nhỏ bên phải
+  linkto: string
 };
 
-// --- 2. Dữ liệu mẫu (4 gói) ---
+// --- 2. Dữ liệu mẫu ---
 const popularPackagesData: PackageDetails[] = [
   {
-    id: "geni-eco",
-    name: "Geni Eco",
-    tagline: "Sàng lọc trước sinh không xâm lấn cơ bản",
-    description:
-      "Phát hiện lệch bội 3 cặp nhiễm sắc thể thường 13, 18, 21 liên quan đến 3 hội chứng di truyền: Patau, Edwards, Down. Áp dụng cho thai đơn từ 9 tuần tuổi. Thời gian trả kết quả: 3–5 ngày làm việc.",
-    mainImageUrl: "/images/NIPT.jpg",
-    // 'https://novagen.vn/wp-content/uploads/2024/04/nipt-geni-eco.jpg',
+    id: "adn-truoc-sinh-10ngay",
+    name: "Xét nghiệm ADN Cha Con Trước Sinh (Không xâm lấn)",
+    tagline: "Sử dụng mẫu máu mẹ và 1 mẫu bất kỳ của cha",
+    description: `Sử dụng 01 mẫu máu mẹ và 01 mẫu bất kỳ của cha (móng tay, tóc, bàn chải...). Áp dụng cho thai từ 7 tuần. Độ chính xác: 99,9999%. Bảo mật tuyệt đối. Trả kết quả sau 3–5 ngày làm việc.`,
+    mainImageUrl:
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/500087657_122108016806870117_710668953486729298_n_wmcxfk.jpg",
     smallLogoUrl: "/images/genbio1.png",
-  },
-  {
-    id: "geni-4",
-    name: "Geni 4",
-    tagline: "Sàng lọc mở rộng lệch bội giới tính",
-    description:
-      "Phát hiện lệch bội 3 cặp NST thường (13, 18, 21) và lệch bội NST giới tính liên quan đến hội chứng Turner (XO). Áp dụng cho thai đơn từ 9 tuần. Thời gian trả kết quả: 3–5 ngày làm việc.",
-    mainImageUrl: "/images/NIPT.jpg",
-    // 'https://novagen.vn/wp-content/uploads/2024/04/nipt-geni-4.jpg',
-    smallLogoUrl: "/images/genbio1.png",
+    linkto:'/dich-vu/DNA'
   },
   {
     id: "geni-8",
     name: "Geni 8",
-    tagline: "Sàng lọc nâng cao cho 8 loại lệch bội",
+    tagline: "Sàng lọc trước sinh không xâm lấn",
     description:
-      "Phát hiện lệch bội NST thường (13, 18, 21) và các hội chứng giới tính: Turner (XO), tam nhiễm X (XXX), Klinefelter (XXY), Jacobs (XYY), Klinefelter mở rộng (XXXY). Áp dụng cho thai đơn từ 9 tuần. Có thể làm thêm 21 bệnh gen lặn cho mẹ. Thời gian trả kết quả: 3–5 ngày làm việc.",
-    mainImageUrl: "/images/NIPT.jpg",
-    // 'https://novagen.vn/wp-content/uploads/2024/04/nipt-geni-8.jpg',
+      "Phát hiện lệch bội 3 cặp NST (13, 18, 21) và 5 hội chứng NST giới tính (Turner, Tam nhiễm X, Klinefelter, Jacobs, XXXY). Dành cho thai đơn từ 9 tuần. Kết quả có từ sau 3-5 ngày làm việc.",
+    mainImageUrl:
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/496506308_122100963794870117_1449912006591196456_n_j34mr5.jpg",
     smallLogoUrl: "/images/genbio1.png",
+    linkto:'/dich-vu/NIPT'
+  },
+  {
+    id: "adn-phap-ly-2-mau-1-2ngay",
+    name: "Xét nghiệm ADN (Pháp lý - 2 mẫu)",
+    tagline: "Xác định quan hệ huyết thống chuẩn pháp lý",
+    description: `Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 2 mẫu/1 kết quả). Dùng cho các thủ tục như làm khai sinh, nhận cha/mẹ/con. Độ chính xác cao 99,9999%. Thời gian trả kết quả: 1-2 ngày làm việc.`,
+    mainImageUrl:
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/496942572_122098102940870117_1791812201739354939_n_efjixl.jpg",
+    smallLogoUrl: "/images/genbio1.png",
+    linkto:'/dich-vu/DNA'
   },
   {
     id: "geni-23",
     name: "Geni 23",
     tagline: "Sàng lọc toàn bộ 23 cặp nhiễm sắc thể",
     description:
-      "Phát hiện lệch bội toàn bộ 22 cặp NST thường và 5 hội chứng giới tính: Turner (XO), tam nhiễm X (XXX), Klinefelter (XXY), Klinefelter mở rộng (XXXY), Jacobs (XYY). Áp dụng cho thai đơn từ 9 tuần. Có thể làm thêm 21 bệnh gen lặn cho mẹ. Thời gian trả kết quả: 3–5 ngày làm việc.",
-    mainImageUrl: "/images/NIPT.jpg",
-    // 'https://novagen.vn/wp-content/uploads/2024/04/nipt-geni-23.jpg',
+      "Phát hiện lệch bội toàn bộ 22 cặp NST thường và 5 hội chứng giới tính: Turner (XO), tam nhiễm X (XXX), Klinefelter (XXY), Klinefelter mở rộng (XXXY), Jacobs (XYY). Áp dụng cho thai đơn từ 9 tuần. Thời gian trả kết quả: 3–5 ngày làm việc.",
+    mainImageUrl:
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/571157271_122148617522870117_6835087446376933824_n_tbex8y.jpg",
     smallLogoUrl: "/images/genbio1.png",
+    linkto:'/dich-vu/NIPT'
   },
-  // {
-  //   id: 'geni-twins',
-  //   name: 'Geni Twins',
-  //   tagline: 'Sàng lọc cho thai đôi',
-  //   description:
-  //     'Phát hiện lệch bội toàn bộ 22 cặp NST thường (không bao gồm NST giới tính). Áp dụng cho thai đôi từ 9 tuần (khuyến nghị thu mẫu từ 12 tuần). Có thể làm thêm 21 bệnh gen lặn cho mẹ. Thời gian trả kết quả: 3–5 ngày làm việc.',
-  //   mainImageUrl:
-  //   '/images/NIPT.jpg',
-  //     // 'https://novagen.vn/wp-content/uploads/2024/04/nipt-geni-twins.jpg',
-  //   smallLogoUrl: '/images/genbio1.png',
-  // },
-  // {
-  //   id: 'geni-diamond',
-  //   name: 'Geni Diamond',
-  //   tagline: 'Gói cao cấp phát hiện mở rộng 122 hội chứng',
-  //   description:
-  //     'Phát hiện lệch bội toàn bộ 22 cặp NST thường và 5 hội chứng giới tính (Turner, XXX, XXY, XXXY, XYY). Đồng thời phát hiện 122 hội chứng do mất đoạn/lặp đoạn nhiễm sắc thể. Áp dụng cho thai đơn từ 9 tuần. Thời gian trả kết quả: 3–5 ngày làm việc.',
-  //   mainImageUrl:
-  //   '/images/NIPT.jpg',
-  //     // 'https://novagen.vn/wp-content/uploads/2024/04/nipt-geni-diamond.jpg',
-  //   smallLogoUrl: '/images/genbio1.png',
-  // },
 ];
 
 // --- 3. Component Card Gói Xét Nghiệm (Item) ---
 const PackageCard: React.FC<{ pkg: PackageDetails }> = ({ pkg }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false); // State quản lý Modal
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
   return (
-    // Card lớn bo tròn, đổ bóng, padding nhỏ hơn
-    <div className="bg-white rounded-3xl shadow-lg overflow-hidden p-5 lg:p-6 flex flex-col lg:flex-row gap-5 lg:gap-6 items-start transition-all duration-300 hover:shadow-2xl">
-      {/* Cột trái: Hình ảnh + Nút bấm */}
-      <div className="w-full lg:w-2/5 flex-shrink-0">
-        <img
-          src={pkg.mainImageUrl}
-          alt={pkg.name}
-          className="w-full h-30 lg:h-50 object-cover rounded-2xl" // Ảnh cao hơn một chút
-        />
-        {/* Nút bấm xếp dọc */}
-        <div className="flex flex-col gap-3 mt-4">
+    <div className="bg-white rounded-3xl shadow-lg overflow-hidden p-4 sm:p-5 lg:p-6 flex flex-col lg:flex-row gap-4 lg:gap-6 items-start transition-all duration-300 hover:shadow-2xl">
+      {/* --- CỘT TRÁI: Ảnh + Nút bấm --- */}
+      {/* Mobile: Flex-row (ngang hàng). Desktop: Flex-col (dọc) */}
+      <div className="w-full lg:w-2/5 flex flex-row lg:flex-col gap-3 lg:gap-0 flex-shrink-0">
+        {/* 1. Hình ảnh */}
+        {/* Mobile: 50% width. Desktop: 100% width */}
+        <div className="w-1/2 lg:w-full">
+          <img
+            src={pkg.mainImageUrl}
+            alt={pkg.name}
+            // Mobile: h-full (để khớp với cụm nút bên cạnh), object-cover để không méo.
+            // Desktop: height cố định hoặc auto.
+            className="w-full h-32 sm:h-40 lg:h-52 object-cover rounded-xl lg:rounded-2xl"
+          />
+        </div>
+
+        {/* 2. Cụm nút bấm */}
+        {/* Mobile: 50% width, căn giữa dọc. Desktop: 100% width, margin top */}
+        <div className="w-1/2 lg:w-full flex flex-col justify-center gap-2 lg:gap-3 lg:mt-4">
           <Link
-            // href={`/services/${pkg.id}`}
-            href={`/dich-vu/NIPT`}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm text-white bg-blue-800 hover:bg-blue-700 transition duration-300 shadow-md"
+            href={pkg.linkto}
+            // Mobile: text-xs, py-2 (nhỏ gọn). Desktop: text-sm, py-2.5
+            // Gradient Xanh cho nút Tìm hiểu thêm
+            className="flex items-center justify-center gap-1.5 lg:gap-2 px-2 lg:px-4 py-2 lg:py-2.5 rounded-full font-medium text-xs lg:text-sm text-white bg-gradient-to-r from-blue-600 to-blue-900 hover:from-blue-700 hover:to-blue-950 transition duration-300 shadow-md text-center"
           >
-            <InfoCircleFill />
+            <InfoCircleFill className="text-xs lg:text-sm" />
             Tìm hiểu thêm
           </Link>
+
           <Link
             href="/contact"
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm text-white bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 transition duration-300 shadow-md"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsModalOpen(true);
+            }}
+            className="flex items-center justify-center gap-1.5 lg:gap-2 px-2 lg:px-4 py-2 lg:py-2.5 rounded-full font-medium text-xs lg:text-sm text-white bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 transition duration-300 shadow-md text-center"
           >
             <CalendarCheckFill />
             Đặt hẹn tư vấn
@@ -114,17 +113,21 @@ const PackageCard: React.FC<{ pkg: PackageDetails }> = ({ pkg }) => {
         </div>
       </div>
 
-      {/* Cột phải: Thông tin */}
+      {/* --- CỘT PHẢI: Thông tin --- */}
       <div className="w-full lg:w-3/5">
         {/* Header: Title + Logo nhỏ */}
-        <div className="flex justify-between items-start gap-4 mb-3">
-          {/* Cỡ chữ tiêu đề nhỏ hơn */}
-          <h2 className="text-xl lg:text-2xl font-bold">
-            <span className="text-blue-600">{pkg.name}</span>
-            <span className="text-gray-600"> – {pkg.tagline}</span>
+        <div className="flex justify-between items-start gap-3 mb-2 lg:mb-3">
+          <h2 className="text-lg lg:text-xl font-bold leading-tight">
+            <span className="text-blue-600 block sm:inline">{pkg.name}</span>
+            <span className="text-gray-500 text-sm lg:text-lg font-normal block sm:inline sm:ml-1">
+              {/* Ẩn dấu gạch ngang trên mobile cho gọn */}
+              <span className="hidden sm:inline">– </span>
+              {pkg.tagline}
+            </span>
           </h2>
-          {/* Logo nhỏ hơn */}
-          <div className="bg-white border border-gray-200 rounded-lg p-1 w-16 h-16 flex-shrink-0 flex items-center justify-center">
+
+          {/* Logo nhỏ */}
+          <div className="bg-white border border-gray-200 rounded-lg p-1 w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0 flex items-center justify-center">
             <img
               src={pkg.smallLogoUrl}
               alt={`${pkg.name} logo`}
@@ -133,14 +136,15 @@ const PackageCard: React.FC<{ pkg: PackageDetails }> = ({ pkg }) => {
           </div>
         </div>
 
-        {/* Dấu chấm ... */}
-        <div className="w-full h-1 border-b-4 border-dashed border-blue-400 mb-4" />
+        {/* Dấu chấm trang trí */}
+        <div className="w-full h-1 border-b-2 lg:border-b-4 border-dashed border-blue-400 mb-3 lg:mb-4 opacity-50" />
 
-        {/* Mô tả (cỡ chữ nhỏ hơn) */}
-        <p className="text-gray-600 text-sm lg:text-base mb-6">
+        {/* Mô tả */}
+        <p className="text-gray-600  text-sm lg:text-base leading-relaxed line-clamp-4 lg:line-clamp-none">
           {pkg.description}
         </p>
       </div>
+      <ConsultationModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 };
@@ -148,9 +152,8 @@ const PackageCard: React.FC<{ pkg: PackageDetails }> = ({ pkg }) => {
 // --- 4. Component Section Chính ---
 const PopularPackages: React.FC = () => {
   return (
-    // Giảm padding section một chút
     <section
-      className="py-10 lg:py-15"
+      className="py-8 lg:py-16"
       style={{
         background:
           "linear-gradient(to bottom, white 0%, #e0f7fa 50%, white 100%)",
@@ -158,17 +161,35 @@ const PopularPackages: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Tiêu đề Section */}
-        <div className="text-center mb-10 lg:mb-12">
-          <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mt-2">
-            GÓI XÉT NGHIỆM PHỔ BIẾN
-          </h1>
+        <div className="text-center mb-8 lg:mb-12">
+          <div
+            className="inline-block px-6 py-3 border-2 border-dashed border-blue-300 rounded-full
+                       bg-white/80 backdrop-blur-sm"
+          >
+            <h2 className="text-xl lg:text-3xl font-bold text-blue-800">
+              GÓI XÉT NGHIỆM PHỔ BIẾN
+            </h2>
+          </div>
         </div>
 
-        {/* Grid 2x2 (giảm gap) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        {/* Grid Packages */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-8">
           {popularPackagesData.map((pkg) => (
             <PackageCard key={pkg.id} pkg={pkg} />
           ))}
+        </div>
+
+        {/* Nút Xem thêm */}
+        <div className="flex justify-center mt-10">
+          <Link
+            href="/dich-vu"
+            className="px-8 py-2.5 border-2 border-blue-500 border-dashed rounded-full text-blue-600 font-medium hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 flex items-center gap-2 group"
+          >
+            Các gói xét nghiệm khác
+            <span className="text-blue-500 group-hover:translate-x-1 transition-transform">
+              →
+            </span>
+          </Link>
         </div>
       </div>
     </section>

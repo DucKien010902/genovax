@@ -4,16 +4,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-// Cần cài đặt: npm install react-bootstrap-icons
 import {
-  ArrowRight,
   CpuFill,
   Journals,
   PersonVcardFill,
+  ArrowRight,
 } from "react-bootstrap-icons";
 
-// --- 1. Component "Cột trụ" (Pillar) ---
-// Component con để tái sử dụng cho 3 giá trị cốt lõi
+// --- 1. Component "Cột trụ" (Pillar) - Giữ nguyên ---
 const PillarItem: React.FC<{
   icon: React.ComponentType<{ size?: number | string }>;
   title: string;
@@ -23,8 +21,8 @@ const PillarItem: React.FC<{
     {/* Icon */}
     <div
       className="flex-shrink-0 w-12 h-12 rounded-full
-                 bg-blue-100 text-blue-700
-                 flex items-center justify-center border-4 border-white shadow-md"
+                  bg-blue-100 text-blue-700
+                  flex items-center justify-center border-4 border-white shadow-md"
     >
       <Icon size={24} />
     </div>
@@ -36,64 +34,102 @@ const PillarItem: React.FC<{
   </div>
 );
 
-// --- 2. Component "Về GennovaX" (Chính) ---
+// --- 2. Component Nút điều hướng nhỏ ---
+const NavButton: React.FC<{ text: string; href: string }> = ({ text, href }) => (
+  <Link
+    href={href}
+    className="
+      flex items-center justify-center gap-2 px-4 py-3 w-full
+      rounded-3xl font-semibold text-white shadow-md
+      bg-gradient-to-r from-red-500 to-blue-700
+      hover:from-red-600 hover:to-blue-800
+      transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg
+    "
+  >
+    {text}
+    <ArrowRight className="opacity-70" size={16} />
+  </Link>
+);
+
+// --- 3. Component Chính ---
 const AboutGennovax: React.FC = () => {
-  // Placeholder ảnh lab, bạn hãy thay bằng ảnh thực tế
-  const imageUrl = "https://res.cloudinary.com/da6f4dmql/image/upload/v1764041387/gen-h-Gennovax-cssk_abhgpb.jpg";
+  const imageUrl =
+    "https://res.cloudinary.com/da6f4dmql/image/upload/v1764226197/gen-h-z7267353458086_c57256b53d7ba5d6070191d7f5ad34cb_jjvpuw.jpg";
 
   return (
-    <section className="bg-white py-10 lg:py-15">
+    <section className="bg-white py-10 lg:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Cột Trái: Hình ảnh (Sáng tạo) */}
-          {/* Cột Trái: Hình ảnh + nút nằm dọc */}
-          <div className="flex flex-col items-start gap-6">
-            <span className="text-xl font-bold uppercase text-blue-600">
+        
+        {/* --- PHẦN 1: TIÊU ĐỀ (Đã đẩy lên đầu) --- */}
+        <div className="flex justify-center mb-10 lg:mb-12">
+          <div
+            className="
+              inline-block px-6 py-2
+              border-2 border-dashed border-blue-300
+              rounded-full
+               backdrop-blur-sm
+            "
+          >
+            <span className="text-xl md:text-3xl font-bold uppercase text-blue-800 tracking-wide">
               VỀ GENNOVAX
             </span>
-            <div className="w-full h-108 relative rounded-3xl shadow-xl overflow-hidden">
-              <Image
-                src={imageUrl}
-                alt="Phòng thí nghiệm GennovaX"
-                fill
-                className="object-cover"
-                unoptimized
-              />
-            </div>
-
-            <Link
-              href="/about"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full
-               font-semibold text-white bg-blue-600
-               hover:bg-blue-700 transition duration-300
-               shadow-lg hover:shadow-blue-500/50 transform hover:scale-105"
-            >
-              Khám phá hành trình của chúng tôi
-              <ArrowRight />
-            </Link>
           </div>
+        </div>
 
-          {/* Cột Phải: Nội dung chi tiết */}
-          <div>
-            <h2 className=" text-2xl lg:text-2xl font-bold text-gray-900 leading-tight">
-              Tiên phong Tương lai Y học qua Lăng kính Di truyền
+        {/* --- PHẦN 2: GRID NỘI DUNG --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+          
+          {/* Cột Trái: Ảnh + 4 Nút */}
+          <div className="flex flex-col gap-6">
+  {/* Ảnh */}
+  <div className="w-full h-80 lg:h-96 relative rounded-3xl shadow-2xl overflow-hidden border border-blue-100">
+    <Image
+      src={imageUrl}
+      alt="Phòng thí nghiệm GennovaX"
+      fill
+      className="object-cover hover:scale-105 transition-transform duration-700"
+      unoptimized
+    />
+  </div>
+
+  {/* Title nhỏ dưới ảnh */}
+  <div className="text-center">
+    <h2 className="text-lg lg:text-3xl font-semibold text-blue-700 mt-1">
+      Vì sao nên chọn chúng tôi ?
+    </h2>
+  </div>
+
+  {/* 4 Button */}
+  <div className="grid grid-cols-2 gap-5 w-[95%]  mx-auto mt-3">
+    <NavButton text="Hệ thống Lab hiện đại" href="/gioi-thieu#he-thong-gennovax" />
+    <NavButton text="Đội ngũ chuyên gia uy tín" href="/gioi-thieu#doi-ngu-va-thanh-tuu" />
+    <NavButton text="Độ phủ khắp miền Bác" href="/gioi-thieu#he-thong-gennovax" />
+    <NavButton text="Nhiều đối tác chiến lược" href="/gioi-thieu#doi-tac-va-thuyet-bi" />
+  </div>
+</div>
+
+
+          {/* Cột Phải: Nội dung chi tiết (Giữ nguyên) */}
+          <div className="pt-2">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+              Tiên phong Tương lai Y học qua <span className="text-blue-700">Lăng kính Di truyền</span>
             </h2>
 
-            <p className="mt-4 text-lg text-gray-600">
+            <p className="mt-6 text-lg text-gray-600 leading-relaxed">
               Sứ mệnh của chúng tôi là ứng dụng công nghệ giải trình tự gen
               (NGS) thế hệ mới và Trí tuệ nhân tạo (AI) để cung cấp các giải
               pháp y học chính xác.
             </p>
-            <p className="mt-3 text-base text-gray-600">
+            <p className="mt-4 text-base text-gray-600 leading-relaxed">
               GennovaX giúp người Việt tiếp cận dịch vụ tầm soát, chẩn đoán và
               điều trị cá thể hóa với{" "}
-              <strong className="text-gray-800">độ chính xác vượt trội</strong>{" "}
-              và <strong className="text-gray-800">chi phí hợp lý</strong>, đặt
+              <strong className="text-blue-800">độ chính xác vượt trội</strong>{" "}
+              và <strong className="text-blue-800">chi phí hợp lý</strong>, đặt
               nền móng cho một tương lai chăm sóc sức khỏe chủ động.
             </p>
 
-            {/* Ba cột trụ (Chi tiết & Sáng tạo hơn checklist) */}
-            <div className="mt-8 space-y-6">
+            {/* Ba cột trụ */}
+            <div className="mt-10 space-y-8">
               <PillarItem icon={CpuFill} title="Công nghệ Vượt trội">
                 Sử dụng nền tảng Big Data và AI độc quyền để phân tích dữ liệu
                 gen, đảm bảo kết quả nhanh và chính xác nhất.
@@ -107,9 +143,8 @@ const AboutGennovax: React.FC = () => {
                 mới, đón đầu xu hướng y học toàn cầu.
               </PillarItem>
             </div>
-
-            {/* Link xem thêm */}
           </div>
+
         </div>
       </div>
     </section>

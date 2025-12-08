@@ -19,13 +19,13 @@ import {
 
 export default function GennovaxDnaService() {
   return (
-    <section className="w-full bg-white text-gray-800 pt-20">
+    <section className="w-full bg-white text-gray-800 ">
       {/* === 1. HERO SECTION === */}
       {/* Sử dụng Ảnh web-11.png */}
       <HeroSection />
 
       {/* === 2. CÁC KHỐI TÍNH NĂNG (BỐ CỤC SO LE) === */}
-      <div className="py-20 bg-gray-50">
+      <div className="py-0 bg-gray-50">
         {/* Khối 1: Lợi thế & Cam kết (Ảnh web_Artboard 5 copy.png) */}
         <FeatureBlock
           imageSrc="/images/ADN/Ảnh web_Artboard 5 copy.png"
@@ -149,50 +149,65 @@ export default function GennovaxDnaService() {
 const HeroSection = () => (
   <div
     className="relative w-full overflow-hidden text-white"
-    style={{ minHeight: "600px" }}
+    style={{ minHeight: "500px" }}
   >
     {/* Ảnh nền */}
     <img
-      src="/images/ADN/Ảnh web-11.png"
+      src="https://res.cloudinary.com/da6f4dmql/image/upload/v1764746810/shutterstock_1802264764_u02kyk.jpg"
       alt="Xét nghiệm ADN Huyết thống GennovaX"
       className="absolute inset-0 h-full w-full object-cover"
     />
-    {/* Lớp phủ màu tối */}
-    <div className="absolute inset-0 bg-blue-900/40"></div>
 
-    {/* Nội dung */}
-    <div className="container relative z-10 mx-auto flex h-full min-h-[600px] max-w-7xl flex-col justify-center px-4 py-20 text-left">
-      <h1 className="text-5xl font-extrabold leading-tight md:text-7xl">
-        Xét nghiệm
-        <br />
-        ADN Huyết Thống
-      </h1>
+    {/* Lớp phủ màu tối để giảm nhiễu nền */}
+    <div className="absolute inset-0 bg-blue-900/50"></div>
+
+    {/* Card nền mờ chứa chữ */}
+    <div className="container relative z-10 mx-auto flex h-full min-h-[500px] max-w-7xl items-center px-4 py-10 md:py-20">
       <div
-        className="my-6 w-24 h-1.5"
-        style={{ backgroundColor: "#0891B2" }} // Màu teal
-      ></div>
-      <p className="max-w-xl text-2xl font-light text-gray-100">
-        Chính xác – Bảo mật – Hợp pháp
-      </p>
-      <p className="mt-4 max-w-xl text-lg text-gray-200">
-        GennovaX cung cấp dịch vụ xét nghiệm ADN huyết thống chuẩn quốc tế, với
-        trên
-        <span className="font-bold text-white"> 120.000 trường hợp</span> đã xác
-        nhận thân nhân qua ADN.
-      </p>
-      <div className="mt-10 flex flex-wrap gap-4">
-        <Link
-          href="/contact"
-          className="rounded-full bg-cyan-500 px-8 py-3.5 text-base font-bold text-white shadow-lg transition duration-300 hover:bg-cyan-400"
-        >
-          Đặt hẹn tư vấn
-        </Link>
-        <Link
-          href="/dich-vu/DNA/#bang-gia"
-          className="rounded-full bg-white/20 px-8 py-3.5 text-base font-bold text-white backdrop-blur-sm transition duration-300 hover:bg-white/30"
-        >
-          Xem bảng giá
-        </Link>
+        className="
+        w-full 
+        max-w-xl 
+        bg-white/15 
+        backdrop-blur-md 
+        rounded-2xl 
+        p-4  
+        md:p-12 
+        shadow-2xl
+      "
+      >
+        <h1 className="text-4xl font-extrabold leading-tight md:text-6xl">
+          Xét nghiệm ADN
+          <br />
+          Huyết Thống
+        </h1>
+
+        <div className="my-6 w-24 h-1.5 bg-cyan-500"></div>
+
+        <p className="text-xl text-white md:text-2xl">
+          Chính xác – Bảo mật – Hợp pháp
+        </p>
+
+        <p className="mt-4 text-lg text-white md:text-xl">
+          GennovaX cung cấp dịch vụ xét nghiệm ADN huyết thống chuẩn quốc tế,
+          với trên
+          <span className="font-bold text-white"> 120.000 trường</span>
+          đã xác nhận thân nhân qua ADN.
+        </p>
+
+        <div className="mt-10 flex  gap-4">
+          <Link
+            href="/contact"
+            className="rounded-full bg-cyan-500 px-4 md:px-8 py-2 md:py-3.5 text-base font-bold text-white shadow-lg transition duration-300 hover:bg-cyan-400"
+          >
+            Đặt hẹn tư vấn
+          </Link>
+          <Link
+            href="/dich-vu/NIPT/#bang-gia"
+            className="rounded-full bg-white/20 px-4 md:px-8 py-2 md:py-3.5 text-base font-bold text-white backdrop-blur-sm transition duration-300 hover:bg-white/30"
+          >
+            Xem bảng giá
+          </Link>
+        </div>
       </div>
     </div>
   </div>

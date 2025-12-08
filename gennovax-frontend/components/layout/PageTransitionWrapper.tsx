@@ -10,6 +10,10 @@ export default function PageTransitionWrapper({
 }) {
   const pathname = usePathname();
 
+  // Nếu pathname là "/", margin-top = 0, các trang khác mt-20
+  const mtClass =
+    pathname === "/" || pathname === "/dang-nhap" ? "mt-0" : "mt-20";
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -18,7 +22,7 @@ export default function PageTransitionWrapper({
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -15 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="min-h-screen"
+        className={`min-h-screen ${mtClass}`}
       >
         {children}
       </motion.div>

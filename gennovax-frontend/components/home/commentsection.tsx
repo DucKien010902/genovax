@@ -22,7 +22,8 @@ const allExperts: Expert[] = [
     name: "TS.BS Phan Cảnh Duy",
     title: "Phó Trưởng khoa Xét nghiệm",
     affiliation: "Trung tâm Ung Bướu, Bệnh viện Trung ương Huế",
-    image: "https://placehold.co/100x100/EBF8FF/3182CE?text=TS.BS+Duy", // Thay bằng ảnh thật
+    image:
+      "https://benhviennoitiet.vn/wp-content/uploads/2023/12/A-Hiep-web.jpg", // Thay bằng ảnh thật
     quote:
       "Tầm soát ung thư bằng xét nghiệm gen cho thấy sự phát triển vượt bậc của y sinh học. Đây là cơ hội thuận lợi để người bệnh có thể tìm ra phương thức xử lý khi phát hiện ở giai đoạn sớm...",
   },
@@ -31,7 +32,8 @@ const allExperts: Expert[] = [
     name: "GS.TS Phạm Như Hiệp",
     title: "Giám đốc Bệnh viện",
     affiliation: "Bệnh viện Trung ương Huế",
-    image: "https://placehold.co/100x100/EBF8FF/3182CE?text=GS.TS+Hiệp", // Thay bằng ảnh thật
+    image:
+      "https://suckhoedoisong.qltns.mediacdn.vn/thumb_w/600/324455921873985536/2024/3/3/4296080207853344429926277667541941839027269n-17094331232751762434977-155-0-1139-984-crop-17094332140561102974289.jpg", // Thay bằng ảnh thật
     quote:
       "Giữa bối cảnh đại dịch COVID-19, tầm soát ung thư bằng xét nghiệm gen như muốn gióng lên hồi chuông báo động rằng bệnh nhân ung thư nói chung cũng như ung thư vú nói riêng...",
   },
@@ -41,7 +43,8 @@ const allExperts: Expert[] = [
     name: "PGS.TS Trần Hồng Vân",
     title: "Phó Trưởng khoa Xét nghiệm",
     affiliation: "Bệnh viện Đại học Y Hà Nội",
-    image: "https://placehold.co/100x100/EBF8FF/3182CE?text=PGS.TS+Vân", // Thay bằng ảnh thật
+    image:
+      "https://benhvienchamcuu.com/public_folder/image/2020/06/16/1592281740_74649_ts-pham-hong-van-vjpg.jpg", // Thay bằng ảnh thật
     quote:
       "Việc ứng dụng công nghệ gen trong y học chính xác mở ra tương lai mới. Nó không chỉ giúp phát hiện bệnh sớm mà còn định hướng điều trị trúng đích hiệu quả cho bệnh nhân.",
   },
@@ -50,7 +53,8 @@ const allExperts: Expert[] = [
     name: "ThS.BS Bùi Kiều Yến Trang",
     title: "Bác sĩ di truyền",
     affiliation: "Bệnh viện Từ Dũ",
-    image: "https://placehold.co/100x100/EBF8FF/3182CE?text=BS.Trang", // Thay bằng ảnh thật
+    image:
+      "https://trungtamadn.com/wp-content/uploads/2023/05/bui-kieu-yen-tran.jpg", // Thay bằng ảnh thật
     quote:
       "Sàng lọc NIPT và các xét nghiệm di truyền tiền làm tổ (PGT) đã giúp hàng ngàn cặp vợ chồng thực hiện hóa giấc mơ có một thai kỳ khỏe mạnh và an toàn tuyệt đối.",
   },
@@ -114,10 +118,9 @@ export default function ExpertOpinions() {
             />
             {/* ✅ SỬA LỖI: Đã thay dấu " bằng &quot; để tránh lỗi biên dịch */}
             <p className="mt-4 text-xl font-light italic leading-relaxed md:text-2xl">
-              &quot;Trong suốt hành trình, **GennovaX** tự hào đã đồng
-              hành và giúp đỡ được hàng trăm ngàn thai phụ, bệnh nhi, người mắc
-              bệnh ung thư... 200.000+ xét nghiệm gen được thực hiện mang đến
-              ảnh hưởng tích cực cho việc sàng lọc và phát hiện bệnh sớm.&quot;
+              &quot;Trong suốt hành trình, GennovaX tự hào đã đồng hành và giúp
+              đỡ được hàng trăm ngàn thai phụ, bệnh nhi,... 200.000+ xét nghiệm gen được thực hiện mang đến ảnh hưởng
+              tích cực cho việc sàng lọc và phát hiện bệnh sớm.&quot;
             </p>
             {/* ✅ Giảm font: xl -> lg */}
             <p className="mt-6 text-lg font-semibold text-cyan-300">

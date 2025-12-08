@@ -72,9 +72,12 @@ export default function OurServiceSystem() {
                 boxShadow: "0 4px 20px rgba(0, 128, 255, 0.6)", // shadow xanh tỏa đều
               }}
             />
-            <p className="mt-4 text-center text-blue-600 text-opacity-80 font-medium">
+            <a
+              href="/gioi-thieu/danh-sach-phong-kham" // Thay bằng link bạn muốn
+              className="mt-4 text-center text-blue-600 text-opacity-80 font-medium inline-block underline hover:text-blue-800"
+            >
               Chuỗi 68 phòng xét nghiệm trên toàn quốc.
-            </p>
+            </a>
           </div>
 
           {/* === CỘT NỘI DUNG (60%) === */}

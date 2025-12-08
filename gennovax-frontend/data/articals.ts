@@ -2,12 +2,15 @@ export const patauArticle = {
   id: "patau-syndrome-13",
   slug: "hoi-chung-patau-trisomy-13",
   // --- Dữ liệu cho Card (Trang danh sách) ---
-  title: "Hội chứng Patau (Trisomy 13) là gì? Biểu hiện, nguyên nhân và tiên lượng sống.",
+  title:
+    "Hội chứng Patau (Trisomy 13) là gì? Biểu hiện, nguyên nhân và tiên lượng sống.",
   date: "Ngày 27/11/2025",
   author: "GennovaX Medical Team",
   tags: ["Y học thường thức", "Sàng lọc trước sinh", "Dị tật bẩm sinh"],
-  imageMain: "https://login.medlatec.vn//ImagePath/images/20210907/20210907_hoi-chung-patau.jpg", // Ảnh đại diện
-  imageBgr: "https://img.freepik.com/vector-mien-phi/hinh-anh-minh-hoa-nen-gradient-xanh-duong_53876-116696.jpg?semt=ais_hybrid&w=740&q=80", // Ảnh đại diện
+  imageMain:
+    "https://login.medlatec.vn//ImagePath/images/20210907/20210907_hoi-chung-patau.jpg", // Ảnh đại diện
+  imageBgr:
+    "https://img.freepik.com/vector-mien-phi/hinh-anh-minh-hoa-nen-gradient-xanh-duong_53876-116696.jpg?semt=ais_hybrid&w=740&q=80", // Ảnh đại diện
   excerpt:
     "Hội chứng Patau (Trisomy 13) là một bất thường nhiễm sắc thể nghiêm trọng gây ra nhiều dị tật bẩm sinh. Bài viết cung cấp thông tin toàn diện về nguyên nhân, triệu chứng, các phương pháp chẩn đoán và tiên lượng sống của trẻ mắc hội chứng này.",
 

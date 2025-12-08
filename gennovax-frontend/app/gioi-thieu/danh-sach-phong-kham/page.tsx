@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Search, MapPin, CheckCircle, Star } from "lucide-react";
+import { Search, MapPin, CheckCircle, Star, Clock, Phone } from "lucide-react";
 import { clinicData } from "@/data/clinics";
 import { Clinic } from "@/types/clinic";
 
@@ -11,7 +11,7 @@ export default function ClinicListPage() {
   const [searchTerm, setSearchTerm] = useState("");
   // Mặc định chọn phòng khám đầu tiên nếu có dữ liệu
   const [selectedClinic, setSelectedClinic] = useState<Clinic | null>(
-    clinicData.length > 0 ? clinicData[0] : null
+    clinicData.length > 0 ? clinicData[0] : null,
   );
 
   // Hàm xử lý tiếng Việt
@@ -29,18 +29,19 @@ export default function ClinicListPage() {
   const filteredClinics = useMemo(() => {
     return clinicData.filter((clinic) =>
       removeVietnameseTones(clinic.name).includes(
-        removeVietnameseTones(searchTerm)
-      )
+        removeVietnameseTones(searchTerm),
+      ),
     );
   }, [searchTerm]);
 
   return (
-    <div className="min-h-screen bg-[#e8f4fd] px-4 py-8 md:pt-34 md:px-12">
+    <div className="min-h-screen bg-[#e8f4fd] px-4 py-8  md:px-12">
       {/* Header Section */}
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold text-[#00b5f1] mb-2">Phòng Khám</h1>
         <p className="text-lg text-[#245c87]">
-          Trải nghiệm chăm sóc y tế tập trung và gần gũi tại phòng khám chuyên khoa
+          Trải nghiệm chăm sóc y tế tập trung và gần gũi tại phòng khám chuyên
+          khoa
         </p>
 
         {/* Search Bar */}
@@ -98,23 +99,22 @@ export default function ClinicListPage() {
                     <MapPin className="h-4 w-4 mt-1 flex-shrink-0" />
                     {clinic.address}
                   </p>
-                  
+
                   {/* Rating */}
+
                   <div className="flex items-center mt-2">
-                    <div className="flex text-yellow-400">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${
-                            i < Math.floor(clinic.rating)
-                              ? "fill-current"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
+                    <Clock className="h-4 w-4 text-yellow-500 mr-1" />
+                    <span className="text-blue-500 font-semibold">
+                      08:00 – 17:00
+                    </span>
                     <span className="ml-2 text-[#f760b6] font-medium">
-                      ({clinic.rating})
+                      (Thứ 2 – Thứ 7)
+                    </span>
+                  </div>
+                  <div className="flex items-center mt-2">
+                    <Phone className="h-4 w-4 text-gray-500 mr-1" />
+                    <span className="text-orange-400 font-semibold">
+                      {clinic.phoneNumber}
                     </span>
                   </div>
                 </div>
@@ -124,7 +124,9 @@ export default function ClinicListPage() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/y-te/chi-tiet-phong-kham?ID=${clinic.clinicId}`);
+                      router.push(
+                        `/y-te/chi-tiet-phong-kham?ID=${clinic.clinicId}`,
+                      );
                     }}
                     className="px-6 py-2 rounded-full border-2 border-[#00b5f1] text-[#00b5f1] font-semibold hover:bg-[#00b5f1] hover:text-white transition-colors"
                   >
@@ -133,7 +135,9 @@ export default function ClinicListPage() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/y-te/dat-lich-xet-nghiem?ID=${clinic.clinicId}`);
+                      router.push(
+                        `/y-te/dat-lich-xet-nghiem?ID=${clinic.clinicId}`,
+                      );
                     }}
                     className="px-6 py-2 rounded-full bg-[#00b5f1] text-white font-semibold hover:bg-[#009fd4] transition-colors shadow-md"
                   >
@@ -143,7 +147,7 @@ export default function ClinicListPage() {
               </div>
             </div>
           ))}
-          
+
           {filteredClinics.length === 0 && (
             <div className="text-center py-10 text-gray-500 italic">
               Không tìm thấy phòng khám nào phù hợp.
@@ -159,11 +163,11 @@ export default function ClinicListPage() {
                 <h2 className="text-xl font-bold text-[#380d75] text-center mb-4">
                   {selectedClinic.name}
                 </h2>
-                
+
                 <img
                   src={selectedClinic.image}
                   alt={selectedClinic.name}
-                  className="w-full h-[200px] object-cover rounded-xl mb-4"
+                  className="w-full h-[300px] object-cover rounded-xl mb-4"
                 />
 
                 <div className="space-y-4">

@@ -1,65 +1,91 @@
-// src/components/FloatingContact.tsx
 "use client";
 
-import React from "react";
-import { TelephoneFill } from "react-bootstrap-icons";
-// Cần cài đặt: npm install react-icons
-import { SiZalo } from "react-icons/si";
+import React, { useState } from "react";
+import { FaPhone, FaFacebookF, FaShareAlt } from "react-icons/fa";
+import { FaCommentDots } from "react-icons/fa6";
+import ChatWidget from "./ChatDrawerAI";
 
-// Định nghĩa props nếu bạn muốn truyền SĐT/Link Zalo từ bên ngoài
-type Props = {
-  phone: string;
-  zaloLink: string;
-};
-
-// Sử dụng Props: const FloatingContact: React.FC<Props> = ({ phone, zaloLink }) => {
-// Hoặc Hardcode:
 const FloatingContact: React.FC = () => {
-  const phoneNumber = "0936 654 456"; // <-- Thay số điện thoại của bạn
-  const zaloOA = "0936654456"; // <-- Thay ID Zalo OA hoặc SĐT Zalo của bạn
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [canClickChildren, setCanClickChildren] = useState(false);
+
+  const phone = "0936654456";
+  const zaloOA = "0936654456";
+
+  const handleOpenShare = () => {
+    // Reset về khóa click
+    setCanClickChildren(false);
+
+    // 0.5s sau mới cho phép click
+    setTimeout(() => {
+      setCanClickChildren(true);
+    }, 500);
+  };
 
   return (
-    // Container cố định ở góc dưới bên phải
-    <div className="fixed bottom-6 right-6 z-50">
-      {/* Container xếp dọc 2 nút */}
-      <div className="flex flex-col space-y-3">
-        {/* Nút Điện thoại */}
-        <a
-          href={`tel:${phoneNumber}`}
-          aria-label="Gọi điện cho chúng tôi"
-          className="w-12 h-12 lg:w-14 lg:h-14 rounded-full
-                     bg-white hover:bg-blue-200
-                     flex items-center justify-center
-                     text-white shadow-lg
-                     transition-all duration-300 transform hover:scale-120"
-        >
-          <img
-            src="https://www.iconarchive.com/download/i103454/paomedia/small-n-flat/phone.1024.png" // <-- hardcode đường dẫn ảnh Zalo
-            alt="zalo"
-            className="w-6 h-6 lg:w-8 lg:h-8"
-          />
-        </a>
+    <>
+      <ChatWidget isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
 
-        {/* Nút Zalo */}
-        <a
-          href={`https://zalo.me/${zaloOA}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Nhắn tin Zalo cho chúng tôi"
-          className="w-12 h-12 lg:w-14 lg:h-14 rounded-full
-                     bg-blue-500 hover:bg-blue-600
-                     flex items-center justify-center
-                     text-white shadow-lg
-                     transition-all duration-300 transform hover:scale-120"
+      <div className="fixed bottom-12 right-6 z-50 flex flex-col gap-4 items-center">
+        {/* ==== KHỐI SHARE ==== */}
+        <div
+          className="relative group"
+          onMouseEnter={handleOpenShare}
+          onClick={handleOpenShare}
         >
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/2048px-Icon_of_Zalo.svg.png" // <-- hardcode đường dẫn ảnh Zalo
-            alt="zalo"
-            className="w-6 h-6 lg:w-8 lg:h-8"
-          />
-        </a>
+          {/* Nút Chia sẻ */}
+          <button className="flex items-center justify-center w-12 h-12 rounded-full bg-[#32a2a8] text-white shadow-md transition-all duration-300 group-hover:opacity-0">
+            <FaShareAlt className="text-xl" />
+          </button>
+
+          {/* 3 nút hiện khi hover */}
+          <div
+            className={`
+              absolute bottom-0 right-0 flex flex-col gap-3
+              opacity-0 group-hover:opacity-100 transition-opacity
+              ${canClickChildren ? "pointer-events-auto" : "pointer-events-none"}
+            `}
+          >
+            {/* Phone */}
+            <a
+              href={`tel:${phone}`}
+              className="flex items-center justify-center w-12 h-12 rounded-full bg-green-500 text-white shadow-md hover:scale-110 transition"
+            >
+              <FaPhone className="text-lg" />
+            </a>
+
+            {/* Zalo */}
+            <a
+              href={`https://zalo.me/${zaloOA}`}
+              target="_blank"
+              className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500 text-white shadow-md hover:scale-110 transition"
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/2048px-Icon_of_Zalo.svg.png"
+                className="w-6 h-6"
+              />
+            </a>
+
+            {/* Facebook */}
+            <a
+              href="https://www.facebook.com/profile.php?id=61576103516877"
+              target="_blank"
+              className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white shadow-md hover:scale-110 transition"
+            >
+              <FaFacebookF className="text-lg" />
+            </a>
+          </div>
+        </div>
+
+        {/* Nút Chat AI */}
+        <button
+          onClick={() => setIsChatOpen(true)}
+          className="relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg transition-all duration-300 hover:scale-110"
+        >
+          <FaCommentDots className="text-2xl" />
+        </button>
       </div>
-    </div>
+    </>
   );
 };
 

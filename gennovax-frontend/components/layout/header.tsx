@@ -1,21 +1,21 @@
 "use client";
 
 import { PhoneCall } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
-import { CaretDownFill, List, X } from "react-bootstrap-icons";
-// Cần cài đặt: npm install react-bootstrap-icons
+import React, { useState, FormEvent, useEffect } from "react";
+import { CaretDownFill, List, X, Send } from "react-bootstrap-icons";
+import ConsultationModal from "../home/ConsultationModal";
 
 // --- 1. Cấu trúc Dữ liệu Menu (TypeScript) ---
 
 export type MenuItem = {
   label: string;
   href: string;
-  subItems?: MenuItem[]; // Tùy chọn submenu
+  subItems?: MenuItem[];
 };
 
 export const menuData: MenuItem[] = [
-  // ... (Dữ liệu menu của bạn không đổi) ...
   {
     label: "Sản phẩm",
     href: "/dich-vu",
@@ -27,9 +27,12 @@ export const menuData: MenuItem[] = [
   },
   {
     label: "Giới thiệu",
-    href: "/about",
+    href: "gioi-thieu/#doi-ngu-va-thanh-tuu",
     subItems: [
-      { label: "Chuỗi phòng xét nghiệm", href: "/gioi-thieu/danh-sach-phong-kham" },
+      {
+        label: "Chuỗi phòng xét nghiệm",
+        href: "/gioi-thieu/danh-sach-phong-kham",
+      },
       { label: "Sứ mệnh & Tầm nhìn", href: "/gioi-thieu/#tam-nhin-va-su-menh" },
       { label: "Hệ thống GennovaX", href: "/gioi-thieu/#he-thong-gennovax" },
       {
@@ -49,33 +52,15 @@ export const menuData: MenuItem[] = [
   },
   {
     label: "Tài liệu",
-    href: "/tai-lieu",
+    href: "/tai-lieu/tai-lieu-y-khoa",
     subItems: [
-      { label: "Tài liệu khoa học", href: "/tai-lieu/tai-lieu-khoa-hoc" },
+      { label: "Tài liệu y khoa", href: "/tai-lieu/tai-lieu-y-khoa" },
       { label: "Khóa học trực tuyến", href: "/tai-lieu/khoa-hoc-edu" },
     ],
   },
-  {
-    label: "Liên hệ",
-    href: "/contact",
-    subItems: [
-      { label: "Văn phòng chính", href: "/contact/main-office" },
-      { label: "Hợp tác đối tác", href: "/contact/partnership" },
-    ],
-  },
-  // {
-  //   label: "Thị trường",
-  //   href: "/market",
-  //   subItems: [
-  //     { label: "Giá trị Gen", href: "/market/gen-value" },
-  //     { label: "Chương trình ưu đãi", href: "/market/promotions" },
-  //   ],
-  // },
 ];
 
 // --- 2. Component DropdownMenuItem (CHO DESKTOP) ---
-
-// ✅ THAY ĐỔI: Nhận thêm prop `isTransparent`
 const DesktopDropdownMenuItem: React.FC<{
   item: MenuItem;
   isTransparent: boolean;
@@ -83,20 +68,17 @@ const DesktopDropdownMenuItem: React.FC<{
   const hasSubItems = item.subItems && item.subItems.length > 0;
 
   return (
-    // Sử dụng group để kích hoạt dropdown menu khi hover
     <div className="group relative h-full flex items-center">
       <Link
         href={item.href}
-        // ✅ THAY ĐỔI: Đổi màu chữ dựa trên `isTransparent`
         className={`flex items-center font-medium px-4 py-2 transition-colors duration-150 ${
           isTransparent
-            ? "text-white hover:text-gray-200" // Trạng thái trong suốt
-            : "text-gray-700 hover:text-blue-500" // Trạng thái solid
+            ? "text-white hover:text-gray-200"
+            : "text-gray-700 hover:text-blue-500"
         }`}
       >
         {item.label}
         {hasSubItems && (
-          // ✅ THAY ĐỔI: Đổi màu icon caret
           <CaretDownFill
             className={`ml-1 w-3 h-3 transition-all duration-300 ${
               isTransparent ? "text-gray-300" : "text-gray-400"
@@ -105,12 +87,11 @@ const DesktopDropdownMenuItem: React.FC<{
         )}
       </Link>
 
-      {/* Dropdown Menu - Desktop (Không đổi) */}
       {hasSubItems && (
         <div
           className="absolute top-full left-1/2 -translate-x-1/2 pt-5
-                       group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
-                       opacity-0 invisible transition-all duration-300 transform translate-y-2 z-20 min-w-48"
+                        group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
+                        opacity-0 invisible transition-all duration-300 transform translate-y-2 z-20 min-w-48"
         >
           <div className="bg-white shadow-xl rounded-lg border border-gray-100 overflow-hidden">
             {item.subItems?.map((subItem) => (
@@ -130,12 +111,12 @@ const DesktopDropdownMenuItem: React.FC<{
 };
 
 // --- 3. Component MobileSidebarMenu (CHO MOBILE) ---
-// (Không cần thay đổi, vì sidebar luôn là nền trắng)
 const MobileSidebarMenu: React.FC<{
   menuData: MenuItem[];
   isOpen: boolean;
   onClose: () => void;
-}> = ({ menuData, isOpen, onClose }) => {
+  onOpenConsultation: () => void; // Thêm prop để mở modal từ mobile menu
+}> = ({ menuData, isOpen, onClose, onOpenConsultation }) => {
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   const toggleSubmenu = (label: string) => {
@@ -144,7 +125,6 @@ const MobileSidebarMenu: React.FC<{
 
   return (
     <>
-      {/* Overlay backdrop */}
       <div
         className={`fixed inset-0 bg-black/50 z-30 transition-opacity ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
@@ -152,36 +132,33 @@ const MobileSidebarMenu: React.FC<{
         onClick={onClose}
       />
 
-      {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="p-4 border-b flex justify-between items-center">
+        <div className="p-4 border-b flex justify-between items-center bg-blue-50">
           <span className="text-lg font-bold text-blue-800">Menu Chính</span>
           <button
             onClick={onClose}
-            className="p-2 text-gray-600 hover:text-red-500"
+            className="p-2 text-gray-600 hover:text-red-500 rounded-full hover:bg-gray-200"
           >
             <X size={24} />
           </button>
         </div>
 
-        <nav className="p-4 overflow-y-auto h-[calc(100%-60px)]">
+        <nav className="p-4 overflow-y-auto h-[calc(100%-140px)]">
           <ul>
             {menuData.map((item) => (
               <li key={item.label} className="border-b border-gray-100">
                 <div className="flex justify-between items-center">
                   <Link
                     href={item.href}
-                    onClick={onClose} // Đóng menu khi điều hướng
+                    onClick={onClose}
                     className="block py-3 text-gray-700 font-medium hover:text-blue-600 flex-grow"
                   >
                     {item.label}
                   </Link>
-
-                  {/* Nút bấm để mở/đóng submenu trên mobile */}
                   {item.subItems && item.subItems.length > 0 && (
                     <button
                       onClick={() => toggleSubmenu(item.label)}
@@ -196,23 +173,21 @@ const MobileSidebarMenu: React.FC<{
                     </button>
                   )}
                 </div>
-
-                {/* Submenu Mobile (Accordion) */}
                 {item.subItems && (
                   <div
                     className={`transition-all duration-300 overflow-hidden ${
                       openSubmenu === item.label
-                        ? "max-h-96 opacity-100 py-1" // Mở
-                        : "max-h-0 opacity-0" // Đóng
+                        ? "max-h-96 opacity-100 py-1"
+                        : "max-h-0 opacity-0"
                     }`}
                   >
-                    <ul className="pl-4">
+                    <ul className="pl-4 bg-gray-50 rounded-md">
                       {item.subItems.map((subItem) => (
                         <li key={subItem.href}>
                           <Link
                             href={subItem.href}
-                            onClick={onClose} // Đóng menu khi điều hướng
-                            className="block py-2 text-sm text-gray-600 hover:text-blue-500 border-l border-gray-300 pl-3"
+                            onClick={onClose}
+                            className="block py-2 text-sm text-gray-600 hover:text-blue-500 border-l-2 border-transparent hover:border-blue-500 pl-3"
                           >
                             {subItem.label}
                           </Link>
@@ -225,117 +200,144 @@ const MobileSidebarMenu: React.FC<{
             ))}
           </ul>
         </nav>
+
+        {/* Nút Nhận tư vấn trên Mobile Menu */}
+        <div className="absolute bottom-0 left-0 w-full p-4 border-t bg-white">
+          <button
+            onClick={() => {
+              onClose();
+              onOpenConsultation();
+            }}
+            className="w-full py-3 rounded-lg font-bold text-white
+                       bg-gradient-to-r from-red-600 to-blue-600 shadow-lg
+                       flex items-center justify-center gap-2 active:scale-95 transition-transform"
+          >
+            <PhoneCall size={18} />
+            Nhận tư vấn ngay
+          </button>
+        </div>
       </div>
     </>
   );
 };
 
-// --- 4. Component Header Chính (RESPONSIVE) ---
+// --- 4. Component Modal Tư Vấn (MỚI) ---
 
-// ✅ THAY ĐỔI: Nhận prop `isTransparent`
+// --- 5. Component Header Chính (RESPONSIVE) ---
+
 const Header: React.FC<{ isTransparent: boolean }> = ({ isTransparent }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State quản lý Modal
 
   const handleCloseMenu = () => setIsMenuOpen(false);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   return (
-    // ✅ THAY ĐỔI: Thay đổi className của Header
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isTransparent
-          ? "bg-transparent border-t-transparent" // Trạng thái trong suốt
-          : "bg-white shadow-md border-t-4 border-t-blue-500/10" // Trạng thái solid
-      }`}
-    >
-      {/* breakpoint lg (1024px) */}
-      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo Section (Responsive) */}
-          <div className="flex items-center space-x-2 lg:space-x-4">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center">
-                <img
-                  src="/images/genbio1.png"
-                  alt="Gen Solutions Logo"
-                  className="h-15 lg:h-25 object-contain"
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isTransparent
+            ? "bg-transparent border-t-transparent"
+            : "bg-white shadow-md border-t-0 border-t-blue-500/10"
+        }`}
+      >
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
+            {/* Logo Section */}
+            <div className="flex items-center space-x-2 lg:space-x-4">
+              <div className="flex items-center">
+                <Link href="/" className="flex items-center">
+                  <img
+                    src="/images/genbio1-1.png"
+                    alt="Gen Solutions Logo"
+                    className="h-10 lg:h-15 object-contain"
+                  />
+                </Link>
+              </div>
+
+              <Link
+                href="/"
+                className="flex flex-col items-start leading-tight mb-1"
+              >
+                <Image
+                  src="/images/genbio1-2.png"
+                  alt="GENNOVAX Logo"
+                  width={120}
+                  height={40}
+                  className={`transition-all ml-0 lg:ml-3 ${
+                    isTransparent ? "opacity-100" : "opacity-90"
+                  }`}
+                  priority
                 />
+                <span
+                  className={`text-[11px] font-bold lg:text-[14px] ml-2  transition-colors ${
+                    isTransparent ? "text-white" : "text-blue-800"
+                  }`}
+                >
+                  Đích đến của niềm tin
+                </span>
               </Link>
             </div>
-            {/* Logo 1: Gene Solutions */}
-            <Link href="/" className="flex flex-col items-start leading-tight">
-              {/* ✅ THAY ĐỔI: Đổi màu chữ Logo */}
-              <span
-                className={`text-sm lg:text-xl font-bold transition-colors ${
-                  isTransparent ? "text-white" : "text-blue-800"
+
+            {/* Navigation & CTA */}
+            <div className="flex items-center space-x-4 lg:space-x-8">
+              {/* Main Menu (Desktop) */}
+              <nav className="hidden lg:flex h-full">
+                <ul className="flex h-full space-x-1">
+                  {menuData.map((item) => (
+                    <li key={item.label}>
+                      <DesktopDropdownMenuItem
+                        item={item}
+                        isTransparent={isTransparent}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              {/* CTA Button (Desktop) - Nút "Nhận tư vấn" */}
+              <button
+                onClick={handleOpenModal}
+                className="hidden lg:block px-6 py-2.5 rounded-full font-bold text-white
+                          bg-gradient-to-r from-red-600 via-blue-600 to-blue-600
+                          bg-[length:200%_auto] hover:bg-right transition-all duration-500 ease-in-out
+                          shadow-lg shadow-blue-500/30 cursor-pointer
+                          transform hover:scale-[1.03] whitespace-nowrap"
+              >
+                <span className="inline-block text-lg align-middle mr-2">
+                  <PhoneCall />
+                </span>
+                Nhận tư vấn
+              </button>
+
+              {/* Hamburger Button (Mobile) */}
+              <button
+                onClick={() => setIsMenuOpen(true)}
+                className={`lg:hidden p-2 transition-colors ${
+                  isTransparent
+                    ? "text-white hover:text-gray-200"
+                    : "text-gray-700 hover:text-blue-500"
                 }`}
               >
-                GENNOVAX
-              </span>
-              {/* ✅ THAY ĐỔI: Đổi màu chữ Slogan */}
-              <span
-                className={`text-[10px] lg:text-xs font-[cursive] transition-colors ${
-                  isTransparent ? "text-white" : "text-blue-800"
-                }`}
-              >
-                Đích đến của niềm tin
-              </span>
-            </Link>
-          </div>
-
-          {/* Navigation Menu & Call to Action */}
-          <div className="flex items-center space-x-4 lg:space-x-8">
-            {/* Main Menu - CHỈ HIỂN THỊ TRÊN DESKTOP (lg:) */}
-            <nav className="hidden lg:flex h-full">
-              <ul className="flex h-full space-x-1">
-                {menuData.map((item) => (
-                  <li key={item.label}>
-                    {/* ✅ THAY ĐỔI: Truyền prop `isTransparent` xuống */}
-                    <DesktopDropdownMenuItem
-                      item={item}
-                      isTransparent={isTransparent}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            {/* CTA Button - CHỈ HIỂN THỊ TRÊN DESKTOP (lg:) */}
-            {/* (Nút CTA màu cam này đã nổi bật, không cần đổi) */}
-            <button
-              className="hidden lg:block px-6 py-2.5 rounded-full font-bold text-white
-                       bg-gradient-to-r from-amber-400 to-orange-500 shadow-lg cursor-pointer
-                       shadow-orange-500/50 hover:from-amber-500 hover:to-orange-600
-                       transition duration-300 transform hover:scale-[1.03] whitespace-nowrap"
-            >
-              <span className="inline-block text-lg align-middle mr-2">
-                <PhoneCall />
-              </span>
-              0936 654 456
-            </button>
-
-            {/* Nút 3 gạch (Hamburger) - CHỈ HIỂN THỊ TRÊN MOBILE (ẩn trên lg:) */}
-            {/* ✅ THAY ĐỔI: Đổi màu icon hamburger */}
-            <button
-              onClick={() => setIsMenuOpen(true)}
-              className={`lg:hidden p-2 transition-colors ${
-                isTransparent
-                  ? "text-white hover:text-gray-200"
-                  : "text-gray-700 hover:text-blue-500"
-              }`}
-            >
-              <List size={30} />
-            </button>
+                <List size={30} />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Sidebar (Render bên ngoài) */}
-      <MobileSidebarMenu
-        menuData={menuData}
-        isOpen={isMenuOpen}
-        onClose={handleCloseMenu}
-      />
-    </header>
+        {/* Mobile Sidebar */}
+        <MobileSidebarMenu
+          menuData={menuData}
+          isOpen={isMenuOpen}
+          onClose={handleCloseMenu}
+          onOpenConsultation={handleOpenModal} // Truyền hàm mở modal xuống mobile menu
+        />
+      </header>
+
+      {/* Render Modal - Nằm ngoài Header để tránh lỗi z-index cục bộ */}
+      <ConsultationModal isOpen={isModalOpen} onClose={handleCloseModal} />
+    </>
   );
 };
 

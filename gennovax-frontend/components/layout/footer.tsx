@@ -70,6 +70,10 @@ const Footer: React.FC = () => {
                 text="Trụ sở: Tầng 2, tòa CT3, khu đô thị Nghĩa Đô, Hoàng Quốc Việt, Hà Nội"
               />
               <ContactItem
+                icon={GeoAltFill}
+                text="Địa chỉ phòng LAB: 183 Đường Trường Chinh, Khương Mai, Thanh Xuân, Hà Nội"
+              />
+              <ContactItem
                 icon={TelephoneFill}
                 text="Hotline (24/7): 0936 654 456"
               />
@@ -132,7 +136,6 @@ const Footer: React.FC = () => {
               <QuickLink href="/dich-vu/DNA">
                 Xét nghiệm gen di truyền (DNA)
               </QuickLink>
-              
             </ul>
 
             <h3 className="text-2xl font-bold text-white pt-6">Về chúng tôi</h3>

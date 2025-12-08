@@ -32,14 +32,15 @@ const serviceData: Service[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800&auto=format&fit=crop", // Placeholder: Bác sĩ và bệnh nhân
     icon: PeopleFill,
-    href: "/services/genetic-counseling",
+    href: "/gioi-thieu#doi-ngu-va-thanh-tuu",
   },
   {
     id: "doanh-nghiep",
     title: "Giải pháp Doanh nghiệp",
     description:
       "Cung cấp các gói tầm soát sức khỏe toàn diện cho nhân viên, nâng cao phúc lợi và hiệu suất làm việc.",
-    imageUrl: "https://www.victoriavn.com/images/cham_soc_suc_khoe_nv-01.jpg", // Placeholder: Họp văn phòng
+    imageUrl:
+      "https://online.benhvienphuongdong.vn/wp-content/uploads/2025/03/Goi-sang-loc-ung-thu-vu-dai-dien-1.jpg", // Placeholder: Họp văn phòng
     icon: BriefcaseFill,
     href: "/services/corporate-solutions",
   },
@@ -126,7 +127,7 @@ const OtherServices: React.FC = () => {
             className="inline-block px-6 py-3 border-2 border-dashed border-blue-300 rounded-full
                        bg-white/80 backdrop-blur-sm"
           >
-            <h2 className="text-2xl lg:text-3xl font-bold text-blue-800">
+            <h2 className="text-xl lg:text-3xl font-bold text-blue-800">
               DỊCH VỤ NỔI BẬT KHÁC CỦA GENNOVAX
             </h2>
           </div>
