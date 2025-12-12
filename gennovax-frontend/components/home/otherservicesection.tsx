@@ -30,17 +30,17 @@ const serviceData: Service[] = [
     description:
       "Kết nối trực tiếp với chuyên gia để giải mã gen, tư vấn chuyên sâu và xây dựng kế hoạch sức khỏe.",
     imageUrl:
-      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800&auto=format&fit=crop", // Placeholder: Bác sĩ và bệnh nhân
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764730192/dl.beatsnoop.com-3000-O9KATiVLbI_bf17z3.jpg", // Placeholder: Bác sĩ và bệnh nhân
     icon: PeopleFill,
     href: "/gioi-thieu#doi-ngu-va-thanh-tuu",
   },
   {
     id: "doanh-nghiep",
-    title: "Giải pháp Doanh nghiệp",
+    title: "Chăm sóc thai kì",
     description:
-      "Cung cấp các gói tầm soát sức khỏe toàn diện cho nhân viên, nâng cao phúc lợi và hiệu suất làm việc.",
+      "Sàng lọc, chẩn đoán, trước, trong, sau khi mang thai.",
     imageUrl:
-      "https://online.benhvienphuongdong.vn/wp-content/uploads/2025/03/Goi-sang-loc-ung-thu-vu-dai-dien-1.jpg", // Placeholder: Họp văn phòng
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764742688/gen-h-z7287822248537_47046515784e5e419d59740b0d1edc4d_y0x2mk.jpg", // Placeholder: Họp văn phòng
     icon: BriefcaseFill,
     href: "/services/corporate-solutions",
   },
@@ -79,8 +79,8 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
 
       {/* 2. Lớp phủ Gradient (Sáng tạo hơn) */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-3/4
-                   bg-gradient-to-t from-blue-700 via-blue-600/80 to-transparent"
+        className="absolute bottom-0 left-0 right-0 h-2/4
+                   bg-gradient-to-t from-blue-600 via-blue-600/80 to-transparent"
       />
 
       {/* 3. Nội dung Card (Overlay) */}
@@ -101,7 +101,7 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
         <p className="text-sm text-white/90 mb-5">{service.description}</p>
 
         {/* Nút Tìm hiểu (Thiết kế đẹp hơn) */}
-        <Link
+        {/* <Link
           href={service.href}
           onClick={(e)=>{
             e.preventDefault()
@@ -113,7 +113,7 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
         >
           Tìm hiểu
           <ArrowRightCircle className="transition-transform duration-300 group-hover:translate-x-1" />
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
@@ -127,11 +127,11 @@ const OtherServices: React.FC = () => {
         {/* Tiêu đề Section (Sáng tạo) */}
         <div className="text-center mb-8 lg:mb-16">
           <div
-            className="inline-block px-6 py-3 border-2 border-dashed border-blue-300 rounded-full
+            className="inline-block px-6 py-3 border-4 border-dashed border-blue-300 rounded-full
                        bg-white/80 backdrop-blur-sm"
           >
-            <h2 className="text-sm lg:text-3xl font-bold text-blue-800">
-              DỊCH VỤ NỔI BẬT KHÁC CỦA GENNOVAX
+            <h2 className="text-sm lg:text-3xl font-bold text-black">
+              Dịch Vụ Nổi Bật Khác<span className="text-blue-700"> Của GennovaX</span>
             </h2>
           </div>
         </div>

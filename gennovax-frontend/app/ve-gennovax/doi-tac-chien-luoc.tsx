@@ -18,7 +18,7 @@ import {
 // 1. Hệ Sinh Thái (Từ Screenshot_28.png)
 const ecosystemData = {
   image:
-    "https://res.cloudinary.com/da6f4dmql/image/upload/v1763107793/Screenshot_28_fe8yp7.png",
+    "https://res.cloudinary.com/da6f4dmql/image/upload/v1765533012/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_5_1_1_sk1rbx.png",
   title: "Hệ Sinh Thái Toàn Diện",
   description:
     "GennovaX làm chủ toàn bộ chu trình với một hệ sinh thái khép kín, đảm bảo tính đồng bộ, bảo mật và chất lượng cao nhất trong từng quy trình.",
@@ -34,7 +34,7 @@ const ecosystemData = {
 // 2. Đối Tác Chiến Lược (Từ Screenshot_29.png)
 const partnersData = {
   image:
-    "https://res.cloudinary.com/da6f4dmql/image/upload/v1763107793/Screenshot_29_j738ve.png",
+    "https://res.cloudinary.com/da6f4dmql/image/upload/v1765533226/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_15_1_1_pm7non.png",
   title: "Đối Tác Chiến Lược Uy Tín",
   description:
     "Chúng tôi xây dựng niềm tin dựa trên sự hợp tác chặt chẽ với các bệnh viện, viện nghiên cứu hàng đầu trong nước và các tập đoàn công nghệ gen hàng đầu thế giới.",
@@ -53,7 +53,7 @@ const partnersData = {
 // 3. Thiết Bị & Tiêu Chuẩn Lab (Từ Screenshot_30.png)
 const equipmentData = {
   image:
-    "https://res.cloudinary.com/da6f4dmql/image/upload/v1763107797/Screenshot_30_r6tu31.png",
+    "https://res.cloudinary.com/da6f4dmql/image/upload/v1765533012/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_5_1_1_sk1rbx.png",
   title: "Phòng Lab Chuẩn Quốc Tế",
   description:
     "Hệ thống phòng Lab được trang bị máy móc hiện đại, tự động và tuân thủ nghiêm ngặt các tiêu chuẩn kiểm soát chất lượng quốc tế.",

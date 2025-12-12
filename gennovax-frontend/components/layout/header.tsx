@@ -29,7 +29,7 @@ export const menuData: MenuItem[] = [
     href: "/gioi-thieu/danh-sach-phong-kham",
     subItems: [
       { label: "Chuỗi phòng xét nghiệm", href: "/gioi-thieu/danh-sach-phong-kham" },
-      { label: "Đội ngũ bác sỹ", href: "/gioi-thieu/danh-sach-phong-kham" },
+      { label: "Đội ngũ bác sỹ", href: "/gioi-thieu/doi-ngu-bac-sy" },
     ],
   },
   {
@@ -235,7 +235,8 @@ const MobileSidebarMenu: React.FC<{
                 onOpenConsultation();
               }}
               className="w-full py-3.5 rounded-xl font-bold text-white shadow-lg shadow-blue-500/30
-                          bg-gradient-to-r from-red-600 via-blue-600 to-blue-700
+                          bg-gradient-to-r from-orange-400 via-orange-600 to-red-600
+
                           flex items-center justify-center gap-2 active:scale-95 transition-transform"
             >
               <PhoneCall size={20} className="animate-pulse" />
@@ -321,7 +322,8 @@ const Header: React.FC<{ isTransparent: boolean }> = ({ isTransparent }) => {
               <button
                 onClick={handleOpenModal}
                 className="group relative px-7 py-3 rounded-full font-bold text-white overflow-hidden
-                           bg-gradient-to-r from-red-600 via-blue-600 to-blue-700
+                           bg-gradient-to-r from-orange-400 via-orange-600 to-red-600
+
                            shadow-[0_4px_15px_rgba(37,99,235,0.4)]
                            transition-all duration-300 hover:shadow-[0_6px_20px_rgba(37,99,235,0.6)] hover:-translate-y-0.5"
               >

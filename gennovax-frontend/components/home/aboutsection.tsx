@@ -65,7 +65,7 @@ const AboutGennovax: React.FC = () => {
           <div
             className="
               inline-block px-6 py-2
-              border-2 border-dashed border-blue-300
+              border-4 border-dashed border-blue-300
               rounded-full
                backdrop-blur-sm
             "

@@ -43,7 +43,7 @@ const partnership = {
 
 // Màu sắc (để nhất quán)
 const brandColors = {
-  primary: "#0D47A1",
+  primary: "#1976D2",
   secondary: "#0D47A1",
 };
 

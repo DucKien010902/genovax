@@ -67,11 +67,11 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <ContactItem
                 icon={GeoAltFill}
-                text="Trụ sở: Tầng 2, tòa CT3, 106 Hoàng Quốc Việt, Phường Nghĩa Đô, Quận Cầu Giấy, Hà Nội. "
+                text="Trụ sở: Tầng 2, tòa CT3, 106 Hoàng Quốc Việt, Phường Nghĩa Đô, Hà Nội. "
               />
               <ContactItem
                 icon={GeoAltFill}
-                text="Địa chỉ phòng LAB: 183 Đường Trường Chinh, Phường Phương Liệt, Quận Thanh Xuân, Hà Nội"
+                text="Địa chỉ phòng LAB: 183 Đường Trường Chinh, Phường Phương Liệt, Hà Nội"
               />
               <ContactItem
                 icon={TelephoneFill}

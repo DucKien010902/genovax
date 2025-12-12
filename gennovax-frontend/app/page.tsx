@@ -11,6 +11,7 @@ import ExpertOpinions from "@/components/home/commentsection";
 import OurServiceSystem from "@/components/home/systemsection";
 import PopupBanner from "@/components/home/PopupBanner";
 import VideoSection from "@/components/home/videoSection";
+import DoctorsList from "@/components/home/doctorsSection";
 
 // --- Thành phần App chính (Tập hợp tất cả) ---
 // Đây là component chính bạn sẽ export
@@ -23,6 +24,7 @@ const LandingPageDongHung: React.FC = () => {
         <PopularPackages />
         <OtherServices />
         <OurServiceSystem />
+        <DoctorsList/>
         <ExpertOpinions />
         <AboutGennovax />
         {/* <VideoSection/> */}

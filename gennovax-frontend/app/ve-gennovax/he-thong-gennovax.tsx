@@ -37,7 +37,7 @@ const capacityData = {
 // 2. Mạng Lưới & Dịch Vụ (Từ Screenshot_17.png)
 const networkData = {
   image:
-    "https://res.cloudinary.com/da6f4dmql/image/upload/v1763106512/Screenshot_17_zmtes0.png",
+    "https://res.cloudinary.com/da6f4dmql/image/upload/v1765532565/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_8_1_1_xr5vnb.png",
   title: "Phát Triển & Cam Kết Dịch Vụ",
   description:
     "Với mạng lưới 68 điểm thu mẫu toàn quốc và quy trình tối ưu, chúng tôi cam kết mang đến dịch vụ 5 sao: Chuẩn xác - Nhanh - Chuyên nghiệp - Linh hoạt.",
@@ -57,7 +57,7 @@ const networkData = {
 
 // 3. Hệ Thống Xét Nghiệm (Từ Screenshot_19.png)
 const servicesData = {
-  image: "/images/gioithieu-hethongGennovax/anh3.png",
+  image: "https://res.cloudinary.com/da6f4dmql/image/upload/v1765532716/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_11_1_1_fygn6v.png",
   title: "Hệ Thống Xét Nghiệm Đa Dạng",
   description:
     "Chúng tôi cung cấp một hệ sinh thái xét nghiệm gen toàn diện, đáp ứng mọi nhu cầu sàng lọc và chẩn đoán y học chính xác.",

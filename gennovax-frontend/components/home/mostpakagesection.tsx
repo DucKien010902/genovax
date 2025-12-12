@@ -70,7 +70,18 @@ const PackageCard: React.FC<{ pkg: PackageDetails }> = ({ pkg }) => {
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
   return (
-    <div className="bg-white rounded-3xl shadow-lg overflow-hidden p-4 sm:p-5 lg:p-6 flex flex-col lg:flex-row gap-4 lg:gap-6 items-start transition-all duration-300 hover:shadow-2xl">
+    <div
+  className="
+    bg-white rounded-3xl shadow-lg overflow-hidden p-4 sm:p-5 lg:p-6 
+    flex flex-col lg:flex-row gap-4 lg:gap-6 items-start 
+    transition-all duration-300 hover:shadow-2xl
+
+    border-4 border-blue-300      /* viền xanh */
+    hover:-translate-y-1             /* nổi lên nhẹ khi hover */
+    hover:border-blue-600            /* viền đậm hơn khi hover */
+  "
+>
+
       {/* --- CỘT TRÁI: Ảnh + Nút bấm --- */}
       {/* Mobile: Flex-row (ngang hàng). Desktop: Flex-col (dọc) */}
       <div className="w-full lg:w-2/5 flex flex-row lg:flex-col gap-3 lg:gap-0 flex-shrink-0">
@@ -153,37 +164,46 @@ const PackageCard: React.FC<{ pkg: PackageDetails }> = ({ pkg }) => {
 const PopularPackages: React.FC = () => {
   return (
     <section
-      className="py-8 lg:py-16"
-      style={{
-        background:
-          "linear-gradient(to bottom, white 0%, #e0f7fa 50%, white 100%)",
-      }}
+      className="py-8 lg:py-16 relative"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage:
+            "url('https://res.cloudinary.com/da6f4dmql/image/upload/v1765522605/shutterstock_1530550610_effhxj.jpg')",
+        }}
+      ></div>
+
+      {/* Overlay mờ để làm nổi nội dung */}
+      <div className="absolute inset-0 bg-white/40 "></div>
+
+      {/* Nội dung phía trên */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Tiêu đề Section */}
         <div className="text-center mb-4 lg:mb-12">
           <div
-            className="inline-block px-6 py-3 border-2 border-dashed border-blue-300 rounded-full
-                       bg-white/80 backdrop-blur-sm"
+            className="inline-block px-6 py-3 border-4 border-dashed border-blue-300 rounded-full
+                       bg-white hover:bg-blue-50 backdrop-blur-sm"
           >
-            <h2 className="text-sm lg:text-3xl font-bold text-blue-800">
-              GÓI XÉT NGHIỆM PHỔ BIẾN
+            <h2 className="text-sm lg:text-3xl font-bold text-black">
+              GÓI XÉT NGHIỆM<span className="text-blue-700"> PHỔ BIẾN</span>
             </h2>
           </div>
         </div>
 
         {/* Grid Packages */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-8">
+        <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-8">
           {popularPackagesData.map((pkg) => (
             <PackageCard key={pkg.id} pkg={pkg} />
           ))}
         </div>
 
         {/* Nút Xem thêm */}
-        <div className="flex justify-center mt-10">
+        <div className="relative flex justify-center mt-10">
           <Link
             href="/dich-vu"
-            className="px-8 py-2.5 text-sm md:text-xl border-2 border-blue-500 border-dashed rounded-full text-blue-600 font-medium hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 flex items-center gap-2 group"
+            className="px-8 py-2.5 text-sm md:text-xl border-2 border-blue-500 border-dashed rounded-full text-blue-600 bg-white/80 font-medium hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 flex items-center gap-2 group"
           >
             Các gói xét nghiệm khác
             <span className="text-blue-500 group-hover:translate-x-1 transition-transform">
@@ -197,3 +217,4 @@ const PopularPackages: React.FC = () => {
 };
 
 export default PopularPackages;
+
