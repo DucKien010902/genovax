@@ -36,12 +36,13 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({ isOpen, onClose }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const suggestedQuestions = [
-    "Thời gian trả kết quả xét nghiệm NIPT là bao lâu?",
-    "Thai bao nhiêu tuần thì có thể làm xét nghiệm NIPT?",
-    "Xét nghiệm sàng lọc gen lặn cho mẹ bầu gồm những bệnh gì?",
-    "Gói Geni 8 phát hiện được những bệnh gì?",
-    "Gói Geni 4 khác gì so với gói Geni Eco?",
-    "Có thể xét nghiệm ADN cha con khi đang mang bầu không?",
+    "Gói xét nghiệm NIPT rẻ nhất bên mình là gói nào và giá bao nhiêu?",
+    "Tôi có thể làm NIPT từ tuần thứ mấy của thai kì?",
+    "Thời gian trả kết quả NIPT thường là bao lâu?",
+    "Gói Geni 23 có phát hiện những gì và giá bao nhiêu?",
+    "Xét nghiệm ADN cho thủ tục hành chính giá bao nhiêu?",
+    "Cho tôi báo giá NIPT Geni Diamond?",
+    "Xét nghiệm ADN mẫu khó có phụ thu không?",
   ];
 
   // ... (Giữ nguyên askQuestion1 và sendMessage) ...
@@ -66,7 +67,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({ isOpen, onClose }) => {
 
   const askQuestion1 = async (question: string): Promise<string> => {
     try {
-      const response = await fetch("https://7f380480e0c2.ngrok-free.app/ask", {
+      const response = await fetch("https://2ec8537ac34b.ngrok-free.app/ask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,7 +93,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({ isOpen, onClose }) => {
       console.error("Lỗi gọi AI:", error);
 
       // Khi lỗi, trả về string thông báo lỗi luôn
-      return "Xin lỗi, hiện tại tôi đang không thể trả lời câu hỏi này do lỗi hệ thống.";
+      return "Xin lỗi, hiện tại tôi đang không thể trả lời câu hỏi này.";
     }
   };
 

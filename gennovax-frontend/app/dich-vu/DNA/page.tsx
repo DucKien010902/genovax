@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 // Cài đặt: npm install lucide-react
 import {
@@ -14,6 +14,7 @@ import {
   CalendarDays,
   AlertTriangle, // Thêm icon cho phần Lưu ý
 } from "lucide-react";
+import ConsultationModal from "@/components/home/ConsultationModal";
 
 // --- COMPONENT CHÍNH TRANG DỊCH VỤ ADN ---
 
@@ -146,9 +147,14 @@ export default function GennovaxDnaService() {
 // --- CÁC COMPONENT PHỤ ---
 
 // 1. Hero Section
-const HeroSection = () => (
+const HeroSection = () => {
+      const [isModalOpen, setIsModalOpen] = useState(false); // State quản lý Modal
+      const handleOpenModal = () => setIsModalOpen(true);
+      const handleCloseModal = () => setIsModalOpen(false);
+
+  return (
   <div
-    className="relative w-full overflow-hidden text-white"
+    className="relative w-full overflow-hidden"
     style={{ minHeight: "500px" }}
   >
     {/* Ảnh nền */}
@@ -162,7 +168,7 @@ const HeroSection = () => (
     <div className="absolute inset-0 bg-blue-900/50"></div>
 
     {/* Card nền mờ chứa chữ */}
-    <div className="container relative z-10 mx-auto flex h-full min-h-[500px] max-w-7xl items-center px-4 py-10 md:py-20">
+    <div className="container relative z-10 mx-auto flex h-full min-h-[500px] max-w-7xl items-center px-4 py-10 md:py-20 text-white">
       <div
         className="
         w-full 
@@ -197,12 +203,16 @@ const HeroSection = () => (
         <div className="mt-10 flex  gap-4">
           <Link
             href="/contact"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsModalOpen(true);
+            }}
             className="rounded-full bg-cyan-500 px-4 md:px-8 py-2 md:py-3.5 text-base font-bold text-white shadow-lg transition duration-300 hover:bg-cyan-400"
           >
             Đặt hẹn tư vấn
           </Link>
           <Link
-            href="/dich-vu/NIPT/#bang-gia"
+            href="/dich-vu/DNA/#bang-gia"
             className="rounded-full bg-white/20 px-4 md:px-8 py-2 md:py-3.5 text-base font-bold text-white backdrop-blur-sm transition duration-300 hover:bg-white/30"
           >
             Xem bảng giá
@@ -210,8 +220,9 @@ const HeroSection = () => (
         </div>
       </div>
     </div>
+    <ConsultationModal isOpen={isModalOpen} onClose={handleCloseModal} />
   </div>
-);
+)};
 
 // 2. Component Khối Tính năng (So le)
 interface FeatureBlockProps {

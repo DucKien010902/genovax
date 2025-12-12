@@ -83,13 +83,13 @@ export default function ExpertOpinions() {
     <section
       id="y-kien-chuyen-gia"
       // ✅ THAY ĐỔI: Giảm padding tổng thể 'py-24' -> 'py-16'
-      className="relative w-full overflow-hidden py-16"
+      className="relative w-full overflow-hidden py-8 lg:py-16"
     >
       {/* Ảnh Nền */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         // THAY THẾ: /images/expert-background.jpg
-        src="https://res.cloudinary.com/da6f4dmql/image/upload/v1763437102/a%CC%82sssa_lyar4l.jpg"
+        src="https://res.cloudinary.com/da6f4dmql/image/upload/v1765253697/dna-strand_oxdt8a.jpg"
         alt="Background"
         className="absolute inset-0 h-full w-full object-cover"
       />
@@ -100,7 +100,7 @@ export default function ExpertOpinions() {
       <div className="container relative z-10 mx-auto max-w-6xl px-4">
         {/* Tiêu đề Section */}
         <div className="mb-0 text-left">
-          <h2 className="text-3xl font-extrabold text-white md:text-4xl">
+          <h2 className="text-xl lg:text-3xl font-extrabold text-white md:text-4xl">
             Ý KIẾN CHUYÊN GIA
           </h2>
           {/* Đường gạch ngang */}
@@ -113,11 +113,11 @@ export default function ExpertOpinions() {
           <div className="flex flex-col justify-center text-white">
             <Quote
               // ✅ Giảm kích thước icon: h-20 w-20 -> h-16 w-16
-              className="h-16 w-16 text-cyan-400/50"
+              className="h-12 lg:h-16 h-12 lg:w-16 text-cyan-400/50"
               fill="currentColor"
             />
             {/* ✅ SỬA LỖI: Đã thay dấu " bằng &quot; để tránh lỗi biên dịch */}
-            <p className="mt-4 text-xl font-light italic leading-relaxed md:text-2xl">
+            <p className="mt-4 text-sm lg:text-xl font-light italic leading-relaxed md:text-2xl">
               &quot;Trong suốt hành trình, GennovaX tự hào đã đồng hành và giúp
               đỡ được hàng trăm ngàn thai phụ, bệnh nhi,... 200.000+ xét nghiệm gen được thực hiện mang đến ảnh hưởng
               tích cực cho việc sàng lọc và phát hiện bệnh sớm.&quot;

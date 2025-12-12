@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 // Để tối ưu, bạn nên dùng 'next/image' thay cho <img> khi deploy
 // import Image from 'next/image';
 import {
@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import ConsultationModal from "@/components/home/ConsultationModal";
 
 // --- DATA (Giữ nguyên) ---
 
@@ -129,9 +130,13 @@ type SectionProps = {
 };
 
 // --- COMPONENT CON 1: HERO SECTION ---
-const HeroSection = () => (
+const HeroSection = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false); // State quản lý Modal
+    const handleOpenModal = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
+  return (
   <div
-    className="relative w-full overflow-hidden text-white"
+    className="relative w-full overflow-hidden "
     style={{ minHeight: "500px" }}
   >
     {/* Ảnh nền */}
@@ -145,7 +150,7 @@ const HeroSection = () => (
     <div className="absolute inset-0 bg-blue-900/50"></div>
 
     {/* Card nền mờ chứa chữ */}
-    <div className="container relative z-10 mx-auto flex h-full min-h-[500px] max-w-7xl items-center px-4 py-10 md:py-20">
+    <div className="container relative z-10 mx-auto flex h-full min-h-[500px] max-w-7xl items-center px-4 py-10 md:py-20 text-white">
       <div
         className="
         w-full 
@@ -167,18 +172,21 @@ const HeroSection = () => (
         <div className="my-6 w-24 h-1.5 bg-cyan-500"></div>
 
         <p className="text-xl text-white md:text-2xl">
-          Chính xác – Bảo mật – Hợp pháp
+          NIPT của riêng người Việt
         </p>
 
         <p className="mt-4 text-lg text-white md:text-xl">
-          GennovaX cung cấp dịch vụ xét nghiệm sàng lọc trước sinh chuẩn quốc
-          tế, với trên
-          <span className="font-bold text-white"> 200.000 trường hợp</span>.
+          Giải pháp sàng lọc bất thường di truyền với thuật toán dựa trên 100.000 data gen người Việt đảm bảo độ 
+          <span className="font-bold text-white"> chính xác 99,9%</span>.
         </p>
 
         <div className="mt-10 flex  gap-4">
           <Link
             href="/contact"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsModalOpen(true);
+            }}
             className="rounded-full bg-cyan-500 px-4 md:px-8 py-2 md:py-3.5 text-base font-bold text-white shadow-lg transition duration-300 hover:bg-cyan-400"
           >
             Đặt hẹn tư vấn
@@ -192,8 +200,9 @@ const HeroSection = () => (
         </div>
       </div>
     </div>
+    <ConsultationModal isOpen={isModalOpen} onClose={handleCloseModal} />
   </div>
-);
+)};
 
 // --- COMPONENT CON 2: INTRO SECTION (SECTION 1) ---
 const IntroSection: React.FC<SectionProps> = ({ brandColors }) => (

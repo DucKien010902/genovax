@@ -1,5 +1,7 @@
 "use client";
-import React from "react";
+import React, { use } from "react"; // <--- 1. Thêm import { use }
+import { useRouter } from "next/navigation";
+import { patauArticle } from "@/data/articals";
 import {
   ArrowLeft,
   Calendar,
@@ -9,12 +11,26 @@ import {
   Facebook,
   Twitter,
 } from "lucide-react";
-import { patauArticle } from "@/data/articals";
-import { useRouter } from "next/navigation";
 
-export default function NewsDetailPage({ onBack }: { onBack: () => void }) {
-  const item = patauArticle; // Lấy dữ liệu bài viết
+// 2. Cập nhật Type: params là Promise
+export default function NewsDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const router = useRouter();
+
+  // 3. Sử dụng hook use() để lấy slug từ Promise
+  const { slug } = use(params);
+
+  console.log(slug); // Bây giờ nó sẽ log ra string đúng
+
+  // Tìm bài viết theo slug
+  const item = patauArticle.find((i) => i.slug === slug);
+
+  if (!item) {
+    return <div className="p-4">Không tìm thấy bài viết.</div>;
+  }
 
   return (
     <article className="min-h-screen bg-white font-sans">
@@ -41,14 +57,14 @@ export default function NewsDetailPage({ onBack }: { onBack: () => void }) {
             {item.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs font-bold bg-[#00ACC1] px-2 py-1 rounded uppercase tracking-wider"
+                className="text-[8px] md:text-sm font-bold bg-[#00ACC1] px-2 py-1 rounded uppercase tracking-wider"
               >
                 {tag}
               </span>
             ))}
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
+          <h1 className="text-2xl md:text-5xl font-bold leading-tight mb-4">
             {item.title}
           </h1>
 
@@ -86,38 +102,22 @@ export default function NewsDetailPage({ onBack }: { onBack: () => void }) {
 
                   {/* Xử lý xuống dòng cho đoạn văn */}
                   <div className="whitespace-pre-line leading-7">
-                    {/* Chỗ này để render text thuần, nếu muốn in đậm (Markdown) cần thư viện react-markdown, 
-                        ở đây mình giả lập replace ký tự ** để demo */}
                     {section.body.split("\n").map((line, i) => (
                       <p key={i} className="mb-4">
                         {line.replace(/\*\*(.*?)\*\*/g, (match, p1) => p1)}
-                        {/* Lưu ý: Trong thực tế nên dùng thư viện markdown parser */}
                       </p>
                     ))}
                   </div>
 
-                  {/* Trigger hình ảnh minh họa phù hợp ngữ cảnh */}
+                  {/* Trigger hình ảnh minh họa (Logic demo cũ của bạn) */}
                   {section.heading.includes("Nguyên nhân") && (
                     <div className="my-6 bg-gray-50 p-4 rounded-lg border border-gray-200 text-center text-sm text-gray-500 italic">
                       <img
-                        src="https://trungtamadn.com/wp-content/uploads/2023/09/tong-quan-he-hoi-chung-patau1.jpg" // đổi path theo ảnh bạn
+                        src="https://trungtamadn.com/wp-content/uploads/2023/09/tong-quan-he-hoi-chung-patau1.jpg"
                         alt="Minh họa Trisomy 13"
                         className="mx-auto mb-3 rounded-lg shadow-md max-w-[350px]"
                       />
-                      Minh họa: Bộ nhiễm sắc thể Trisomy 13 (3 bản sao ở vị trí
-                      số 13)
-                    </div>
-                  )}
-
-                  {section.heading.includes("Triệu chứng") && (
-                    <div className="my-6 bg-gray-50 p-4 rounded-lg border border-gray-200 text-center text-sm text-gray-500 italic">
-                      <img
-                        src="https://gentis.com.vn/public/media/y-kien-chuyen-gia/201811/fc3c5a5aa220fb15a3d32c02f115bbab.jpg" // đổi path theo ảnh bạn
-                        alt="Minh họa Trisomy 13"
-                        className="mx-auto mb-3 rounded-lg shadow-md max-w-[350px]"
-                      />
-                      <br />
-                      Minh họa: Các đặc điểm hình thái của hội chứng Patau
+                      Minh họa: Bộ nhiễm sắc thể Trisomy 13
                     </div>
                   )}
                 </div>

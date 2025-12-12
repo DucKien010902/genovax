@@ -144,16 +144,19 @@ const Services: React.FC = () => {
     <section>
       {/* PHẦN 1: HERO */}
       <div
-        className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 text-center bg-blue-700/80 bg-cover bg-center bg-no-repeat relative"
-        style={{ backgroundImage: `url('/images/bgrHome.jpg')` }}
+        className="bg-scale max-w-full mx-auto px-4 lg:px-8 pt-8 lg:pt-16 pb-6 lg:pb-12 text-center  bg-cover bg-center bg-no-repeat relative"
+        style={{ 
+  "--bg-url": `url('https://res.cloudinary.com/da6f4dmql/image/upload/v1765357565/dna-strand_1_1_1_1_icogbd.png')`
+} as React.CSSProperties}
+
       >
-        <div className="absolute inset-0 bg-black/40" />{" "}
+        <div className="absolute inset-0 bg-black/50" />{" "}
         {/* Overlay tối để chữ rõ hơn */}
         <div className="relative z-10">
-          <h1 className="text-4xl lg:text-5xl font-bold text-white drop-shadow-md">
+          <h1 className="text-3xl lg:text-5xl font-bold text-white drop-shadow-md">
             Dịch vụ xét nghiệm
           </h1>
-          <p className="mt-4 text-lg text-gray-100 max-w-xl mx-auto drop-shadow-sm">
+          <p className="mt-4 text-2sm lg:text-lg text-gray-100 max-w-xl mx-auto drop-shadow-sm">
             Tận hưởng dịch vụ y tế gen tiên tiến, chăm sóc sức khỏe chuyên
             nghiệp.
           </p>
@@ -165,7 +168,7 @@ const Services: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Tìm kiếm xét nghiệm (ví dụ: NIPT, ADN, HPV...)"
-              className="w-full pl-12 pr-4 py-4 rounded-full border border-white/50 bg-white/20 placeholder-white text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-white/80 text-lg backdrop-blur-sm transition-all"
+              className="w-full pl-12 pr-4 py-4 rounded-full border border-white/50 bg-white/20 placeholder-white text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-white/80 text-sm lg:text-lg backdrop-blur-sm transition-all"
             />
             <Search
               className="absolute left-5 top-1/2 -translate-y-1/2 text-white/90"
@@ -179,7 +182,7 @@ const Services: React.FC = () => {
               <button
                 key={cat.key}
                 onClick={() => setCategory(cat.key)}
-                className={`px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 border border-white/20
+                className={`px-3 lg:px-5 py-1.5 lg:py-2.5 rounded-full font-semibold text-sm transition-all duration-300 border border-white/20
                 ${
                   category === cat.key
                     ? "bg-white text-blue-700 shadow-xl scale-105"
@@ -194,7 +197,7 @@ const Services: React.FC = () => {
       </div>
 
       {/* PHẦN 2: DANH SÁCH DỊCH VỤ */}
-      <div className="relative py-14 lg:py-20 bg-gray-50">
+      <div className="relative py-10 lg:py-20 bg-gray-50">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {filteredPackages.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">

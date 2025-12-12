@@ -74,7 +74,7 @@ export default function OurServiceSystem() {
             />
             <a
               href="/gioi-thieu/danh-sach-phong-kham" // Thay bằng link bạn muốn
-              className="mt-4 text-center text-blue-600 text-opacity-80 font-medium inline-block underline hover:text-blue-800"
+              className="mt-4 text-xs lg:text-lg text-center text-blue-600 text-opacity-80 font-medium inline-block underline hover:text-blue-800"
             >
               Chuỗi 68 phòng xét nghiệm trên toàn quốc.
             </a>
@@ -99,10 +99,10 @@ export default function OurServiceSystem() {
               {commitments.map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-xl bg-gray-50 p-6 shadow-lg transition-shadow hover:shadow-xl"
+                  className="rounded-xl bg-gray-50 p-4 shadow-lg transition-shadow hover:shadow-xl"
                 >
                   <item.icon
-                    className="h-10 w-10 mb-3"
+                    className="hidden lg:flex h-10 w-10 mb-3"
                     style={{ color: brandColors.secondary }}
                   />
                   <h4 className="text-lg font-bold text-gray-800">
@@ -124,7 +124,7 @@ export default function OurServiceSystem() {
             >
               <div className="flex items-center">
                 <Handshake className="h-10 w-10 flex-shrink-0 text-white" />
-                <h3 className="ml-4 text-2xl font-bold text-white">
+                <h3 className="ml-4 text-lg lg:text-2xl font-bold text-white">
                   {partnership.title}
                 </h3>
               </div>
@@ -132,7 +132,7 @@ export default function OurServiceSystem() {
                 {partnership.features.map((feature, idx) => (
                   <li
                     key={idx}
-                    className="flex items-start text-lg text-gray-100"
+                    className="flex items-start text-sm lg:text-lg text-gray-100"
                   >
                     <Check className="mr-3 mt-1 h-6 w-6 flex-shrink-0 text-cyan-400" />
                     <span>{feature}</span>

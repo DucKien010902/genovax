@@ -54,7 +54,7 @@ const NavButton: React.FC<{ text: string; href: string }> = ({ text, href }) => 
 // --- 3. Component Chính ---
 const AboutGennovax: React.FC = () => {
   const imageUrl =
-    "https://res.cloudinary.com/da6f4dmql/image/upload/v1764226197/gen-h-z7267353458086_c57256b53d7ba5d6070191d7f5ad34cb_jjvpuw.jpg";
+    "https://res.cloudinary.com/da6f4dmql/image/upload/v1764750460/shutterstock_1770401555_hmmobk.jpg";
 
   return (
     <section className="bg-white py-10 lg:py-16">
@@ -70,7 +70,7 @@ const AboutGennovax: React.FC = () => {
                backdrop-blur-sm
             "
           >
-            <span className="text-xl md:text-3xl font-bold uppercase text-blue-800 tracking-wide">
+            <span className="text-sm md:text-3xl font-bold uppercase text-blue-800 tracking-wide">
               VỀ GENNOVAX
             </span>
           </div>
@@ -82,7 +82,7 @@ const AboutGennovax: React.FC = () => {
           {/* Cột Trái: Ảnh + 4 Nút */}
           <div className="flex flex-col gap-6">
   {/* Ảnh */}
-  <div className="w-full h-80 lg:h-96 relative rounded-3xl shadow-2xl overflow-hidden border border-blue-100">
+  <div className="w-full aspect-[16/10] relative rounded-xl lg:rounded-3xl shadow-2xl overflow-hidden border border-blue-100">
     <Image
       src={imageUrl}
       alt="Phòng thí nghiệm GennovaX"
@@ -101,26 +101,26 @@ const AboutGennovax: React.FC = () => {
 
   {/* 4 Button */}
   <div className="grid grid-cols-2 gap-5 w-[95%]  mx-auto mt-3">
-    <NavButton text="Hệ thống Lab hiện đại" href="/gioi-thieu#he-thong-gennovax" />
-    <NavButton text="Đội ngũ chuyên gia uy tín" href="/gioi-thieu#doi-ngu-va-thanh-tuu" />
-    <NavButton text="Độ phủ khắp miền Bác" href="/gioi-thieu#he-thong-gennovax" />
-    <NavButton text="Nhiều đối tác chiến lược" href="/gioi-thieu#doi-tac-va-thuyet-bi" />
+    <NavButton text="Hệ thống Lab hiện đại" href="/ve-gennovax#he-thong-gennovax" />
+    <NavButton text="Đội ngũ bác sỹ uy tín" href="/ve-gennovax#doi-ngu-va-thanh-tuu" />
+    <NavButton text="Độ phủ toàn quốc" href="/ve-gennovax#he-thong-gennovax" />
+    <NavButton text="Hệ sinh thái đối tác lớn" href="/ve-gennovax#doi-tac-va-thuyet-bi" />
   </div>
 </div>
 
 
           {/* Cột Phải: Nội dung chi tiết (Giữ nguyên) */}
           <div className="pt-2">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+            <h2 className="text-2xl lg:text-4xl font-bold text-gray-900 leading-tight">
               Tiên phong Tương lai Y học qua <span className="text-blue-700">Lăng kính Di truyền</span>
             </h2>
 
-            <p className="mt-6 text-lg text-gray-600 leading-relaxed">
+            <p className="mt-6 text-base lg:text-lg text-gray-600 leading-relaxed">
               Sứ mệnh của chúng tôi là ứng dụng công nghệ giải trình tự gen
               (NGS) thế hệ mới và Trí tuệ nhân tạo (AI) để cung cấp các giải
               pháp y học chính xác.
             </p>
-            <p className="mt-4 text-base text-gray-600 leading-relaxed">
+            <p className="mt-4 text-base lg:text-lg text-gray-600 leading-relaxed">
               GennovaX giúp người Việt tiếp cận dịch vụ tầm soát, chẩn đoán và
               điều trị cá thể hóa với{" "}
               <strong className="text-blue-800">độ chính xác vượt trội</strong>{" "}

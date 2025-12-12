@@ -32,7 +32,7 @@ const popularPackagesData: PackageDetails[] = [
   },
   {
     id: "geni-8",
-    name: "Geni 8",
+    name: "Xét nghiệm sàng lọc NIPT - Geni 8",
     tagline: "Sàng lọc trước sinh không xâm lấn",
     description:
       "Phát hiện lệch bội 3 cặp NST (13, 18, 21) và 5 hội chứng NST giới tính (Turner, Tam nhiễm X, Klinefelter, Jacobs, XXXY). Dành cho thai đơn từ 9 tuần. Kết quả có từ sau 3-5 ngày làm việc.",
@@ -53,7 +53,7 @@ const popularPackagesData: PackageDetails[] = [
   },
   {
     id: "geni-23",
-    name: "Geni 23",
+    name: "Xét nghiệm sàng lọc NIPT - Geni 23",
     tagline: "Sàng lọc toàn bộ 23 cặp nhiễm sắc thể",
     description:
       "Phát hiện lệch bội toàn bộ 22 cặp NST thường và 5 hội chứng giới tính: Turner (XO), tam nhiễm X (XXX), Klinefelter (XXY), Klinefelter mở rộng (XXXY), Jacobs (XYY). Áp dụng cho thai đơn từ 9 tuần. Thời gian trả kết quả: 3–5 ngày làm việc.",
@@ -117,7 +117,7 @@ const PackageCard: React.FC<{ pkg: PackageDetails }> = ({ pkg }) => {
       <div className="w-full lg:w-3/5">
         {/* Header: Title + Logo nhỏ */}
         <div className="flex justify-between items-start gap-3 mb-2 lg:mb-3">
-          <h2 className="text-lg lg:text-xl font-bold leading-tight">
+          <h2 className="text-lg lg:text-xl font-bold leading-tight h-[100px] md:h-[150px]">
             <span className="text-blue-600 block sm:inline">{pkg.name}</span>
             <span className="text-gray-500 text-sm lg:text-lg font-normal block sm:inline sm:ml-1">
               {/* Ẩn dấu gạch ngang trên mobile cho gọn */}
@@ -161,12 +161,12 @@ const PopularPackages: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Tiêu đề Section */}
-        <div className="text-center mb-8 lg:mb-12">
+        <div className="text-center mb-4 lg:mb-12">
           <div
             className="inline-block px-6 py-3 border-2 border-dashed border-blue-300 rounded-full
                        bg-white/80 backdrop-blur-sm"
           >
-            <h2 className="text-xl lg:text-3xl font-bold text-blue-800">
+            <h2 className="text-sm lg:text-3xl font-bold text-blue-800">
               GÓI XÉT NGHIỆM PHỔ BIẾN
             </h2>
           </div>
@@ -183,7 +183,7 @@ const PopularPackages: React.FC = () => {
         <div className="flex justify-center mt-10">
           <Link
             href="/dich-vu"
-            className="px-8 py-2.5 border-2 border-blue-500 border-dashed rounded-full text-blue-600 font-medium hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 flex items-center gap-2 group"
+            className="px-8 py-2.5 text-sm md:text-xl border-2 border-blue-500 border-dashed rounded-full text-blue-600 font-medium hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 flex items-center gap-2 group"
           >
             Các gói xét nghiệm khác
             <span className="text-blue-500 group-hover:translate-x-1 transition-transform">

@@ -54,7 +54,7 @@ export default function PopupBanner() {
       >
         {/* Ảnh banner */}
         <img
-          src="https://scontent.fhan17-1.fna.fbcdn.net/v/t39.30808-6/500171538_122109065432870117_5679422188234481001_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=wHH1jprZNscQ7kNvwEQD0nE&_nc_oc=AdmX9rEuHYveDwLpeG6lkntzfmzRdkF5ELN0z0X5WGW1cx19JbjEYI0bM0HdCvLBFyQ&_nc_zt=23&_nc_ht=scontent.fhan17-1.fna&_nc_gid=50UDkhciqOa6dQOvyx5JYg&oh=00_Afm7oi_EiWbOmnZtZnnUkiFdGsJqjyzCBSXALfQRz-NPDg&oe=6935CF17"
+          src="https://res.cloudinary.com/da6f4dmql/image/upload/v1765252888/500171538_122109065432870117_5679422188234481001_n_laiiez.jpg"
           alt="Banner popup"
           className="w-full aspect-[2/2] md:aspect-[2/2] object-cover block"
         />

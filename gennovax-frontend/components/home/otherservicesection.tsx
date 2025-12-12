@@ -63,7 +63,7 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
   return (
     // Card bo tròn, đổ bóng và có hiệu ứng hover
     <div
-      className="relative w-full h-96 rounded-2xl overflow-hidden shadow-lg
+      className="relative w-full h-80 lg:h-96 rounded-2xl overflow-hidden shadow-lg
                  group transition-all duration-300 ease-in-out
                  hover:shadow-2xl hover:scale-[1.03]"
     >
@@ -103,6 +103,9 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
         {/* Nút Tìm hiểu (Thiết kế đẹp hơn) */}
         <Link
           href={service.href}
+          onClick={(e)=>{
+            e.preventDefault()
+          }}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full
                      font-semibold text-sm text-blue-700 bg-white
                      transition-all duration-300
@@ -119,15 +122,15 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
 // --- 4. Component Section Chính ---
 const OtherServices: React.FC = () => {
   return (
-    <section className="py-10 lg:py-15 bg-gray-50">
+    <section className="py-5 lg:py-15 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Tiêu đề Section (Sáng tạo) */}
-        <div className="text-center mb-12 lg:mb-16">
+        <div className="text-center mb-8 lg:mb-16">
           <div
             className="inline-block px-6 py-3 border-2 border-dashed border-blue-300 rounded-full
                        bg-white/80 backdrop-blur-sm"
           >
-            <h2 className="text-xl lg:text-3xl font-bold text-blue-800">
+            <h2 className="text-sm lg:text-3xl font-bold text-blue-800">
               DỊCH VỤ NỔI BẬT KHÁC CỦA GENNOVAX
             </h2>
           </div>

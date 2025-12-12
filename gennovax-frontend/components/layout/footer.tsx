@@ -67,11 +67,11 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <ContactItem
                 icon={GeoAltFill}
-                text="Trụ sở: Tầng 2, tòa CT3, khu đô thị Nghĩa Đô, Hoàng Quốc Việt, Hà Nội"
+                text="Trụ sở: Tầng 2, tòa CT3, 106 Hoàng Quốc Việt, Phường Nghĩa Đô, Quận Cầu Giấy, Hà Nội. "
               />
               <ContactItem
                 icon={GeoAltFill}
-                text="Địa chỉ phòng LAB: 183 Đường Trường Chinh, Khương Mai, Thanh Xuân, Hà Nội"
+                text="Địa chỉ phòng LAB: 183 Đường Trường Chinh, Phường Phương Liệt, Quận Thanh Xuân, Hà Nội"
               />
               <ContactItem
                 icon={TelephoneFill}
@@ -152,7 +152,7 @@ const Footer: React.FC = () => {
       <div className="bg-black/20 py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
           <p className="text-sm text-gray-400">
-            Một sản phẩm của CÔNG TY CỔ PHẦN CÔNG NGHỆ GENNOVAX.
+            Một sản phẩm của CÔNG TY CỔ PHẦN GENNOVAX.
             <br />© {new Date().getFullYear()} GennovaX. All Rights Reserved.
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">

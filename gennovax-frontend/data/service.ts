@@ -8,7 +8,7 @@ export const ServicesData: PackageDetails[] = [
       "Phát hiện lệch bội 3 cặp nhiễm sắc thể thường: 13, 18, 21 liên quan đến 3 hội chứng di truyền: Patau, Edwards, Down.",
     targetAudience: "Thai đơn từ 9 tuần",
     returnTime: "3-5 ngày làm việc",
-    price: 1500000,
+    price: 1700000,
     category: "NIPT",
   },
   {
