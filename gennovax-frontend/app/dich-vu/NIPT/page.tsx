@@ -176,7 +176,7 @@ const HeroSection = () => {
         </p>
 
         <p className="mt-4 text-lg text-white md:text-xl">
-          Giải pháp sàng lọc bất thường di truyền với thuật toán dựa trên 100.000 data gen người Việt đảm bảo độ 
+          Giải pháp sàng lọc dị tật bẩm sinh với thuật toán dựa trên 100.000 data gen người Việt đảm bảo độ 
           <span className="font-bold text-white"> chính xác 99,9%</span>.
         </p>
 

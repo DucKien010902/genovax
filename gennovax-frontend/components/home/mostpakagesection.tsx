@@ -1,24 +1,22 @@
-// src/components/PopularPackages.tsx
 "use client";
 
 import Link from "next/link";
 import React, { useState } from "react";
-// Cần cài đặt: npm install react-bootstrap-icons
 import { CalendarCheckFill, InfoCircleFill } from "react-bootstrap-icons";
 import ConsultationModal from "./ConsultationModal";
 
-// --- 1. Cấu trúc dữ liệu (TypeScript) ---
+/* =======================
+1. TYPE
+======================= */
 export type PackageDetails = {
   id: string;
-  name: string; // Tên chính (màu xanh)
-  tagline: string; // Tên phụ (màu xám)
+  name: string;
+  tagline: string;
   description: string;
-  mainImageUrl: string; // Ảnh lớn bên trái
-  smallLogoUrl: string; // Logo nhỏ bên phải
-  linkto: string
+  mainImageUrl: string;
+  smallLogoUrl: string;
+  linkto: string;
 };
-
-// --- 2. Dữ liệu mẫu ---
 const popularPackagesData: PackageDetails[] = [
   {
     id: "adn-truoc-sinh-10ngay",
@@ -64,157 +62,152 @@ const popularPackagesData: PackageDetails[] = [
   },
 ];
 
-// --- 3. Component Card Gói Xét Nghiệm (Item) ---
-const PackageCard: React.FC<{ pkg: PackageDetails }> = ({ pkg }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false); // State quản lý Modal
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
+/* =======================
+   2. DATA
+======================= */
+
+
+/* =======================
+   3. PACKAGE CARD
+======================= */
+const PackageCard: React.FC<{
+  pkg: PackageDetails;
+  onConsult: () => void;
+}> = ({ pkg, onConsult }) => {
   return (
     <div
-  className="
-    bg-white rounded-3xl shadow-lg overflow-hidden p-4 sm:p-5 lg:p-6 
-    flex flex-col lg:flex-row gap-4 lg:gap-6 items-start 
-    transition-all duration-300 hover:shadow-2xl
-
-    border-4 border-blue-300      /* viền xanh */
-    hover:-translate-y-1             /* nổi lên nhẹ khi hover */
-    hover:border-blue-600            /* viền đậm hơn khi hover */
-  "
->
-
-      {/* --- CỘT TRÁI: Ảnh + Nút bấm --- */}
-      {/* Mobile: Flex-row (ngang hàng). Desktop: Flex-col (dọc) */}
-      <div className="w-full lg:w-2/5 flex flex-row lg:flex-col gap-3 lg:gap-0 flex-shrink-0">
-        {/* 1. Hình ảnh */}
-        {/* Mobile: 50% width. Desktop: 100% width */}
+      className="
+        bg-white rounded-3xl shadow-lg overflow-hidden p-4 sm:p-5 lg:p-6
+        flex flex-col lg:flex-row gap-4 lg:gap-6
+        transition-all duration-300 hover:shadow-2xl
+        border-4 border-blue-300 hover:border-blue-600 hover:-translate-y-1
+      "
+    >
+      {/* LEFT */}
+      <div className="w-full lg:w-2/5 flex flex-row lg:flex-col gap-3 flex-shrink-0">
         <div className="w-1/2 lg:w-full">
           <img
             src={pkg.mainImageUrl}
             alt={pkg.name}
-            // Mobile: h-full (để khớp với cụm nút bên cạnh), object-cover để không méo.
-            // Desktop: height cố định hoặc auto.
-            className="w-full h-32 sm:h-40 lg:h-52 object-cover rounded-xl lg:rounded-2xl"
+            className="w-full h-32 sm:h-40 lg:h-52 object-cover rounded-xl"
           />
         </div>
 
-        {/* 2. Cụm nút bấm */}
-        {/* Mobile: 50% width, căn giữa dọc. Desktop: 100% width, margin top */}
-        <div className="w-1/2 lg:w-full flex flex-col justify-center gap-2 lg:gap-3 lg:mt-4">
+        <div className="w-1/2 lg:w-full flex flex-col justify-center gap-2 lg:mt-4">
           <Link
             href={pkg.linkto}
-            // Mobile: text-xs, py-2 (nhỏ gọn). Desktop: text-sm, py-2.5
-            // Gradient Xanh cho nút Tìm hiểu thêm
-            className="flex items-center justify-center gap-1.5 lg:gap-2 px-2 lg:px-4 py-2 lg:py-2.5 rounded-full font-medium text-xs lg:text-sm text-white bg-gradient-to-r from-blue-600 to-blue-900 hover:from-blue-700 hover:to-blue-950 transition duration-300 shadow-md text-center"
+            className="flex items-center justify-center gap-2 px-3 py-2 rounded-full 
+              text-xs lg:text-sm text-white font-medium
+              bg-gradient-to-r from-blue-600 to-blue-900 hover:from-blue-700 hover:to-blue-950"
           >
-            <InfoCircleFill className="text-xs lg:text-sm" />
+            <InfoCircleFill />
             Tìm hiểu thêm
           </Link>
 
-          <Link
-            href="/contact"
-            onClick={(e) => {
-              e.preventDefault();
-              setIsModalOpen(true);
-            }}
-            className="flex items-center justify-center gap-1.5 lg:gap-2 px-2 lg:px-4 py-2 lg:py-2.5 rounded-full font-medium text-xs lg:text-sm text-white bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 transition duration-300 shadow-md text-center"
+          <button
+            onClick={onConsult}
+            className="flex items-center justify-center gap-2 px-3 py-2 rounded-full
+              text-xs lg:text-sm text-white font-medium
+              bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 cursor-pointer "
           >
             <CalendarCheckFill />
             Đặt hẹn tư vấn
-          </Link>
+          </button>
         </div>
       </div>
 
-      {/* --- CỘT PHẢI: Thông tin --- */}
+      {/* RIGHT */}
       <div className="w-full lg:w-3/5">
-        {/* Header: Title + Logo nhỏ */}
-        <div className="flex justify-between items-start gap-3 mb-2 lg:mb-3">
-          <h2 className="text-lg lg:text-xl font-bold leading-tight h-[100px] md:h-[150px]">
-            <span className="text-blue-600 block sm:inline">{pkg.name}</span>
-            <span className="text-gray-500 text-sm lg:text-lg font-normal block sm:inline sm:ml-1">
-              {/* Ẩn dấu gạch ngang trên mobile cho gọn */}
-              <span className="hidden sm:inline">– </span>
+        <div className="flex justify-between items-start gap-3 mb-3">
+          <h2 className="text-lg lg:text-xl font-bold leading-tight">
+            <span className="text-blue-600 block">{pkg.name}</span>
+            <span className="text-gray-500 text-sm lg:text-base font-normal">
               {pkg.tagline}
             </span>
           </h2>
 
-          {/* Logo nhỏ */}
-          <div className="bg-white border border-gray-200 rounded-lg p-1 w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0 flex items-center justify-center">
+          <div className=" rounded-lg p-1 w-12 h-12 flex items-center justify-center flex-shrink-0">
             <img
               src={pkg.smallLogoUrl}
-              alt={`${pkg.name} logo`}
-              className="max-w-full max-h-full object-contain"
+              alt="logo"
+              className="w-full h-full object-contain"
             />
           </div>
         </div>
 
-        {/* Dấu chấm trang trí */}
-        <div className="w-full h-1 border-b-2 lg:border-b-4 border-dashed border-blue-400 mb-3 lg:mb-4 opacity-50" />
+        <div className="border-b-2 border-dashed border-blue-400 mb-3 opacity-50" />
 
-        {/* Mô tả */}
-        <p className="text-gray-600  text-sm lg:text-base leading-relaxed line-clamp-4 lg:line-clamp-none">
+        <p className="text-gray-600 text-sm lg:text-base leading-relaxed line-clamp-4">
           {pkg.description}
         </p>
       </div>
-      <ConsultationModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 };
 
-// --- 4. Component Section Chính ---
+/* =======================
+   4. MAIN SECTION
+======================= */
 const PopularPackages: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+
   return (
-    <section
-      className="py-8 lg:py-16 relative"
-    >
-      {/* Background image */}
+    <section className="py-8 lg:py-16 relative">
+      {/* Background */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage:
             "url('https://res.cloudinary.com/da6f4dmql/image/upload/v1765522605/shutterstock_1530550610_effhxj.jpg')",
         }}
-      ></div>
+      />
+      <div className="absolute inset-0 bg-white/40" />
 
-      {/* Overlay mờ để làm nổi nội dung */}
-      <div className="absolute inset-0 bg-white/40 "></div>
-
-      {/* Nội dung phía trên */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Tiêu đề Section */}
-        <div className="text-center mb-4 lg:mb-12">
-          <div
-            className="inline-block px-6 py-3 border-4 border-dashed border-blue-300 rounded-full
-                       bg-white hover:bg-blue-50 backdrop-blur-sm"
-          >
-            <h2 className="text-sm lg:text-3xl font-bold text-black">
-              GÓI XÉT NGHIỆM<span className="text-blue-700"> PHỔ BIẾN</span>
+      <div className="relative max-w-7xl mx-auto px-4">
+        {/* Title */}
+        <div className="text-center mb-10">
+          <div className="inline-block px-6 py-3 border-4 border-dashed border-blue-300 rounded-full bg-white">
+            <h2 className="text-xl lg:text-3xl font-bold">
+              GÓI XÉT NGHIỆM <span className="text-blue-700">PHỔ BIẾN</span>
             </h2>
           </div>
         </div>
 
-        {/* Grid Packages */}
-        <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-8">
+        {/* Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {popularPackagesData.map((pkg) => (
-            <PackageCard key={pkg.id} pkg={pkg} />
+            <PackageCard
+              key={pkg.id}
+              pkg={pkg}
+              onConsult={() => {
+                setSelectedService(pkg.name);
+                setIsModalOpen(true);
+              }}
+            />
           ))}
         </div>
 
-        {/* Nút Xem thêm */}
-        <div className="relative flex justify-center mt-10">
+        {/* More */}
+        <div className="flex justify-center mt-10">
           <Link
             href="/dich-vu"
-            className="px-8 py-2.5 text-sm md:text-xl border-2 border-blue-500 border-dashed rounded-full text-blue-600 bg-white/80 font-medium hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 flex items-center gap-2 group"
+            className="px-8 py-3 border-2 border-blue-500 border-dashed rounded-full
+              text-blue-600 bg-white hover:bg-blue-50 transition"
           >
-            Các gói xét nghiệm khác
-            <span className="text-blue-500 group-hover:translate-x-1 transition-transform">
-              →
-            </span>
+            Các gói xét nghiệm khác →
           </Link>
         </div>
       </div>
+
+      {/* ✅ MODAL – CHỈ 1 INSTANCE */}
+      <ConsultationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        defaultService={selectedService}
+      />
     </section>
   );
 };
 
 export default PopularPackages;
-

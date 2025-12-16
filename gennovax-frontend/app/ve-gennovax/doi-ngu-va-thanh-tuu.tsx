@@ -7,20 +7,12 @@ import React from "react";
 // Sắp xếp: 2 ảnh đội ngũ, sau đó 2 ảnh chứng nhận
 const galleryImages = [
   {
-    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1765532831/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_12_1_1_injiyv.png",
+    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1765784252/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_12_1_1_daghh7.png",
     alt: "Đội ngũ chuyên gia GennovaX 1",
   },
   {
-    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1765532934/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_12_1_2_ggq4m4.png",
+    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1765784316/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_10_1_1_xlubi0.png",
     alt: "Đội ngũ chuyên gia GennovaX 2",
-  },
-  {
-    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1763106320/Screenshot_21_uw3zmg.png",
-    alt: "Thành tựu và Chứng nhận GennovaX 1",
-  },
-  {
-    src: "https://res.cloudinary.com/da6f4dmql/image/upload/v1763106320/Screenshot_22_zeejdk.png",
-    alt: "Thành tựu và Chứng nhận GennovaX 2",
   },
 ];
 
