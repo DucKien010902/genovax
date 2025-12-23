@@ -148,29 +148,29 @@ export default function GennovaxDnaService() {
 
 // 1. Hero Section
 const HeroSection = () => {
-      const [isModalOpen, setIsModalOpen] = useState(false); // State quản lý Modal
-      const handleOpenModal = () => setIsModalOpen(true);
-      const handleCloseModal = () => setIsModalOpen(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State quản lý Modal
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   return (
-  <div
-    className="relative w-full overflow-hidden"
-    style={{ minHeight: "500px" }}
-  >
-    {/* Ảnh nền */}
-    <img
-      src="https://res.cloudinary.com/da6f4dmql/image/upload/v1764746810/shutterstock_1802264764_u02kyk.jpg"
-      alt="Xét nghiệm ADN Huyết thống GennovaX"
-      className="absolute inset-0 h-full w-full object-cover"
-    />
+    <div
+      className="relative w-full overflow-hidden"
+      style={{ minHeight: "500px" }}
+    >
+      {/* Ảnh nền */}
+      <img
+        src="https://res.cloudinary.com/da6f4dmql/image/upload/v1764746810/shutterstock_1802264764_u02kyk.jpg"
+        alt="Xét nghiệm ADN Huyết thống GennovaX"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
 
-    {/* Lớp phủ màu tối để giảm nhiễu nền */}
-    <div className="absolute inset-0 bg-blue-900/50"></div>
+      {/* Lớp phủ màu tối để giảm nhiễu nền */}
+      <div className="absolute inset-0 bg-blue-900/50"></div>
 
-    {/* Card nền mờ chứa chữ */}
-    <div className="container relative z-10 mx-auto flex h-full min-h-[500px] max-w-7xl items-center px-4 py-10 md:py-20 text-white">
-      <div
-        className="
+      {/* Card nền mờ chứa chữ */}
+      <div className="container relative z-10 mx-auto flex h-full min-h-[500px] max-w-7xl items-center px-4 py-10 md:py-20 text-white">
+        <div
+          className="
         w-full 
         max-w-xl 
         bg-white/15 
@@ -180,49 +180,50 @@ const HeroSection = () => {
         md:p-12 
         shadow-2xl
       "
-      >
-        <h1 className="text-4xl font-extrabold leading-tight md:text-6xl">
-          Xét nghiệm ADN
-          <br />
-          Huyết Thống
-        </h1>
+        >
+          <h1 className="text-4xl font-extrabold leading-tight md:text-6xl">
+            Xét nghiệm ADN
+            <br />
+            Huyết Thống
+          </h1>
 
-        <div className="my-6 w-24 h-1.5 bg-cyan-500"></div>
+          <div className="my-6 w-24 h-1.5 bg-cyan-500"></div>
 
-        <p className="text-xl text-white md:text-2xl">
-          Chính xác – Bảo mật – Hợp pháp
-        </p>
+          <p className="text-xl text-white md:text-2xl">
+            Chính xác – Bảo mật – Hợp pháp
+          </p>
 
-        <p className="mt-4 text-lg text-white md:text-xl">
-          GennovaX cung cấp dịch vụ xét nghiệm ADN huyết thống chuẩn quốc tế,
-          với trên
-          <span className="font-bold text-white"> 120.000 trường</span>
-          đã xác nhận thân nhân qua ADN.
-        </p>
+          <p className="mt-4 text-lg text-white md:text-xl">
+            GennovaX cung cấp dịch vụ xét nghiệm ADN huyết thống chuẩn quốc tế,
+            với trên
+            <span className="font-bold text-white"> 120.000 trường</span>
+            đã xác nhận thân nhân qua ADN.
+          </p>
 
-        <div className="mt-10 flex  gap-4">
-          <Link
-            href="/contact"
-            onClick={(e) => {
-              e.preventDefault();
-              setIsModalOpen(true);
-            }}
-            className="rounded-full bg-cyan-500 px-4 md:px-8 py-2 md:py-3.5 text-base font-bold text-white shadow-lg transition duration-300 hover:bg-cyan-400"
-          >
-            Đặt hẹn tư vấn
-          </Link>
-          <Link
-            href="/dich-vu/DNA/#bang-gia"
-            className="rounded-full bg-white/20 px-4 md:px-8 py-2 md:py-3.5 text-base font-bold text-white backdrop-blur-sm transition duration-300 hover:bg-white/30"
-          >
-            Xem bảng giá
-          </Link>
+          <div className="mt-10 flex  gap-4">
+            <Link
+              href="/contact"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsModalOpen(true);
+              }}
+              className="rounded-full bg-cyan-500 px-4 md:px-8 py-2 md:py-3.5 text-base font-bold text-white shadow-lg transition duration-300 hover:bg-cyan-400"
+            >
+              Đặt hẹn tư vấn
+            </Link>
+            <Link
+              href="/dich-vu/DNA/#bang-gia"
+              className="rounded-full bg-white/20 px-4 md:px-8 py-2 md:py-3.5 text-base font-bold text-white backdrop-blur-sm transition duration-300 hover:bg-white/30"
+            >
+              Xem bảng giá
+            </Link>
+          </div>
         </div>
       </div>
+      <ConsultationModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
-    <ConsultationModal isOpen={isModalOpen} onClose={handleCloseModal} />
-  </div>
-)};
+  );
+};
 
 // 2. Component Khối Tính năng (So le)
 interface FeatureBlockProps {

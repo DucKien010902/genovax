@@ -145,10 +145,11 @@ const Services: React.FC = () => {
       {/* PHẦN 1: HERO */}
       <div
         className="bg-scale max-w-full mx-auto px-4 lg:px-8 pt-8 lg:pt-16 pb-6 lg:pb-12 text-center  bg-cover bg-center bg-no-repeat relative"
-        style={{ 
-  "--bg-url": `url('https://res.cloudinary.com/da6f4dmql/image/upload/v1765357565/dna-strand_1_1_1_1_icogbd.png')`
-} as React.CSSProperties}
-
+        style={
+          {
+            "--bg-url": `url('https://res.cloudinary.com/da6f4dmql/image/upload/v1765357565/dna-strand_1_1_1_1_icogbd.png')`,
+          } as React.CSSProperties
+        }
       >
         <div className="absolute inset-0 bg-black/50" />{" "}
         {/* Overlay tối để chữ rõ hơn */}

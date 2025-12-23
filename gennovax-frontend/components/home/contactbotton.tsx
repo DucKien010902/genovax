@@ -26,7 +26,7 @@ const FloatingContact: React.FC = () => {
     <>
       <ChatWidget isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
 
-      <div className="fixed bottom-12 right-6 z-50 flex flex-col gap-4 items-center">
+      <div className="fixed bottom-12 right-6 z-50 flex flex-col gap-4 items-center cursor-pointer">
         {/* ==== KHỐI SHARE ==== */}
         <div
           className="relative group"
@@ -80,7 +80,7 @@ const FloatingContact: React.FC = () => {
         {/* Nút Chat AI */}
         <button
           onClick={() => setIsChatOpen(true)}
-          className="relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg transition-all duration-300 hover:scale-110"
+          className="cursor-pointer relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg transition-all duration-300 hover:scale-110"
         >
           <FaCommentDots className="text-2xl" />
         </button>

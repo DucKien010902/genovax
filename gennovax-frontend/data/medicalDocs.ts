@@ -8,6 +8,7 @@ export interface MedicalSection {
 export interface MedicalDoc {
   id: string;
   title: string;
+  summary: string;
   sections: MedicalSection[];
   references?: string[];
 }
@@ -80,5 +81,242 @@ export const medicalDocs = [
       "PATAU K, SMITH DW, THERMAN E, INHORN SL, WAGNER HP. Multiple congenital anomaly caused by an extra autosome. Lancet. 1960 Apr 09;1(7128):790-3.",
       "Patau Syndrome, Grant M. Williams; Robert Brady. 2023 June 26",
     ],
+  },
+  {
+    id: "edwards-syndrome-trisomy-18",
+    summary:
+      "Edwards syndrome (trisomy 18) is a chromosomal disorder caused by an extra chromosome 18, leading to multiple severe congenital anomalies and high mortality. Recent advances in medical care have improved survival, requiring individualized, multidisciplinary management and supportive family-centered care.",
+    title: "Edwards Syndrome (Trisomy 18)",
+    sections: [
+      {
+        heading: "Introduction",
+        content: `Edwards syndrome was first reported by Edwards et al in 1960 in a neonate with multiple congenital malformations and cognitive deficits. Trisomy 18 is an autosomal chromosomal aneuploidy caused by an extra chromosome 18, leading to various congenital malformations, and is the second most common autosomal trisomy after trisomy 21. Traditionally, infants diagnosed with trisomy 18 are offered comfort care as the condition is deemed lethal. Recent literature suggests a shift in the management of the condition. Technological interventions are now being offered, with more parents choosing these interventions. Comprehensive care requires a multidisciplinary approach and empathetic support for families to navigate complex medical and ethical decisions. This activity reviews the clinical presentation, evaluation, and management of Edwards syndrome, highlighting key information useful for the interprofessional team in identifying, assessing, and approaching patients with this condition and their families.`,
+      },
+      {
+        heading: "Epidemiology",
+        content: `The live birth prevalence of Edwards syndrome ranges from 1 in 3600 to 1 in 10,000. In the past 2 decades, the prevalence of trisomy 18 has increased due to an increase in the average maternal age. The prevalence of Edwards syndrome varies by country and termination policies. In the United States, the overall prevalence of Edwards syndrome is approximately 1 in 2500, and the liveborn prevalence is 1 in 8600. The prevalence is higher in females compared to males, with a ratio of 3:2. However, fetal loss is higher in males compared to females, and females have better survival rates compared to males.`,
+      },
+      {
+        heading: "Prognosis",
+        content: `Although trisomy 18 remains life-limiting, recent advances in medical care have significantly improved survival rates and outcomes. Approximately 50% of fetuses carried to term are born alive, although 40% die during labor, and one-third of surviving fetuses are delivered preterm. Among live-born infants with trisomy 18, 60% to 75% survive the first week, 20% to 40% survive the first month, and 10% to 19% survive the first year. More recent studies indicate that intensive medical interventions, such as advanced hospital care and cardiac surgeries, can increase 1-year survival rates to 30% to 50%.
+
+Female infants with trisomy 18 have a higher likelihood of survival compared to males, and individuals with mosaic trisomy 18 often experience more prolonged survival compared to those with complete trisomy 18. The primary causes of mortality include cardiac failure due to congenital heart defects and respiratory complications, such as obstructive apnea, pulmonary hypertension, and central apnea. Advancements, driven by increased hospitalizations, surgeries, and technological interventions, such as cardiac surgery, underscore the importance of revising outdated terminology. Although trisomy 18 remains life-limiting, it is vital to adopt language that accurately reflects the progress in care and honors the experiences of affected individuals and families.`,
+      },
+      {
+        heading: "Etiology",
+        content: `Edwards syndrome typically results from an extra copy of chromosome 18q. There are 3 types of Edwards syndrome—complete trisomy 18, partial trisomy 18, and mosaic trisomy 18.
+
+Complete trisomy 18 is the most common form (94%). In this type, every cell contains 3 complete copies of chromosome 18. The extra chromosome is due to nondisjunction, mostly during meiosis II. The extra chromosome is most often of maternal origin. The frequency of nondisjunction errors increases with advancing maternal age.
+
+Mosaic trisomy 18 is the second most common type (<5%). In this type, both a complete trisomy 18 and a normal cell line exist. Thus, the phenotype can range from a complete trisomy 18 phenotype with early mortality to a normal phenotype.
+
+Partial trisomy 18 accounts for 2% of Edwards syndrome. In this type, only a partial segment of chromosome 18q is present in triplicate. The partial triplicate often results from a balanced translocation or inversion carried by 1 of the parents. The phenotype of partial trisomy 18 is variable based on the location and extent of the triplicated segment.
+
+The prevalence of Edwards syndrome is positively correlated with advancing maternal age. The recurrence risk for complete trisomy 18 is 0.5% to 1% for subsequent pregnancies. If 1 parent is found to be a carrier of a balanced translocation leading to an unbalanced translocation in the child, as observed in partial trisomy 18, the recurrence risk can be higher, up to 20%, for subsequent pregnancies.`,
+      },
+      {
+        heading: "Pathophysiology",
+        content: `The phenotype of Edwards syndrome appears to be associated with 3 copies of 2 critical regions on the long arm of chromosome 18, specifically from 18q12.1 to 18q21.2 and 18q22.3 to 18qter. Severe mental retardation in Edwards syndrome may be associated with trisomy of 18q12.1 to 18q21.2. The trisomy of the short arm of chromosome 18 (18p) does not seem to cause any of the major features of Edwards syndrome.`,
+      },
+      {
+        heading: "Disease Manifestation",
+        content: `Edwards syndrome is characterized by variable clinical manifestations. More than 125 anomalies have been reported as features of Edwards syndrome. However, none of the clinical features are pathognomonic for Edwards syndrome.
+
+Most cases of Edwards syndrome are diagnosed prenatally, often through antenatal screening with maternal age, maternal serum markers, or ultrasound findings during the second trimester. Antenatally, Edwards syndrome can reveal intrauterine growth restriction, polyhydramnios, agenesis of the corpus callosum, choroid plexus cyst, nuchal thickening, brachycephaly, clenched hands with overriding index fingers, cardiac defects, omphalocele, and a single umbilical artery. Edwards syndrome has a high risk of fetal loss and stillbirth.
+
+Postnatally, Edwards syndrome is characterized by a cluster of phenotypes, including the following:
+
+Neurologic findings
+Neonatal hypotonia followed by hypertonia
+Apnea
+Seizures
+Poor sucking
+Delayed psychomotor development and mental retardation
+
+Craniofacial findings
+Skull: Microcephaly, bitemporal narrowing, and prominent occiput
+Face: Triangular and asymmetrical face with facial paralysis
+Eyes: Microphthalmia, hypertelorism, epicanthus, short palpebral fissures, coloboma of the iris, cataract, corneal clouding, hypoplastic supraorbital ridge, upward or downward slanting palpebral fissures, and abnormal retinal pigmentation.
+Nose: Prominent nasal bridge with hypoplastic nasal root, upturned nares, and choanal atresia
+Oral cavity: Micro-retrognathia, microstomia, narrow arched palate, cleft lip, and cleft palate
+Ears: Microtia, preauricular appendages, low-set or retroverted ears, and dysplastic ears
+
+Skeletal
+Severe growth retardation
+Short neck
+Short sternum
+Broad chest, with or without widely spaced small nipples
+Incomplete ossification of the clavicle
+Hemivertebrae or fused vertebrae and scoliosis
+Pectus excavatum
+Narrow pelvis and limitation of the hip abduction
+Hip dislocation
+Arthrogryposis
+Clenched hands with overriding fingers, camptodactyly, syndactyly, single palmar crease and clinodactyly of the fifth fingers, radial or thumb hypoplasia, and hypoplastic nails
+Rocker-bottom feet with prominent calcanei, talipes equinovarus, and dorsiflexed great toes
+
+Cardiovascular
+Cardiac defects in 90% of patients with Edwards syndrome
+Ventricular or atrial septal defect, patent ductus arteriosus, tetralogy of Fallot, overriding aorta, coarctation of the aorta, and hypoplastic left heart syndrome
+Polyvalvular heart disease (involving 2 or more valves, most commonly the aortic and pulmonary valves)
+
+Pulmonary
+Pulmonary hypoplasia
+Tracheobronchomalacia, laryngomalacia
+Obstructive and central apnea
+Early-onset pulmonary hypertension
+
+Gastrointestinal
+Omphalocele
+Esophageal atresia with tracheoesophageal fistula
+Pyloric stenosis
+Ileal atresia
+Malrotation
+Meckel diverticulum
+Diastasis recti
+Umbilical hernia
+
+Genitourinary
+Cryptorchidism, hypospadias, and micropenis
+Clitoral hypertrophy, hypoplasia of the labia majora, ovarian dysgenesis, and bifid uterus
+Horseshoe kidney, renal agenesis, and hydronephrosis
+
+Central nervous system malformations (occur in 30% of cases)
+Cerebellar hypoplasia
+Meningoencephalocele
+Anencephaly
+Hydrocephalus
+Holoprosencephaly
+Arnold-Chiari malformation
+Hypoplasia of the corpus callosum`,
+      },
+      {
+        heading: "Diagnosis / Screening",
+        content: `The evaluation and diagnosis of trisomy 18 begin in the antenatal period. Maternal serum screening can show low levels of alpha-fetoprotein, human chorionic gonadotropin, and unconjugated estriol. Serum and genetic markers are more useful when combined with classic ultrasound findings, such as increased nuchal translucency. For example, noninvasive prenatal testing using cell-free fetal DNA in maternal plasma has a role in diagnosing trisomy 18 but has a positive predictive value of only 60.7% when used alone. Combined with ultrasound, noninvasive prenatal testing has a positive predictive value of 100% and a negative predictive value of up to 100% by the second trimester. Amniocentesis or chorionic villus sampling is recommended if the antenatal screening suggests a high risk for fetal aneuploidy.
+
+Postnatally, phenotypic variation and clinical presentation guide the evaluation. Diagnostic imaging studies, such as ultrasonography, can assess intracranial, cardiac (echocardiogram), intra-abdominal, and renal abnormalities; however, circumstances dictate the study of choice. Screening is essential in these patients, as anomalies often involve multiple organ systems. Although the diagnosis is typically clinical, karyotyping can confirm trisomy, and microarray testing provides more detailed information about mosaicism.`,
+      },
+      {
+        heading: "Health Surveillance Guidelines",
+        content: `The child with Edwards syndrome should be assessed for growth during each visit, and results should be plotted on specific growth charts.
+Sucking or swallowing difficulties can be assessed using a radiographic swallow study, which can be helpful when considering the ability of the child to protect the airway.
+Cognitive and motor development should be assessed at each visit, and referral to early intervention, if needed, is recommended.
+An ophthalmologist referral is necessary at birth to rule out eye malformations and again in childhood to check for refractive errors and photophobia. An audiologist referral is essential at birth to rule out sensorineural hearing loss.
+A thorough neurologic examination should be performed at each visit to detect signs of hypertonia or seizures, and a referral to a neurologist is recommended.
+An echocardiogram at birth should be performed to evaluate for congenital heart disease and pulmonary hypertension.
+Abdominal ultrasound is recommended at birth to screen for renal malformations and should be repeated every 6 months until adolescence to monitor for neoplasms, such as Wilms tumor or hepatoblastoma.
+An orthopedic examination should be performed at every visit to check for joint contractures or scoliosis.
+A pulmonologist referral and a sleep study are recommended if obstructive or central apnea is encountered.
+Referrals to a gastroenterologist and nutritionist are warranted if enteral nutrition or management of gastroesophageal reflux is needed`,
+      },
+      {
+        heading: "Treatment / Management",
+        content: `There is no definitive treatment for Edwards syndrome. Ethical issues exist around the treatment plan for newborns with Edwards syndrome due to the high mortality rate and difficulty predicting which infants survive beyond their first year of life. The major causes of sudden death in Edwards syndrome are neurological instability, cardiac failure, and respiratory failure. An individualized approach should be considered for each patient, giving the utmost importance to the parental choices in the child's best interests.
+
+Delivery room and neonatal intensive care unit management: Previously, trisomy 18 was considered lethal, and resuscitation at birth was not indicated. The American Academy of Pediatrics and the recent Neonatal Resuscitation Program guidelines no longer advocate withholding active management, including resuscitative efforts in the delivery room.
+Feeding management: Nasogastric tube feeding and gastrostomy feeding are considered to address feeding issues. Gastroesophageal reflux can be initially managed with medical therapy and later with surgical options if refractory.
+Cardiac management: Diuretics and digoxin are used for heart failure. Palliative and corrective cardiac surgery is recommended for complex congenital heart defects.
+Infections: The standard approach to treating respiratory infections, pneumonia, urinary tract infections, and otitis media is recommended.
+Orthopedic management may be required, particularly for scoliosis due to hemivertebra.
+Psychiatric management: The family should receive psychosocial support, including information on support organizations.`,
+      },
+      {
+        heading: "Complications",
+        content: `Edwards syndrome is associated with a wide range of severe complications that affect multiple organ systems. These complications contribute to the high morbidity and mortality rates observed in affected individuals, often requiring multidisciplinary management to address the complex medical challenges. Major complications are as follows:
+
+Growth: Low birth weight followed by failure to thrive is common in Edwards syndrome. Patients with Edwards syndrome have feeding difficulties, gastroesophageal reflux, and recurrent aspiration. Edwards syndrome–specific growth curves are available for tracking development.
+Developmental delay: Severe to profound developmental delays are common. Cognitive and motor delays are noted in most surviving patients with Edwards syndrome. A few cases of Edwards syndrome, mosaic type, have been reported with normal intelligence.
+Cardiorespiratory failure: This is the leading cause of death in Edwards syndrome, often due to congenital cardiac defects, hypoventilation, central apnea, and pulmonary hypoplasia.
+Neoplasm: Edwards syndrome increases the risk of neoplasms such as Wilms tumor/nephroblastoma, hepatoblastoma, and Hodgkin disease.
+Endocrine: Thymic hypoplasia and adrenal hypoplasia are common in patients with Edwards syndrome.`,
+      },
+      {
+        heading: "Differential Diagnosis",
+        content: `The differential diagnosis of Edwards syndrome is relatively broad and includes the following conditions:
+
+Fetal akinesia sequence (Pena-Shokeir syndrome type I): An autosomal recessive condition characterized by facial anomalies, including micrognathia; multiple joint contractures; intrauterine growth restriction; polyhydramnios; and pulmonary hypoplasia.
+Patau syndrome (trisomy 13)
+Distal arthrogryposis type I with joint contractures
+CHARGE syndrome (coloboma, heart malformations, atresia of the nasal choanae, retardation of growth, genital abnormalities, and ear abnormalities)
+VACTERL association (vertebral defects, anal atresia, cardiovascular defects, tracheoesophageal fistula, esophageal atresia, renal anomalies, and limb defects)`,
+      },
+    ],
+    references: ["StatPearls - NCBI Bookshelf: Edwards Syndrome (Trisomy 18)"],
+  },
+  {
+    id: "down-syndrome-trisomy-21",
+    title: "Down Syndrome (Trisomy 21)",
+    summary:
+      "Down syndrome (trisomy 21) is a genetic disorder caused by the presence of an extra copy of chromosome 21, leading to intellectual disability, characteristic features, and multisystem involvement. Advances in medical care have significantly improved survival and quality of life through multidisciplinary management.",
+    sections: [
+      {
+        heading: "Introduction",
+        content: `Down syndrome was first described by an English physician, John Langdon Down, in 1866, but its association with chromosome 21 was established almost 100 years later in the laboratory of Raymond Turpin in Paris. Drs. Marth Gutier and Jerome Lejeune were Turpin's students. Credit for the association is debated. It is the presence of all or part of the third copy of chromosome 21 that causes Down syndrome, the most common chromosomal abnormality occurring in humans. It is also found that the most frequently occurring live-born aneuploidy is trisomy 21, which causes this syndrome.
+Down syndrome (trisomy 21) is a genetic disorder caused by the presence of all or a portion of a third chromosome 21. Patients typically present with mild to moderate intellectual disability, growth retardation, and characteristic facial features. This activity reviews the evaluation and management of Down syndrome and explains the role of the interprofessional team in improving care for patients with this condition.`,
+      },
+      {
+        heading: "Epidemiology",
+        content: `The incidence of Down syndrome increases with maternal age, and its occurrence varies in different populations (1 in 319 to 1 in 1000 live births). It is also known that the frequency of Down syndrome fetuses is quite high at the time of conception, but about 50% to 75% of these fetuses are lost before term. The occurrence of other autosomal trisomy is much more common than the 21, but the postnatal survival is very poor as compared to Down syndrome. This high percentage of survival of patients with trisomy 21 is thought to be a function of a small number of genes on chromosome 21 called Hsa21, which is the smallest and least dense of the autosomes.`,
+      },
+      {
+        heading: "Prognosis",
+        content: `With the recent advances in the medical practice, development of surgical techniques for the correction of congenital disabilities, and improvement in general care, there has been a tremendous increase in the survival of infants and life expectancy of patients with Down syndrome. A Birmingham (United Kingdom) study done almost 60 years ago showed that 45% of infants survived the first year of life, and only 40% would be alive at 5 years. A later study conducted about 50 years after that showed that 78% of patients with Down syndrome plus a congenital heart defect survived for 1 year, while the number went up to 96% in patients without the anomalies. This rise in the life expectancy of these patients should continue to rise significantly because of the developments in medical science. Healthcare facilities aim to provide proper and timely management to these patients and to help them to have a fulfilled and productive life`,
+      },
+      {
+        heading: "Etiology",
+        content: `The majority of patients with Down syndrome have an extra copy of chromosome 21. There are different hypotheses related to the genetic basis of Down syndrome and the association of different genotypes with the phenotypes. Among them is gene dosage imbalance, in which there is an increased dosage or number of genes of Hsa21, which results in increased gene expansion. It further includes the possibility of association of different genes with different phenotypes of Down syndrome. The other popular hypothesis is the amplified development instability hypothesis, according to which the genetic imbalance created by a number of trisomic genes results in a greater impact on the expression and regulation of many genes.
+
+The critical region hypothesis is also well-known in this list. Down syndrome critical regions (DSCR) are a few chromosomal regions that are associated with partial trisomy for Has21. DSCR on 21q21.22 is responsible for many clinical features of Down syndrome. After a thorough study of different analyses, it became clear that a single critical region gene cannot cause all the phenotypical features associated with trisomy 21, rather it is more evident that multiple critical regions or critical genes have a role to play in this phenomenon.`,
+      },
+      {
+        heading: "Evaluation",
+        content: `There are different methods used for the prenatal diagnosis of Down syndrome. Ultrasound, between 14 and 24 weeks of gestation, can be used as a tool for diagnosis based on soft markers like increased nuchal fold thickness, small or no nasal bone, and large ventricles. Nuchal translucency (NT) is detected by ultrasound and is caused by a collection of fluid under the skin behind the fetal neck. It is done between 11 and 14 weeks of gestation. Other causes of this finding include Other causes are trisomy 13 (Patau syndrome), trisomy 18 (Edwards syndrome), and Turner syndrome. Amniocentesis and chorionic villus sampling have widely been used for the diagnosis, but there is a small risk of miscarriages between 0.5% to 1%.
+
+Several other methods have also been developed and are used for the rapid detection of trisomy 21 both during fetal life and after birth. The FISH of interphase nuclei is most commonly used by either using Hsa21-specific probes or the whole of the Hsa21. Another method that is currently being used is QF-PCR, in which the presence of 3 different alleles is determined by using DNA polymorphic markers. The success of this method depends upon the informative markers and the presence of DNA. It has been found that up to 86.67% of cases of Down syndrome can be identified by using the STR marker method.
+
+A relatively new method called paralogue sequence quantification (PSQ) uses the paralogue sequence on the Hsa21 copy number. It is a PCR-based method that uses the paralogue genes to detect the targeted chromosome number abnormalities, which is known as paralogue sequence quantification.
+
+There are non-invasive prenatal diagnostic methods that are being studied to be used for the diagnosis of Down syndrome prenatally. These are based on the presence of fetal cells in the maternal blood and the presence of cell-free fetal DNA in the maternal serum.
+
+Cell-free fetal DNA makes up 5% to 10% of the maternal plasma, and it increases during pregnancy and clears after delivery. Though this method has been used to determine fetal Rh status in Rhive women, sex in sex-linked disorders, and for the detection of paternally inherited autosomal recessive and dominant traits, its use for the detection of chromosomal aneuploidy, especially the trisomy is still a challenge.
+
+Few other recent methods like digital PCR and next-generation sequencing (NGS) are also being developed for the diagnosis of Down syndrome.`,
+      },
+      {
+        heading: "Clinical Features",
+        content: `Different clinical conditions are associated with Down syndrome as different systems are affected by it. These patients have a wide array of signs and symptoms like intellectual and developmental disabilities or neurological features, congenital heart defects, gastrointestinal (GI) abnormalities, characteristic facial features, and abnormalities.`,
+      },
+      {
+        heading: "Treatment / Management",
+        content: `The management of patients with Down syndrome is multidisciplinary. Newborns with suspicion of Down syndrome should have a karyotyping done to confirm the diagnosis. The family needs to be referred to the clinical geneticist for the genetic testing and counseling of both parents.
+
+Parental education is one of the foremost aspects regarding the management of Down syndrome, as parents need to be aware of the different possible conditions associated with it so that they can be diagnosed and treated appropriately. Treatment is basically symptomatic, and complete recovery is not possible.
+
+These patients should have their hearing and vision assessed, and as they are more prone to have cataracts, timely surgery is required. Thyroid function tests should be done on a yearly basis and, if deranged, should be managed accordingly.
+
+A balanced diet, regular exercise, and physical therapy are needed for optimum growth and weight gain, although feeding problems improve after cardiac surgery.
+
+Cardiac referral should arranged for all the patients regardless of the clinical signs of congenital heart disease. If present, this should be corrected within the first 6 months of life to ensure optimum growth and development of the child.
+
+Other specialties involved include a developmental pediatrician, pediatric pulmonologist, gastroenterologist, neurologist, neurosurgeon, orthopedic specialist, child psychiatrist, physical and occupational therapist, speech and language therapist, and audiologist.`,
+      },
+      {
+        heading: "Differential Diagnosis",
+        content: `Congenital hypothyroidism
+Mosaic trisomy 21 syndrome
+Partial trisomy 21(or 21q duplication)
+Robertsonian trisomy 21
+Trisomy 18
+Zellweger syndrome or other peroxisomal disorders`,
+      },
+      {
+        heading: "Enhancing Healthcare Team Outcomes",
+        content: `The management of patients with Down syndrome is an interprofessional endeavor. Newborns with suspicion of Down syndrome should have a karyotyping done to confirm the diagnosis. The family needs to be referred to the clinical geneticist for the genetic testing and counseling of both parents.
+Because almost every organ system is involved, the child needs to be seen by the ophthalmologist, orthopedic surgeon, cardiologist, dermatologist, gastroenterologist, physical therapist, mental health nurse, ENT surgeon, and behavior specialist.
+Parental education is one of the foremost aspects regarding the management of Down syndrome, as parents need to be aware of the different possible conditions associated with it so that they can be diagnosed and treated appropriately. Treatment is basically symptomatic, and complete recovery is not possible.
+While life span has increased over the past 3 decades, these individuals still have a shorter life expectancy compared to healthy individuals.`,
+      },
+    ],
+    references: ["StatPearls - NCBI Bookshelf: Down Syndrome (Trisomy 21)"],
   },
 ];

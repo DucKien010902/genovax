@@ -140,9 +140,9 @@ const Footer: React.FC = () => {
 
             <h3 className="text-2xl font-bold text-white pt-6">Về chúng tôi</h3>
             <ul className="space-y-3 pt-2">
-              <QuickLink href="/about">Hành trình GennovaX</QuickLink>
-              <QuickLink href="/news">Tin tức & Sự kiện</QuickLink>
-              <QuickLink href="/contact">Liên hệ Chuyên gia</QuickLink>
+              <QuickLink href="/ve-gennovax">Hành trình GennovaX</QuickLink>
+              <QuickLink href="/tin-tuc">Tin tức & Sự kiện</QuickLink>
+              <QuickLink href="/gioi-thieu/doi-ngu-bac-sy">Liên hệ Chuyên gia</QuickLink>
             </ul>
           </div>
         </div>

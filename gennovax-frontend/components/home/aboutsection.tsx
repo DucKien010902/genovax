@@ -35,7 +35,10 @@ const PillarItem: React.FC<{
 );
 
 // --- 2. Component Nút điều hướng nhỏ ---
-const NavButton: React.FC<{ text: string; href: string }> = ({ text, href }) => (
+const NavButton: React.FC<{ text: string; href: string }> = ({
+  text,
+  href,
+}) => (
   <Link
     href={href}
     className="
@@ -59,7 +62,6 @@ const AboutGennovax: React.FC = () => {
   return (
     <section className="bg-white py-10 lg:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* --- PHẦN 1: TIÊU ĐỀ (Đã đẩy lên đầu) --- */}
         <div className="flex justify-center mb-10 lg:mb-12">
           <div
@@ -78,41 +80,52 @@ const AboutGennovax: React.FC = () => {
 
         {/* --- PHẦN 2: GRID NỘI DUNG --- */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          
           {/* Cột Trái: Ảnh + 4 Nút */}
           <div className="flex flex-col gap-6">
-  {/* Ảnh */}
-  <div className="w-full aspect-[16/10] relative rounded-xl lg:rounded-3xl shadow-2xl overflow-hidden border border-blue-100">
-    <Image
-      src={imageUrl}
-      alt="Phòng thí nghiệm GennovaX"
-      fill
-      className="object-cover hover:scale-105 transition-transform duration-700"
-      unoptimized
-    />
-  </div>
+            {/* Ảnh */}
+            <div className="w-full aspect-[16/10] relative rounded-xl lg:rounded-3xl shadow-2xl overflow-hidden border border-blue-100">
+              <Image
+                src={imageUrl}
+                alt="Phòng thí nghiệm GennovaX"
+                fill
+                className="object-cover hover:scale-105 transition-transform duration-700"
+                unoptimized
+              />
+            </div>
 
-  {/* Title nhỏ dưới ảnh */}
-  <div className="text-center">
-    <h2 className="text-lg lg:text-3xl font-semibold text-blue-700 mt-1">
-      Vì sao nên chọn chúng tôi ?
-    </h2>
-  </div>
+            {/* Title nhỏ dưới ảnh */}
+            <div className="text-center">
+              <h2 className="text-lg lg:text-3xl font-semibold text-blue-700 mt-1">
+                Vì sao nên chọn chúng tôi ?
+              </h2>
+            </div>
 
-  {/* 4 Button */}
-  <div className="grid grid-cols-2 gap-5 w-[95%]  mx-auto mt-3">
-    <NavButton text="Hệ thống Lab hiện đại" href="/ve-gennovax#he-thong-gennovax" />
-    <NavButton text="Đội ngũ bác sỹ uy tín" href="/ve-gennovax#doi-ngu-va-thanh-tuu" />
-    <NavButton text="Độ phủ toàn quốc" href="/ve-gennovax#he-thong-gennovax" />
-    <NavButton text="Hệ sinh thái đối tác lớn" href="/ve-gennovax#doi-tac-va-thuyet-bi" />
-  </div>
-</div>
-
+            {/* 4 Button */}
+            <div className="grid grid-cols-2 gap-5 w-[95%]  mx-auto mt-3">
+              <NavButton
+                text="Hệ thống Lab hiện đại"
+                href="/ve-gennovax#he-thong-gennovax"
+              />
+              <NavButton
+                text="Đội ngũ bác sỹ uy tín"
+                href="/ve-gennovax#doi-ngu-va-thanh-tuu"
+              />
+              <NavButton
+                text="Độ phủ toàn quốc"
+                href="/ve-gennovax#he-thong-gennovax"
+              />
+              <NavButton
+                text="Hệ sinh thái đối tác lớn"
+                href="/ve-gennovax#doi-tac-va-thuyet-bi"
+              />
+            </div>
+          </div>
 
           {/* Cột Phải: Nội dung chi tiết (Giữ nguyên) */}
           <div className="pt-2">
             <h2 className="text-2xl lg:text-4xl font-bold text-gray-900 leading-tight">
-              Tiên phong Tương lai Y học qua <span className="text-blue-700">Lăng kính Di truyền</span>
+              Tiên phong Tương lai Y học qua{" "}
+              <span className="text-blue-700">Lăng kính Di truyền</span>
             </h2>
 
             <p className="mt-6 text-base lg:text-lg text-gray-600 leading-relaxed">
@@ -144,7 +157,6 @@ const AboutGennovax: React.FC = () => {
               </PillarItem>
             </div>
           </div>
-
         </div>
       </div>
     </section>

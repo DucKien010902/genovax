@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Calendar,
-  Tag,
-  ArrowRight,
-  Facebook,
-  Twitter,
-} from "lucide-react";
+import { Calendar, Tag, ArrowRight, Facebook, Twitter } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { patauArticle } from "@/data/articals";
 
@@ -60,10 +54,7 @@ const NewsCard = ({ item }: { item: ArticleItem }) => {
   const router = useRouter();
 
   return (
-    <div
-
-      className="group flex flex-col w-full rounded-2xl bg-white shadow-md transition hover:shadow-xl cursor-pointer overflow-hidden border border-gray-100 h-full"
-    >
+    <div className="group flex flex-col w-full rounded-2xl bg-white shadow-md transition hover:shadow-xl cursor-pointer overflow-hidden border border-gray-100 h-full">
       <div className="flex flex-col md:flex-row h-full max-h-[300px]">
         {/* IMAGE */}
         <div className="w-[0] md:w-[45%] aspect-video md:aspect-auto relative overflow-hidden">
@@ -117,8 +108,9 @@ const NewsCard = ({ item }: { item: ArticleItem }) => {
               </div>
 
               <button
-               onClick={() => router.push(`/tin-tuc/${item.slug}`)}
-               className="flex items-center gap-2 text-sm font-bold text-[#00BCD4] hover:text-[#0097A7] transition group/btn">
+                onClick={() => router.push(`/tin-tuc/${item.slug}`)}
+                className="flex items-center gap-2 text-sm font-bold text-[#00BCD4] hover:text-[#0097A7] transition group/btn"
+              >
                 Đọc tiếp
                 <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
               </button>

@@ -57,7 +57,8 @@ const networkData = {
 
 // 3. Hệ Thống Xét Nghiệm (Từ Screenshot_19.png)
 const servicesData = {
-  image: "https://res.cloudinary.com/da6f4dmql/image/upload/v1765532716/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_11_1_1_fygn6v.png",
+  image:
+    "https://res.cloudinary.com/da6f4dmql/image/upload/v1765532716/Ho%CC%82%CC%80_so%CC%9B_na%CC%86ng_lu%CC%9B%CC%A3c_Gennovax_11_1_1_fygn6v.png",
   title: "Hệ Thống Xét Nghiệm Đa Dạng",
   description:
     "Chúng tôi cung cấp một hệ sinh thái xét nghiệm gen toàn diện, đáp ứng mọi nhu cầu sàng lọc và chẩn đoán y học chính xác.",

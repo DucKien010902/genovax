@@ -37,8 +37,7 @@ const serviceData: Service[] = [
   {
     id: "doanh-nghiep",
     title: "Chăm sóc thai kì",
-    description:
-      "Sàng lọc, chẩn đoán, trước, trong, sau khi mang thai.",
+    description: "Sàng lọc, chẩn đoán, trước, trong, sau khi mang thai.",
     imageUrl:
       "https://res.cloudinary.com/da6f4dmql/image/upload/v1764742688/gen-h-z7287822248537_47046515784e5e419d59740b0d1edc4d_y0x2mk.jpg", // Placeholder: Họp văn phòng
     icon: BriefcaseFill,
@@ -131,7 +130,8 @@ const OtherServices: React.FC = () => {
                        bg-white/80 backdrop-blur-sm"
           >
             <h2 className="text-sm lg:text-3xl font-bold text-black">
-              Dịch Vụ Nổi Bật Khác<span className="text-blue-700"> Của GennovaX</span>
+              Dịch Vụ Nổi Bật Khác
+              <span className="text-blue-700"> Của GennovaX</span>
             </h2>
           </div>
         </div>

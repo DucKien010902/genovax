@@ -15,7 +15,7 @@ export default function DoctorsList() {
       (d) =>
         d.name.toLowerCase().includes(t) ||
         d.workplace.toLowerCase().includes(t) ||
-        d.title.toLowerCase().includes(t)
+        d.title.toLowerCase().includes(t),
     );
   }, [searchTerm]);
 
@@ -24,7 +24,6 @@ export default function DoctorsList() {
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 font-sans bg-slate-50">
       <div className="max-w-7xl mx-auto">
-
         {/* Title */}
         <div className="text-center mb-8 lg:mb-12">
           <div className="inline-block px-5 py-2.5 border-4 border-dashed border-blue-300 rounded-full bg-white/80 backdrop-blur-sm">
@@ -44,7 +43,9 @@ export default function DoctorsList() {
         ) : (
           <div className="text-center py-20">
             <UserRound className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-500 text-lg">Không tìm thấy bác sĩ phù hợp.</p>
+            <p className="text-slate-500 text-lg">
+              Không tìm thấy bác sĩ phù hợp.
+            </p>
           </div>
         )}
 
@@ -57,7 +58,9 @@ export default function DoctorsList() {
                        flex items-center gap-2 group"
           >
             Xem thêm chuyên gia
-            <span className="text-blue-500 group-hover:translate-x-1 transition-transform">→</span>
+            <span className="text-blue-500 group-hover:translate-x-1 transition-transform">
+              →
+            </span>
           </Link>
         </div>
       </div>
@@ -81,7 +84,6 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
       <div className="h-24 sm:h-28 bg-gradient-to-r from-blue-800 to-blue-600 w-full absolute top-0 z-0"></div>
 
       <div className="relative z-10 px-4 sm:px-5 lg:px-6 pt-10 sm:pt-12 lg:pt-14 flex flex-col flex-grow">
-
         {/* Avatar Responsive */}
         <div className="relative w-28 h-28 sm:w-32 sm:h-32 lg:w-40 lg:h-40 mx-auto mb-4 sm:mb-5 lg:mb-6">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full p-1 shadow-lg">
@@ -94,7 +96,7 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
                 className="object-cover"
                 onError={(e) => {
                   e.currentTarget.srcset = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    doctor.name
+                    doctor.name,
                   )}&background=random&size=256`;
                 }}
               />
@@ -107,7 +109,9 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
           <p className="text-blue-600 font-semibold text-xs sm:text-sm uppercase tracking-wider mb-1">
             {doctor.title}
           </p>
-          <h3 className="text-lg sm:text-xl font-bold text-slate-800">{doctor.name}</h3>
+          <h3 className="text-lg sm:text-xl font-bold text-slate-800">
+            {doctor.name}
+          </h3>
 
           <div className="mt-2 inline-flex items-center justify-center text-xs sm:text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
             <MapPin className="w-3 h-3 mr-1" />
@@ -118,7 +122,10 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
         {/* Roles */}
         <ul className="space-y-1.5 sm:space-y-2 mb-6">
           {doctor.roles.slice(0, 3).map((role, index) => (
-            <li key={index} className="flex items-start text-xs sm:text-sm text-slate-600">
+            <li
+              key={index}
+              className="flex items-start text-xs sm:text-sm text-slate-600"
+            >
               <span className="mr-2 mt-1 w-1.5 h-1.5 bg-blue-400 rounded-full"></span>
               <span className="line-clamp-2">{role}</span>
             </li>

@@ -8,9 +8,9 @@ export default function PopupBanner() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // State quản lý Modal
-    const handleOpenModal = () => setIsModalOpen(true);
-    const handleCloseModal = () => setIsModalOpen(false);
-    const [isChatOpen, setIsChatOpen] = useState(false);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const shown = sessionStorage.getItem("popupShown");
@@ -99,10 +99,10 @@ export default function PopupBanner() {
                 hover:bg-[#005f9e] hover:shadow-[0_6px_20px_rgba(0,113,188,0.7)]
                 hover:-translate-y-1 active:scale-95
                 transition-all duration-300 backdrop-blur-sm"
-                onClick={(e) => {
-              e.preventDefault();
-              setIsChatOpen(true);
-            }}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsChatOpen(true);
+              }}
             >
               Tư vấn nhanh
             </Link>
@@ -117,11 +117,10 @@ export default function PopupBanner() {
                 hover:-translate-y-1 active:scale-95
                 transition-all duration-300 backdrop-blur-sm"
               onClick={(e) => {
-              e.preventDefault();
-              setIsModalOpen(true);
-            }}
+                e.preventDefault();
+                setIsModalOpen(true);
+              }}
             >
-              
               Đặt Lịch Ngay
             </Link>
           </div>

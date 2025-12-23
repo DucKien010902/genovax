@@ -2,7 +2,18 @@
 
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 // Thêm CheckCircle cho icon thành công
-import { PhoneCall, X, Send, Loader2, CheckCircle, User, MapPin, Mail, Phone, HelpCircle } from "lucide-react";
+import {
+  PhoneCall,
+  X,
+  Send,
+  Loader2,
+  CheckCircle,
+  User,
+  MapPin,
+  Mail,
+  Phone,
+  HelpCircle,
+} from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 interface ConsultationModalProps {
@@ -76,9 +87,9 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
     onClose();
     // Đợi animation đóng modal xong mới reset về form nhập liệu
     setTimeout(() => {
-        setIsSuccess(false);
+      setIsSuccess(false);
     }, 300);
-  }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -101,7 +112,6 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
 
       // THAY ĐỔI: Không dùng toast nữa, chuyển sang màn hình Success
       setIsSuccess(true);
-      
     } catch (error) {
       console.error("Lỗi gửi form:", error);
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau!");
@@ -124,7 +134,6 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
 
       {/* Modal Content */}
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fadeInUp flex flex-col max-h-[90vh]">
-        
         {/* === TRƯỜNG HỢP 1: HIỂN THỊ FORM ĐĂNG KÝ === */}
         {!isSuccess && (
           <>
@@ -256,7 +265,8 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="animate-spin" size={20} /> Đang gửi...
+                        <Loader2 className="animate-spin" size={20} /> Đang
+                        gửi...
                       </>
                     ) : (
                       <>
@@ -276,55 +286,70 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <CheckCircle className="w-12 h-12 text-green-600" />
             </div>
-            
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Đăng ký thành công!</h3>
+
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+              Đăng ký thành công!
+            </h3>
             <p className="text-gray-500 mb-6">
-              Cảm ơn bạn đã để lại thông tin. Chuyên viên của chúng tôi sẽ liên hệ lại trong thời gian sớm nhất.
+              Cảm ơn bạn đã để lại thông tin. Chuyên viên của chúng tôi sẽ liên
+              hệ lại trong thời gian sớm nhất.
             </p>
 
             {/* Box hiển thị thông tin tóm tắt */}
             <div className="w-full bg-gray-50 rounded-xl border border-gray-200 p-4 mb-6 text-left space-y-3">
-               <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2 border-b pb-2">Thông tin đã gửi</h4>
-               
-               <div className="flex items-start gap-3">
-                  <User className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="block text-xs text-gray-400">Họ và tên</span>
-                    <span className="font-medium text-gray-800">{formData.name}</span>
-                  </div>
-               </div>
+              <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2 border-b pb-2">
+                Thông tin đã gửi
+              </h4>
 
-               <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="block text-xs text-gray-400">Số điện thoại</span>
-                    <span className="font-medium text-gray-800">{formData.phone}</span>
-                  </div>
-               </div>
+              <div className="flex items-start gap-3">
+                <User className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+                <div>
+                  <span className="block text-xs text-gray-400">Họ và tên</span>
+                  <span className="font-medium text-gray-800">
+                    {formData.name}
+                  </span>
+                </div>
+              </div>
 
-               <div className="flex items-start gap-3">
-                  <HelpCircle className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+              <div className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+                <div>
+                  <span className="block text-xs text-gray-400">
+                    Số điện thoại
+                  </span>
+                  <span className="font-medium text-gray-800">
+                    {formData.phone}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <HelpCircle className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+                <div>
+                  <span className="block text-xs text-gray-400">
+                    Dịch vụ quan tâm
+                  </span>
+                  <span className="font-medium text-gray-800">
+                    {formData.service === "NIPT" && "Xét nghiệm NIPT"}
+                    {formData.service === "ADN" && "Xét nghiệm ADN Huyết thống"}
+                    {formData.service === "GEN" && "Xét nghiệm HPV"}
+                    {formData.service === "OTHER" && "Xét nghiệm khác"}
+                    {formData.service === "" && "Chưa chọn"}
+                  </span>
+                </div>
+              </div>
+
+              {formData.address && (
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
                   <div>
-                    <span className="block text-xs text-gray-400">Dịch vụ quan tâm</span>
-                    <span className="font-medium text-gray-800">
-                      {formData.service === 'NIPT' && 'Xét nghiệm NIPT'}
-                      {formData.service === 'ADN' && 'Xét nghiệm ADN Huyết thống'}
-                      {formData.service === 'GEN' && 'Xét nghiệm HPV'}
-                      {formData.service === 'OTHER' && 'Xét nghiệm khác'}
-                      {formData.service === '' && 'Chưa chọn'}
+                    <span className="block text-xs text-gray-400">Địa chỉ</span>
+                    <span className="font-medium text-gray-800 text-sm">
+                      {formData.address}
                     </span>
                   </div>
-               </div>
-
-               {formData.address && (
-                 <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-                    <div>
-                      <span className="block text-xs text-gray-400">Địa chỉ</span>
-                      <span className="font-medium text-gray-800 text-sm">{formData.address}</span>
-                    </div>
-                 </div>
-               )}
+                </div>
+              )}
             </div>
 
             <button
@@ -335,7 +360,6 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
             </button>
           </div>
         )}
-
       </div>
     </div>
   );

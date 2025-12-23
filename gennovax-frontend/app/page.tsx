@@ -24,7 +24,7 @@ const LandingPageDongHung: React.FC = () => {
         <PopularPackages />
         <OtherServices />
         <OurServiceSystem />
-        <DoctorsList/>
+        <DoctorsList />
         <ExpertOpinions />
         <AboutGennovax />
         {/* <VideoSection/> */}

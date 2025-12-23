@@ -15,14 +15,13 @@ export default function DoctorsList() {
       (d) =>
         d.name.toLowerCase().includes(t) ||
         d.workplace.toLowerCase().includes(t) ||
-        d.title.toLowerCase().includes(t)
+        d.title.toLowerCase().includes(t),
     );
   }, [searchTerm]);
 
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 bg-slate-50 font-sans">
       <div className="max-w-7xl mx-auto">
-
         {/* Header */}
         <div className="text-center mb-10 sm:mb-12 space-y-3">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
@@ -85,7 +84,6 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
       <div className="h-24 sm:h-28 bg-gradient-to-r from-blue-800 to-blue-600 w-full absolute top-0 z-0"></div>
 
       <div className="relative z-10 px-4 sm:px-5 lg:px-6 pt-10 sm:pt-12 lg:pt-14 flex flex-col flex-grow">
-
         {/* Avatar */}
         <div className="relative w-28 h-28 sm:w-32 sm:h-32 lg:w-40 lg:h-40 mx-auto mb-4 sm:mb-5 lg:mb-6">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full p-1 shadow-lg">
@@ -98,7 +96,7 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
                 className="object-cover"
                 onError={(e) => {
                   e.currentTarget.srcset = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    doctor.name
+                    doctor.name,
                   )}&background=random&size=256`;
                 }}
               />
@@ -125,7 +123,10 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
         {/* Roles */}
         <ul className="space-y-1.5 sm:space-y-2 mb-6">
           {doctor.roles.slice(0, 3).map((role, idx) => (
-            <li key={idx} className="flex items-start text-xs sm:text-sm text-slate-600">
+            <li
+              key={idx}
+              className="flex items-start text-xs sm:text-sm text-slate-600"
+            >
               <span className="mr-2 mt-1 w-1.5 h-1.5 bg-blue-400 rounded-full"></span>
               <span className="line-clamp-2">{role}</span>
             </li>
@@ -137,8 +138,8 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
       <div className="p-4 bg-slate-50 border-t border-slate-100">
         <Link
           href={`/doctors/${doctor.id}`}
-          onClick={(e)=>{
-            e.preventDefault()
+          onClick={(e) => {
+            e.preventDefault();
           }}
           className="
             flex items-center justify-center w-full py-2.5 bg-white border border-blue-200

@@ -2,12 +2,23 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { medicalDocs, MedicalDoc, MedicalSection } from "@/data/medicalDocs";
+import {
+  medicalDocs,
+  type MedicalDoc,
+  type MedicalSection,
+} from "@/data/medicalDocs";
+
+type RouteParams = {
+  slug: string;
+};
 
 export default function DetailPage() {
-  const params = useParams();
-  // const doc: MedicalDoc | undefined = medicalDocs.find((d) => d.id === params?.id);
-  const doc = medicalDocs[0];
+  const params = useParams<RouteParams>();
+
+  const slug = params.slug;
+  console.log(slug);
+
+  const doc: MedicalDoc | undefined = medicalDocs.find((d) => d.id === slug);
 
   if (!doc) {
     return <div className="p-10">Document not found</div>;
@@ -32,7 +43,7 @@ export default function DetailPage() {
         {/* Sections */}
         <div className="space-y-8">
           {doc.sections.map((section: MedicalSection, idx: number) => (
-            <div key={idx} className="section-block">
+            <section key={idx}>
               <h2 className="text-2xl font-semibold text-blue-800 mb-3">
                 {section.heading}
               </h2>
@@ -41,20 +52,19 @@ export default function DetailPage() {
                 {section.content}
               </div>
 
-              {/* Hiển thị image nếu có */}
               {section.image && (
-                <div className="my-6 p-4 bg-gray-50 border rounded-lg">
+                <figure className="my-6 p-4 bg-gray-50 border rounded-lg">
                   <img
                     src={section.image}
                     alt={section.heading}
                     className="w-full h-80 object-cover rounded-md"
                   />
-                  <p className="text-sm text-gray-500 mt-2 italic">
+                  <figcaption className="text-sm text-gray-500 mt-2 italic">
                     Figure: {section.heading}
-                  </p>
-                </div>
+                  </figcaption>
+                </figure>
               )}
-            </div>
+            </section>
           ))}
         </div>
 
@@ -63,7 +73,7 @@ export default function DetailPage() {
           <div className="mt-12 pt-8 border-t border-gray-200">
             <h3 className="text-xl font-bold mb-4">References</h3>
             <ul className="list-disc pl-5 space-y-2 text-sm text-gray-600">
-              {doc.references.map((ref: string, idx: number) => (
+              {doc.references.map((ref, idx) => (
                 <li key={idx}>{ref}</li>
               ))}
             </ul>

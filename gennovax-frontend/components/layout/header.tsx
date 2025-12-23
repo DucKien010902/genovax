@@ -28,7 +28,10 @@ export const menuData: MenuItem[] = [
     label: "Giới thiệu",
     href: "/gioi-thieu/danh-sach-phong-kham",
     subItems: [
-      { label: "Chuỗi phòng xét nghiệm", href: "/gioi-thieu/danh-sach-phong-kham" },
+      {
+        label: "Chuỗi phòng xét nghiệm",
+        href: "/gioi-thieu/danh-sach-phong-kham",
+      },
       { label: "Đội ngũ bác sỹ", href: "/gioi-thieu/doi-ngu-bac-sy" },
     ],
   },
@@ -51,8 +54,14 @@ export const menuData: MenuItem[] = [
     subItems: [
       { label: "Sứ mệnh & Tầm nhìn", href: "/ve-gennovax#tam-nhin-va-su-menh" },
       { label: "Hệ thống GennovaX", href: "/ve-gennovax#he-thong-gennovax" },
-      { label: "Đội ngũ chuyên gia", href: "/ve-gennovax#doi-ngu-va-thanh-tuu" },
-      { label: "Đối tác chiến lược", href: "/ve-gennovax#doi-tac-va-thuyet-bi" },
+      {
+        label: "Đội ngũ chuyên gia",
+        href: "/ve-gennovax#doi-ngu-va-thanh-tuu",
+      },
+      {
+        label: "Đối tác chiến lược",
+        href: "/ve-gennovax#doi-tac-va-thuyet-bi",
+      },
     ],
   },
 ];
@@ -172,7 +181,9 @@ const MobileSidebarMenu: React.FC<{
                 <li key={item.label} className="group">
                   <div
                     className={`flex justify-between items-center rounded-lg transition-colors ${
-                      openSubmenu === item.label ? "bg-blue-50/50" : "hover:bg-gray-50"
+                      openSubmenu === item.label
+                        ? "bg-blue-50/50"
+                        : "hover:bg-gray-50"
                     }`}
                   >
                     <Link
@@ -190,7 +201,9 @@ const MobileSidebarMenu: React.FC<{
                         <CaretDownFill
                           size={14}
                           className={`transition-transform duration-300 ${
-                            openSubmenu === item.label ? "rotate-180 text-blue-600" : ""
+                            openSubmenu === item.label
+                              ? "rotate-180 text-blue-600"
+                              : ""
                           }`}
                         />
                       </button>
@@ -269,7 +282,6 @@ const Header: React.FC<{ isTransparent: boolean }> = ({ isTransparent }) => {
       >
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex justify-between items-center">
-            
             {/* --- Logo Area --- */}
             <div className="flex items-center space-x-2 lg:space-x-4">
               <div className="flex items-center">
@@ -329,8 +341,8 @@ const Header: React.FC<{ isTransparent: boolean }> = ({ isTransparent }) => {
               >
                 {/* Hiệu ứng lướt sáng (Shimmer) */}
                 <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
-                
-                <span className="relative flex items-center gap-2">
+
+                <span className="relative flex items-center gap-2 cursor-pointer">
                   <PhoneCall size={18} />
                   Nhận tư vấn
                 </span>
@@ -353,10 +365,10 @@ const Header: React.FC<{ isTransparent: boolean }> = ({ isTransparent }) => {
       </header>
 
       {/* --- PHẦN QUAN TRỌNG ĐÃ ĐƯỢC THÊM VÀO: --- */}
-      <MobileSidebarMenu 
+      <MobileSidebarMenu
         menuData={menuData}
-        isOpen={isMenuOpen} 
-        onClose={handleCloseMenu} 
+        isOpen={isMenuOpen}
+        onClose={handleCloseMenu}
         onOpenConsultation={handleOpenModal}
       />
 

@@ -26,7 +26,7 @@ const popularPackagesData: PackageDetails[] = [
     mainImageUrl:
       "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/500087657_122108016806870117_710668953486729298_n_wmcxfk.jpg",
     smallLogoUrl: "/images/genbio1.png",
-    linkto:'/dich-vu/DNA'
+    linkto: "/dich-vu/DNA",
   },
   {
     id: "geni-8",
@@ -37,7 +37,7 @@ const popularPackagesData: PackageDetails[] = [
     mainImageUrl:
       "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/496506308_122100963794870117_1449912006591196456_n_j34mr5.jpg",
     smallLogoUrl: "/images/genbio1.png",
-    linkto:'/dich-vu/NIPT'
+    linkto: "/dich-vu/NIPT",
   },
   {
     id: "adn-phap-ly-2-mau-1-2ngay",
@@ -47,7 +47,7 @@ const popularPackagesData: PackageDetails[] = [
     mainImageUrl:
       "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/496942572_122098102940870117_1791812201739354939_n_efjixl.jpg",
     smallLogoUrl: "/images/genbio1.png",
-    linkto:'/dich-vu/DNA'
+    linkto: "/dich-vu/DNA",
   },
   {
     id: "geni-23",
@@ -58,14 +58,13 @@ const popularPackagesData: PackageDetails[] = [
     mainImageUrl:
       "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/571157271_122148617522870117_6835087446376933824_n_tbex8y.jpg",
     smallLogoUrl: "/images/genbio1.png",
-    linkto:'/dich-vu/NIPT'
+    linkto: "/dich-vu/NIPT",
   },
 ];
 
 /* =======================
    2. DATA
 ======================= */
-
 
 /* =======================
    3. PACKAGE CARD

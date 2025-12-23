@@ -12,10 +12,7 @@ export default function PageTransitionWrapper({
 
   // Nếu pathname là "/", margin-top = 0, các trang khác mt-20
   const mtClass =
-  pathname === "/" || pathname === "/dang-nhap"
-    ? "mt-0"
-    : "mt-14 lg:mt-20";
-
+    pathname === "/" || pathname === "/dang-nhap" ? "mt-0" : "mt-14 lg:mt-20";
 
   return (
     <AnimatePresence mode="wait">

@@ -17,11 +17,12 @@ export const doctorsData: Doctor[] = [
     id: "5",
     name: "Nguyễn Thị Trang",
     title: "PGS, TS",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp98JOL-9ZyHndeKZe6NByRpG6LAcasH82oQ&s",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp98JOL-9ZyHndeKZe6NByRpG6LAcasH82oQ&s",
     workplace: "Đại học Y Hà Nội",
     roles: [
       "Giảng viên cao cấp Trường Đại học Y Hà Nội",
-      "Hội Di truyền y học Việt Nam"
+      "Hội Di truyền y học Việt Nam",
     ],
   },
 
@@ -44,7 +45,8 @@ export const doctorsData: Doctor[] = [
     id: "2",
     name: "Hồ Quang Huy",
     title: "Tiến sĩ, Bác sĩ",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT0o-UxLtp_LxL87CURavmDQ7v9fLGPca_5Q&s",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT0o-UxLtp_LxL87CURavmDQ7v9fLGPca_5Q&s",
     workplace: "Bệnh viện K cơ sở 2",
     roles: ["Phụ trách Khoa xét nghiệm (Bệnh viện K cơ sở 2)"],
   },
@@ -52,17 +54,17 @@ export const doctorsData: Doctor[] = [
     id: "4",
     name: "Đoàn Trọng Tuyên",
     title: "Tiến sĩ, Bác sĩ",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbLRQ2v4uT6rWB3PtLpp-9FJPf7Y_uzqbdZQ&s",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbLRQ2v4uT6rWB3PtLpp-9FJPf7Y_uzqbdZQ&s",
     workplace: "Viện y học dự phòng Quân đội",
-    roles: [
-      "Nguyên Phó Viện trưởng Viện y học dự phòng Quân đội - Cục Quân Y"
-    ],
+    roles: ["Nguyên Phó Viện trưởng Viện y học dự phòng Quân đội - Cục Quân Y"],
   },
   {
     id: "6",
     name: "Bùi Kiều Yến Trang",
     title: "Tiến sĩ, Bác sĩ",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZlvSq_ztecCuR4Kxq85-mbuJRGBpofg_7SA&s",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZlvSq_ztecCuR4Kxq85-mbuJRGBpofg_7SA&s",
     workplace: "Bệnh viện Từ Dũ",
     roles: ["Bác sĩ di truyền (Bệnh viện Từ Dũ)"],
   },
@@ -74,7 +76,8 @@ export const doctorsData: Doctor[] = [
     id: "3",
     name: "Trần Hồng Vân",
     title: "Thạc sĩ, Bác sĩ",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSw_wJkS5Wkb5TsNMelXB-tOoXQo_fthKpuRQ&s",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSw_wJkS5Wkb5TsNMelXB-tOoXQo_fthKpuRQ&s",
     workplace: "Bệnh viện Đại học Y Hà Nội",
     roles: ["Phó trưởng Khoa xét nghiệm", "Bệnh viện Đại học Y Hà Nội"],
   },

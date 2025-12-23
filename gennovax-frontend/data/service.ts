@@ -68,7 +68,7 @@ export const ServicesData: PackageDetails[] = [
   // === GENE ===
   {
     id: "gene-lan-21",
-    name: "Xét nghiệm người lành mang gen lặn gây bệnh 21 gen",
+    name: "Xét nghiệm sàng lọc 21 bệnh đơn gen di truyền lặn (cho mẹ)",
     description:
       "Sàng lọc 21 gen lặn phổ biến, giúp đánh giá nguy cơ di truyền cho con cái.",
     returnTime: "5-7 ngày làm việc",
@@ -77,7 +77,7 @@ export const ServicesData: PackageDetails[] = [
   },
   {
     id: "gene-lan-chong",
-    name: "Xét nghiệm gen lặn (Làm cho chồng)",
+    name: "Xét nghiệm sàng lọc 21 bệnh đơn gen di truyền lặn (làm thêm cho chồng)",
     description:
       "Áp dụng khi thai phụ xét nghiệm NIPT Dương Tính với 1 trong 21 gen lặn. Dùng để xét nghiệm cho chồng.",
     returnTime: "5-7 ngày làm việc",
