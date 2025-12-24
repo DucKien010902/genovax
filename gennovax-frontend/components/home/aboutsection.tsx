@@ -42,7 +42,7 @@ const NavButton: React.FC<{ text: string; href: string }> = ({
   <Link
     href={href}
     className="
-      flex items-center justify-center gap-2 px-4 py-3 w-full
+      flex items-center justify-between gap-2 px-4 py-3 w-full
       rounded-3xl font-semibold text-white shadow-md
       bg-gradient-to-r from-red-500 to-blue-700
       hover:from-red-600 hover:to-blue-800
@@ -64,17 +64,10 @@ const AboutGennovax: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* --- PHẦN 1: TIÊU ĐỀ (Đã đẩy lên đầu) --- */}
         <div className="flex justify-center mb-10 lg:mb-12">
-          <div
-            className="
-              inline-block px-6 py-2
-              border-4 border-dashed border-blue-300
-              rounded-full
-               backdrop-blur-sm
-            "
-          >
-            <span className="text-sm md:text-3xl font-bold uppercase text-blue-800 tracking-wide">
-              VỀ GENNOVAX
-            </span>
+          <div className="inline-block px-5 py-2.5 border-3 border-dashed border-blue-400 rounded-full bg-white/80 backdrop-blur-sm">
+            <h2 className="text-base sm:text-xl lg:text-3xl font-bold text-black">
+              Về <span className="text-blue-700">GennovaX</span>
+            </h2>
           </div>
         </div>
 

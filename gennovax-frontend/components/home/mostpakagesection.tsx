@@ -79,7 +79,7 @@ const PackageCard: React.FC<{
         bg-white rounded-3xl shadow-lg overflow-hidden p-4 sm:p-5 lg:p-6
         flex flex-col lg:flex-row gap-4 lg:gap-6
         transition-all duration-300 hover:shadow-2xl
-        border-4 border-blue-300 hover:border-blue-600 hover:-translate-y-1
+        border-2 lg:border-4 border-blue-300 hover:border-blue-600 hover:-translate-y-1
       "
     >
       {/* LEFT */}
@@ -92,34 +92,42 @@ const PackageCard: React.FC<{
           />
         </div>
 
-        <div className="w-1/2 lg:w-full flex flex-col justify-center gap-2 lg:mt-4">
-          <Link
-            href={pkg.linkto}
-            className="flex items-center justify-center gap-2 px-3 py-2 rounded-full 
-              text-xs lg:text-sm text-white font-medium
-              bg-gradient-to-r from-blue-600 to-blue-900 hover:from-blue-700 hover:to-blue-950"
-          >
-            <InfoCircleFill />
-            Tìm hiểu thêm
-          </Link>
+        <div className="w-[40%] lg:w-full mx-auto flex flex-col justify-center gap-2 lg:mt-4">
+  <Link
+    href={pkg.linkto}
+    className="flex items-center justify-center gap-2 px-3 py-3 rounded-full
+      text-[10px] lg:text-sm text-white font-medium
+      bg-gradient-to-r from-blue-600 to-blue-900 
+      hover:from-blue-700 hover:to-blue-950
+      border-2 lg:border-3 border-teal-300/60 
+      focus:outline-none focus:ring-2 focus:ring-teal-300/40 transition"
+  >
+    <InfoCircleFill />
+    Tìm hiểu thêm
+  </Link>
 
-          <button
-            onClick={onConsult}
-            className="flex items-center justify-center gap-2 px-3 py-2 rounded-full
-              text-xs lg:text-sm text-white font-medium
-              bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 cursor-pointer "
-          >
-            <CalendarCheckFill />
-            Đặt hẹn tư vấn
-          </button>
-        </div>
+  <button
+    onClick={onConsult}
+    className="flex items-center justify-center gap-2 px-3 py-3 rounded-full
+      text-[10px] lg:text-sm text-white font-medium
+      bg-gradient-to-r from-amber-400 to-orange-500 
+      hover:from-amber-500 hover:to-orange-600
+      border-2 lg:border-3 border-teal-300/60 
+      focus:outline-none focus:ring-2 focus:ring-teal-300/40
+      cursor-pointer transition"
+  >
+    <CalendarCheckFill />
+    Đặt hẹn tư vấn
+  </button>
+</div>
+
       </div>
 
       {/* RIGHT */}
       <div className="w-full lg:w-3/5">
         <div className="flex justify-between items-start gap-3 mb-3">
           <h2 className="text-lg lg:text-xl font-bold leading-tight">
-            <span className="text-blue-600 block">{pkg.name}</span>
+            <span className="text-blue-600 text-sm lg:text-xl block">{pkg.name}</span>
             <span className="text-gray-500 text-sm lg:text-base font-normal">
               {pkg.tagline}
             </span>
@@ -134,9 +142,9 @@ const PackageCard: React.FC<{
           </div>
         </div>
 
-        <div className="border-b-2 border-dashed border-blue-400 mb-3 opacity-50" />
+        <div className="hidden lg:flex border-b-2 border-dashed border-blue-400 mb-3 opacity-50" />
 
-        <p className="text-gray-600 text-sm lg:text-base leading-relaxed line-clamp-4">
+        <p className="hidden lg:flex text-gray-600 text-sm lg:text-base leading-relaxed line-clamp-4">
           {pkg.description}
         </p>
       </div>
@@ -161,14 +169,14 @@ const PopularPackages: React.FC = () => {
             "url('https://res.cloudinary.com/da6f4dmql/image/upload/v1765522605/shutterstock_1530550610_effhxj.jpg')",
         }}
       />
-      <div className="absolute inset-0 bg-white/40" />
+      <div className="absolute inset-0 bg-white/50" />
 
       <div className="relative max-w-7xl mx-auto px-4">
         {/* Title */}
-        <div className="text-center mb-10">
-          <div className="inline-block px-6 py-3 border-4 border-dashed border-blue-300 rounded-full bg-white">
-            <h2 className="text-xl lg:text-3xl font-bold">
-              GÓI XÉT NGHIỆM <span className="text-blue-700">PHỔ BIẾN</span>
+        <div className="text-center mb-5 lg:mb-10">
+          <div className="inline-block px-5 py-2.5 border-3 border-dashed border-blue-400 rounded-full bg-white ">
+            <h2 className="text-sm lg:text-3xl font-bold">
+              Gói Xét Nghiệm <span className="text-blue-700">Phổ Biến</span>
             </h2>
           </div>
         </div>
@@ -191,7 +199,7 @@ const PopularPackages: React.FC = () => {
         <div className="flex justify-center mt-10">
           <Link
             href="/dich-vu"
-            className="px-8 py-3 border-2 border-blue-500 border-dashed rounded-full
+            className="px-5 py-2.5 border-2 border-blue-500 border-dashed rounded-full text-sm lg:text-xl
               text-blue-600 bg-white hover:bg-blue-50 transition"
           >
             Các gói xét nghiệm khác →

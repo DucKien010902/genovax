@@ -26,7 +26,7 @@ export default function DoctorsList() {
       <div className="max-w-7xl mx-auto">
         {/* Title */}
         <div className="text-center mb-8 lg:mb-12">
-          <div className="inline-block px-5 py-2.5 border-4 border-dashed border-blue-300 rounded-full bg-white/80 backdrop-blur-sm">
+          <div className="inline-block px-5 py-2.5 border-3 border-dashed border-blue-400 rounded-full bg-white/80 backdrop-blur-sm">
             <h2 className="text-base sm:text-xl lg:text-3xl font-bold text-black">
               Đội Ngũ <span className="text-blue-700">Chuyên Gia</span>
             </h2>

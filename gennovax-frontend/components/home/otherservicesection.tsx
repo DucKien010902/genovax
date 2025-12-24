@@ -121,12 +121,12 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
 // --- 4. Component Section Chính ---
 const OtherServices: React.FC = () => {
   return (
-    <section className="py-5 lg:py-15 bg-gray-50">
+    <section className="py-5 pt-10 lg:py-15 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Tiêu đề Section (Sáng tạo) */}
         <div className="text-center mb-8 lg:mb-16">
           <div
-            className="inline-block px-6 py-3 border-4 border-dashed border-blue-300 rounded-full
+            className="inline-block px-5 py-2.5 border-3 border-dashed border-blue-400 rounded-full
                        bg-white/80 backdrop-blur-sm"
           >
             <h2 className="text-sm lg:text-3xl font-bold text-black">

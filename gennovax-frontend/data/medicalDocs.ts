@@ -244,79 +244,93 @@ VACTERL association (vertebral defects, anal atresia, cardiovascular defects, tr
     references: ["StatPearls - NCBI Bookshelf: Edwards Syndrome (Trisomy 18)"],
   },
   {
-    id: "down-syndrome-trisomy-21",
-    title: "Down Syndrome (Trisomy 21)",
-    summary:
-      "Down syndrome (trisomy 21) is a genetic disorder caused by the presence of an extra copy of chromosome 21, leading to intellectual disability, characteristic features, and multisystem involvement. Advances in medical care have significantly improved survival and quality of life through multidisciplinary management.",
-    sections: [
-      {
-        heading: "Introduction",
-        content: `Down syndrome was first described by an English physician, John Langdon Down, in 1866, but its association with chromosome 21 was established almost 100 years later in the laboratory of Raymond Turpin in Paris. Drs. Marth Gutier and Jerome Lejeune were Turpin's students. Credit for the association is debated. It is the presence of all or part of the third copy of chromosome 21 that causes Down syndrome, the most common chromosomal abnormality occurring in humans. It is also found that the most frequently occurring live-born aneuploidy is trisomy 21, which causes this syndrome.
-Down syndrome (trisomy 21) is a genetic disorder caused by the presence of all or a portion of a third chromosome 21. Patients typically present with mild to moderate intellectual disability, growth retardation, and characteristic facial features. This activity reviews the evaluation and management of Down syndrome and explains the role of the interprofessional team in improving care for patients with this condition.`,
-      },
-      {
-        heading: "Epidemiology",
-        content: `The incidence of Down syndrome increases with maternal age, and its occurrence varies in different populations (1 in 319 to 1 in 1000 live births). It is also known that the frequency of Down syndrome fetuses is quite high at the time of conception, but about 50% to 75% of these fetuses are lost before term. The occurrence of other autosomal trisomy is much more common than the 21, but the postnatal survival is very poor as compared to Down syndrome. This high percentage of survival of patients with trisomy 21 is thought to be a function of a small number of genes on chromosome 21 called Hsa21, which is the smallest and least dense of the autosomes.`,
-      },
-      {
-        heading: "Prognosis",
-        content: `With the recent advances in the medical practice, development of surgical techniques for the correction of congenital disabilities, and improvement in general care, there has been a tremendous increase in the survival of infants and life expectancy of patients with Down syndrome. A Birmingham (United Kingdom) study done almost 60 years ago showed that 45% of infants survived the first year of life, and only 40% would be alive at 5 years. A later study conducted about 50 years after that showed that 78% of patients with Down syndrome plus a congenital heart defect survived for 1 year, while the number went up to 96% in patients without the anomalies. This rise in the life expectancy of these patients should continue to rise significantly because of the developments in medical science. Healthcare facilities aim to provide proper and timely management to these patients and to help them to have a fulfilled and productive life`,
-      },
-      {
-        heading: "Etiology",
-        content: `The majority of patients with Down syndrome have an extra copy of chromosome 21. There are different hypotheses related to the genetic basis of Down syndrome and the association of different genotypes with the phenotypes. Among them is gene dosage imbalance, in which there is an increased dosage or number of genes of Hsa21, which results in increased gene expansion. It further includes the possibility of association of different genes with different phenotypes of Down syndrome. The other popular hypothesis is the amplified development instability hypothesis, according to which the genetic imbalance created by a number of trisomic genes results in a greater impact on the expression and regulation of many genes.
-
-The critical region hypothesis is also well-known in this list. Down syndrome critical regions (DSCR) are a few chromosomal regions that are associated with partial trisomy for Has21. DSCR on 21q21.22 is responsible for many clinical features of Down syndrome. After a thorough study of different analyses, it became clear that a single critical region gene cannot cause all the phenotypical features associated with trisomy 21, rather it is more evident that multiple critical regions or critical genes have a role to play in this phenomenon.`,
-      },
-      {
-        heading: "Evaluation",
-        content: `There are different methods used for the prenatal diagnosis of Down syndrome. Ultrasound, between 14 and 24 weeks of gestation, can be used as a tool for diagnosis based on soft markers like increased nuchal fold thickness, small or no nasal bone, and large ventricles. Nuchal translucency (NT) is detected by ultrasound and is caused by a collection of fluid under the skin behind the fetal neck. It is done between 11 and 14 weeks of gestation. Other causes of this finding include Other causes are trisomy 13 (Patau syndrome), trisomy 18 (Edwards syndrome), and Turner syndrome. Amniocentesis and chorionic villus sampling have widely been used for the diagnosis, but there is a small risk of miscarriages between 0.5% to 1%.
-
-Several other methods have also been developed and are used for the rapid detection of trisomy 21 both during fetal life and after birth. The FISH of interphase nuclei is most commonly used by either using Hsa21-specific probes or the whole of the Hsa21. Another method that is currently being used is QF-PCR, in which the presence of 3 different alleles is determined by using DNA polymorphic markers. The success of this method depends upon the informative markers and the presence of DNA. It has been found that up to 86.67% of cases of Down syndrome can be identified by using the STR marker method.
-
-A relatively new method called paralogue sequence quantification (PSQ) uses the paralogue sequence on the Hsa21 copy number. It is a PCR-based method that uses the paralogue genes to detect the targeted chromosome number abnormalities, which is known as paralogue sequence quantification.
-
-There are non-invasive prenatal diagnostic methods that are being studied to be used for the diagnosis of Down syndrome prenatally. These are based on the presence of fetal cells in the maternal blood and the presence of cell-free fetal DNA in the maternal serum.
-
-Cell-free fetal DNA makes up 5% to 10% of the maternal plasma, and it increases during pregnancy and clears after delivery. Though this method has been used to determine fetal Rh status in Rhive women, sex in sex-linked disorders, and for the detection of paternally inherited autosomal recessive and dominant traits, its use for the detection of chromosomal aneuploidy, especially the trisomy is still a challenge.
-
-Few other recent methods like digital PCR and next-generation sequencing (NGS) are also being developed for the diagnosis of Down syndrome.`,
-      },
-      {
-        heading: "Clinical Features",
-        content: `Different clinical conditions are associated with Down syndrome as different systems are affected by it. These patients have a wide array of signs and symptoms like intellectual and developmental disabilities or neurological features, congenital heart defects, gastrointestinal (GI) abnormalities, characteristic facial features, and abnormalities.`,
-      },
-      {
-        heading: "Treatment / Management",
-        content: `The management of patients with Down syndrome is multidisciplinary. Newborns with suspicion of Down syndrome should have a karyotyping done to confirm the diagnosis. The family needs to be referred to the clinical geneticist for the genetic testing and counseling of both parents.
-
-Parental education is one of the foremost aspects regarding the management of Down syndrome, as parents need to be aware of the different possible conditions associated with it so that they can be diagnosed and treated appropriately. Treatment is basically symptomatic, and complete recovery is not possible.
-
-These patients should have their hearing and vision assessed, and as they are more prone to have cataracts, timely surgery is required. Thyroid function tests should be done on a yearly basis and, if deranged, should be managed accordingly.
-
-A balanced diet, regular exercise, and physical therapy are needed for optimum growth and weight gain, although feeding problems improve after cardiac surgery.
-
-Cardiac referral should arranged for all the patients regardless of the clinical signs of congenital heart disease. If present, this should be corrected within the first 6 months of life to ensure optimum growth and development of the child.
-
-Other specialties involved include a developmental pediatrician, pediatric pulmonologist, gastroenterologist, neurologist, neurosurgeon, orthopedic specialist, child psychiatrist, physical and occupational therapist, speech and language therapist, and audiologist.`,
-      },
-      {
-        heading: "Differential Diagnosis",
-        content: `Congenital hypothyroidism
-Mosaic trisomy 21 syndrome
-Partial trisomy 21(or 21q duplication)
-Robertsonian trisomy 21
-Trisomy 18
-Zellweger syndrome or other peroxisomal disorders`,
-      },
-      {
-        heading: "Enhancing Healthcare Team Outcomes",
-        content: `The management of patients with Down syndrome is an interprofessional endeavor. Newborns with suspicion of Down syndrome should have a karyotyping done to confirm the diagnosis. The family needs to be referred to the clinical geneticist for the genetic testing and counseling of both parents.
-Because almost every organ system is involved, the child needs to be seen by the ophthalmologist, orthopedic surgeon, cardiologist, dermatologist, gastroenterologist, physical therapist, mental health nurse, ENT surgeon, and behavior specialist.
-Parental education is one of the foremost aspects regarding the management of Down syndrome, as parents need to be aware of the different possible conditions associated with it so that they can be diagnosed and treated appropriately. Treatment is basically symptomatic, and complete recovery is not possible.
-While life span has increased over the past 3 decades, these individuals still have a shorter life expectancy compared to healthy individuals.`,
-      },
-    ],
-    references: ["StatPearls - NCBI Bookshelf: Down Syndrome (Trisomy 21)"],
-  },
+  id: "down-syndrome-trisomy-21",
+  title: "Down Syndrome (Trisomy 21)",
+  summary:
+    "Down syndrome (trisomy 21) is a genetic disorder caused by the presence of all or a portion of a third chromosome 21. Patients typically present with mild to moderate intellectual disability, growth retardation, and characteristic facial features.",
+  sections: [
+    {
+      heading: "Introduction",
+      content:
+        "Down syndrome was first described by an English physician, John Langdon Down, in 1866, but its association with chromosome 21 was established almost 100 years later in the laboratory of Raymond Turpin in Paris. Drs. Marth Gutier and Jerome Lejeune were Turpin's students. Credit for the association is debated. It is the presence of all or part of the third copy of chromosome 21 that causes Down syndrome, the most common chromosomal abnormality occurring in humans. It is also found that the most frequently occurring live-born aneuploidy is trisomy 21, which causes this syndrome.\n\nDown syndrome (trisomy 21) is a genetic disorder caused by the presence of all or a portion of a third chromosome 21. Patients typically present with mild to moderate intellectual disability, growth retardation, and characteristic facial features. This activity reviews the evaluation and management of Down syndrome and explains the role of the interprofessional team in improving care for patients with this condition."
+    },
+    {
+      heading: "Epidemiology",
+      content:
+        "The incidence of Down syndrome increases with maternal age, and its occurrence varies in different populations (1 in 319 to 1 in 1000 live births). It is also known that the frequency of Down syndrome fetuses is quite high at the time of conception, but about 50% to 75% of these fetuses are lost before term. The occurrence of other autosomal trisomy is much more common than the 21, but the postnatal survival is very poor as compared to Down syndrome. This high percentage of survival of patients with trisomy 21 is thought to be a function of a small number of genes on chromosome 21 called Hsa21, which is the smallest and least dense of the autosomes."
+    },
+    {
+      heading: "Prognosis",
+      content:
+        "With the recent advances in the medical practice, development of surgical techniques for the correction of congenital disabilities, and improvement in general care, there has been a tremendous increase in the survival of infants and life expectancy of patients with Down syndrome. A Birmingham (United Kingdom) study done almost 60 years ago showed that 45% of infants survived the first year of life, and only 40% would be alive at 5 years. A later study conducted about 50 years after that showed that 78% of patients with Down syndrome plus a congenital heart defect survived for 1 year, while the number went up to 96% in patients without the anomalies. This rise in the life expectancy of these patients should continue to rise significantly because of the developments in medical science. Healthcare facilities aim to provide proper and timely management to these patients and to help them to have a fulfilled and productive life."
+    },
+    {
+      heading: "Etiology",
+      content:
+        "The majority of patients with Down syndrome have an extra copy of chromosome 21. There are different hypotheses related to the genetic basis of Down syndrome and the association of different genotypes with the phenotypes. Among them is gene dosage imbalance, in which there is an increased dosage or number of genes of Hsa21, which results in increased gene expansion. It further includes the possibility of association of different genes with different phenotypes of Down syndrome. The other popular hypothesis is the amplified development instability hypothesis, according to which the genetic imbalance created by a number of trisomic genes results in a greater impact on the expression and regulation of many genes.\n\nThe critical region hypothesis is also well-known in this list. Down syndrome critical regions (DSCR) are a few chromosomal regions that are associated with partial trisomy for Has21. DSCR on 21q21.22 is responsible for many clinical features of Down syndrome. After a thorough study of different analyses, it became clear that a single critical region gene cannot cause all the phenotypical features associated with trisomy 21, rather it is more evident that multiple critical regions or critical genes have a role to play in this phenomenon."
+    },
+    {
+      heading: "Evaluation",
+      content:
+        "There are different methods used for the prenatal diagnosis of Down syndrome. Ultrasound, between 14 and 24 weeks of gestation, can be used as a tool for diagnosis based on soft markers like increased nuchal fold thickness, small or no nasal bone, and large ventricles. Nuchal translucency (NT) is detected by ultrasound and is caused by a collection of fluid under the skin behind the fetal neck. It is done between 11 and 14 weeks of gestation. Other causes of this finding include trisomy 13 (Patau syndrome), trisomy 18 (Edwards syndrome), and Turner syndrome. Amniocentesis and chorionic villus sampling have widely been used for the diagnosis, but there is a small risk of miscarriages between 0.5% to 1%.\n\nSeveral other methods have also been developed and are used for the rapid detection of trisomy 21 both during fetal life and after birth. The FISH of interphase nuclei is most commonly used by either using Hsa21-specific probes or the whole of the Hsa21. Another method that is currently being used is QF-PCR, in which the presence of 3 different alleles is determined by using DNA polymorphic markers. The success of this method depends upon the informative markers and the presence of DNA. It has been found that up to 86.67% of cases of Down syndrome can be identified by using the STR marker method.\n\nA relatively new method called paralogue sequence quantification (PSQ) uses the paralogue sequence on the Hsa21 copy number. It is a PCR-based method that uses the paralogue genes to detect the targeted chromosome number abnormalities, which is known as paralogue sequence quantification.\n\nThere are non-invasive prenatal diagnostic methods that are being studied to be used for the diagnosis of Down syndrome prenatally. These are based on the presence of fetal cells in the maternal blood and the presence of cell-free fetal DNA in the maternal serum.\n\nCell-free fetal DNA makes up 5% to 10% of the maternal plasma, and it increases during pregnancy and clears after delivery. Though this method has been used to determine fetal Rh status in Rhive women, sex in sex-linked disorders, and for the detection of paternally inherited autosomal recessive and dominant traits, its use for the detection of chromosomal aneuploidy, especially the trisomy is still a challenge.\n\nFew other recent methods like digital PCR and next-generation sequencing (NGS) are also being developed for the diagnosis of Down syndrome."
+    },
+    {
+      heading: "Clinical Features",
+      content:
+        `Different clinical conditions are associated with Down syndrome as different systems are affected by it. These patients have a wide array of signs and symptoms like intellectual and developmental disabilities or neurological features, congenital heart defects, gastrointestinal (GI) abnormalities, characteristic facial features, and abnormalities.
+Congenital Cardiac Defects (CHD)
+Congenital cardiac defects are by far the most common and leading cause associated with morbidity and mortality in patients with Down syndrome, especially in the first 2 years of life. Though different suggestions have been made about the geographical as well as seasonal variation in the occurrence of different types of congenital cardiac defects in trisomy 21, so far none of the results have been conclusive.
+The incidence of CHD in babies born with Down syndrome is up to 50%. The most common cardiac defect associated with Down syndrome is an atrioventricular septal defect (AVSD), and this defect makes up to 40% of the congenital cardiac defects in Down syndrome. It is said to be associated with the mutation of the non-Hsa21 CRELD1 gene. The second most common cardiac defect in Down syndrome is a ventricular septal defect (VSD), which is seen in about 32% of the patients with Down syndrome. Together with AVSD, these account for more than 50% of congenital cardiac defects in patients with Down syndrome.
+The other cardiac defects associated with trisomy 21 are secundum atrial defect (10%), tetralogy of Fallot (6%), and isolated PDA (4%), while about 30% of the patients have more than one cardiac defect. There is geographical variation in the prevalence of the cardiac defect in Down syndrome, with VSD being the most common in Asia and secundum type ASD in Latin America. The reason behind this difference in the prevalence of different types of CHD in different regions is still unclear, and many factors such as regional proximity have been found to contribute.
+Because of such a high prevalence of CHD in patients with Down syndrome, it has been recommended that all patients get an echocardiogram within the first few weeks of life.
+Gastrointestinal (GI) Tract Abnormalities
+Patients with trisomy 21 have many structural and functional disorders related to the GI tract. Structural defects can occur anywhere from the mouth to anus, and it has been found that certain defects like duodenal and small bowel atresia or stenosis, annular pancreas, imperforate anus, and Hirschsprung disease occur more commonly in these patients as compared to the general population.
+About 2% of patients with Down syndrome have Hirschsprung disease while 12% of patients with Hirschsprung disease have Down syndrome. Hirschsprung disease is a form of functional lower intestinal obstruction in which the neural cells fail to migrate to the distal segment of the rectum resulting in an aganglionic segment which does not have normal peristalsis resulting in failure of normal defecation reflex causing a functional obstruction. The infant usually presents with signs and symptoms related to intestinal obstruction. Duodenal atresia and imperforate anus usually present in the neonatal period.
+Apart from the structural defects patients with Down syndrome, patients are also prone to many other GI disorders like gastroesophageal reflux (GERD), chronic constipation, intermittent diarrhea, and celiac disease. Since there is a strong association of celiac disease with Down syndrome being present in about 5% of these patients, it is recommended to do yearly screening of celiac disease. Once diagnosed, these patients will have to remain on a gluten-free diet for the rest of life.
+Hematologic Disorders
+There are several hematological disorders associated with Down syndrome. The hematological abnormalities in a newborn with Down syndrome (HANDS) constitute neutrophilia, thrombocytopenia, and polycythemia, which are seen in 80%, 66% and 34% of Down syndrome babies respectively. HANDS is usually mild and resolves within the first thr3e weeks of life.
+The other disorder that is quite specific to Down syndrome is a transient myeloproliferative disorder, which is defined as detection of blast cells in younger than 3 month old babies with Down syndrome. It is characterized by the clonal proliferation of megakaryocytes and is detected during the first week of life and is resolved by 3 months of life. It is also known as transient abnormal myelopoiesis or transient leukemia and is known to be present in about 10% of patients with Down syndrome. If this occurs in the fetus, it can cause spontaneous abortion.
+Patients with Down syndrome are 10-times more at risk of developing leukemia, which constitute about 2% of all pediatric acute lymphoblastic leukemia and 10% of all pediatric acute myeloid leukemia. Thirty percent of Down syndrome patients with acute lymphoblastic leukemia have an association with function mutation in Janus Kinase 2 gene.
+About 10% of patients with chronic myeloid leukemia (TML) develop leukemogenesis of acute megakaryoblastic leukemia (AMKL) before the age of 4 years. AMKL is associated with GATA1 gene which is an X-linked transcriptor factor leading to an uncontrolled proliferation of immature megakaryocytes.
+Neurologic Disorders
+Trisomy of Hsa21 has associated with reduced brain volume especially hippocampus and cerebellum. Hypotonia is the hallmark of babies with Down syndrome and is present in almost all of them. It is defined as decreased resistance to passive muscle stretch and is responsible for delayed motor development in these patients. Because of hypotonia Down syndrome patients have joint laxity that causes decreased gait stability and increased energy requirement for physical exertion. These patients are prone to decreased bone mass and increased risk of fractures due to the low level of physical activity, while the ligamentous laxity predisposes these patients to atlantoaxial subluxation.
+Five percent to 13% of children with Down syndrome have seizures, out of that, 40% will have seizures before their first birthday, and in these cases, the seizures are usually infantile spasms. Down syndrome children with infantile spasm do respond better to antiepileptics as compared to other kids with the same, and therefore, early intervention and treatment improve the developmental outcome.
+Lennox-Gestaut syndrome is also seen to be more prevalent in children with Down syndrome when it does occur, has a late onset, and is associated with reflex seizures along with an increased rate of EEG abnormalities.
+Forty percent of patients with Down syndrome develop tonic-clonic or myoclonic seizures in their first 3 decades. Dementia occurs more commonly in patients older than 45 years of age with Down syndrome, and about 84% are more prone to develop seizures. The seizures in these patients are related to the rapid decline in their cognitive functions.
+The risk of developing early-onset Alzheimer disease is significantly high in patients with Down syndrome with 50% to 70% of patients developing dementia by the age of 60 years. Amyloid precursor protein (APP), which is known to be associated with increased risk for the Alzheimer disease is found to be encoded on Hsa21, and trisomy of this protein is likely to be responsible for increased frequency of dementia in people with Down syndrome. Recent studies have shown that triplication of APP is associated with increased risk of early-onset Alzheimer disease even in the normal population.
+Nearly all the patients with Down syndrome have mild to moderate learning disability. Trisomy of multiple genes including DYRK1A, synaptojanin 1, and single-minded homolog 2 (SIM2) have been found to cause learning and memory defects in mice, which suggests the possibility that the overexpression of these genes may likely be causing the learning disability in people with Down syndrome.
+Endocrinological Disorders
+Thyroid gland dysfunction is most commonly associated with Down syndrome. Hypothyroidism can be congenital or acquired at any time during life. The newborn screening program in New York has reported an increased incidence of congenital hypothyroidism in babies with Down syndrome as compared to the others. The anti-thyroid autoantibodies were found in 13% to 34% of patients with Down syndrome who had acquired hypothyroidism, and the concentration of these antibodies increased after 8 years of life. About half of the patients with Down syndrome have been shown to have subclinical hypothyroidism with elevated TSH and normal thyroxine levels. Hyperthyroidism is much less frequent in patients with Down syndrome as compared to hypothyroidism, although the rate of it still exceeds the incidence of hyperthyroidism in the general pediatric population.
+Abnormalities in sexual development are also noted to be significant with delayed puberty in both genders. In girls, primary hypogonadism presents as delay in menarche or adrenarche, while in boys it can manifest as cryptorchidism, ambiguous genitalia, micropenis, small testes, low sperm count, and scanty growth of axillary and pubic hair.
+ The insulin-like growth factor is also said to be responsible for the delay in skeletal maturation and short stature in patients with Down syndrome.
+Musculoskeletal Disorders
+Children with Down syndrome are at an increased risk of reduced muscle mass because of hypotonia increased ligamentous laxity which causes retardation of gross motor skills and can result in joint dislocation. These patients also have vitamin D deficiency due to several factors like inadequate exposure to sunlight, inadequate intake of vitamin D, malabsorption secondary to celiac disease, increased breakdown because of anticonvulsant therapy, among other factors. These factors increase the risk of decreased bone mass in children with Down syndrome and predispose them to recurrent fractures.
+Refractive Errors and Visual Abnormalities
+Ocular and orbital anomalies are common in children with Down syndrome. These include blepharitis (2-7%), keratoconus (5-8%), cataract (25% to 85%), retinal anomalies (0% to 38%), strabismus (23% to 44%), amblyopia (10% to 26%), nystagmus (5% to 30%), refractive errors (18% to 58%), glaucoma (less than 1%), iris anomalies (38% to 90%) and optic nerve anomalies (very few cases).
+The ocular anomalies, if left untreated, can significantly affect the lives of these patients. Therefore, all the patients with Down syndrome should have an eye exam is done during the first 6 months of life and then annually.
+Otorhinolaryngological ( ENT) Disorders
+Ear, nose, and throat problems are also quite common in patients with Down syndrome. The anatomical structure of the ear in Down syndrome patients predisposes them to hearing deficits. Hearing loss is usually conductive because of impaction of cerumen and middle ear pathologies, including chronic middle ear effusion due to the small Eustachian tube, acute otitis media, and eardrum perforation. These patients usually require pressure equalization tubes for the treatment.
+The sensorineural hearing loss has also been associated with Down syndrome because of the structural abnormalities in the inner ears such as narrow internal auditory canals.
+`
+    },
+    {
+      heading: "Treatment / Management",
+      content:
+        "The management of patients with Down syndrome is multidisciplinary. Newborns with suspicion of Down syndrome should have a karyotyping done to confirm the diagnosis. The family needs to be referred to the clinical geneticist for the genetic testing and counseling of both parents.\n\nParental education is one of the foremost aspects regarding the management of Down syndrome, as parents need to be aware of the different possible conditions associated with it so that they can be diagnosed and treated appropriately. Treatment is basically symptomatic, and complete recovery is not possible.\n\nThese patients should have their hearing and vision assessed, and as they are more prone to have cataracts, timely surgery is required. Thyroid function tests should be done on a yearly basis and, if deranged, should be managed accordingly.\n\nA balanced diet, regular exercise, and physical therapy are needed for optimum growth and weight gain, although feeding problems improve after cardiac surgery.\n\nCardiac referral should arranged for all the patients regardless of the clinical signs of congenital heart disease. If present, this should be corrected within the first 6 months of life to ensure optimum growth and development of the child.\n\nOther specialties involved include a developmental pediatrician, pediatric pulmonologist, gastroenterologist, neurologist, neurosurgeon, orthopedic specialist, child psychiatrist, physical and occupational therapist, speech and language therapist, and audiologist."
+    },
+    {
+      heading: "Differential Diagnosis",
+      content:
+        "Congenital hypothyroidism\nMosaic trisomy 21 syndrome\nPartial trisomy 21 (or 21q duplication)\nRobertsonian trisomy 21\nTrisomy 18\nZellweger syndrome or other peroxisomal disorders"
+    },
+    {
+      heading: "Enhancing Healthcare Team Outcomes",
+      content:
+        "The management of patients with Down syndrome is an interprofessional endeavor. Newborns with suspicion of Down syndrome should have a karyotyping done to confirm the diagnosis. The family needs to be referred to the clinical geneticist for the genetic testing and counseling of both parents.\n\nBecause almost every organ system is involved, the child needs to be seen by the ophthalmologist, orthopedic surgeon, cardiologist, dermatologist, gastroenterologist, physical therapist, mental health nurse, ENT surgeon, and behavior specialist.\n\nParental education is one of the foremost aspects regarding the management of Down syndrome, as parents need to be aware of the different possible conditions associated with it so that they can be diagnosed and treated appropriately. Treatment is basically symptomatic, and complete recovery is not possible.\n\nWhile life span has increased over the past 3 decades, these individuals still have a shorter life expectancy compared to healthy individuals."
+    }
+  ],
+  references: [
+    "https://www.ncbi.nlm.nih.gov/books/NBK526016/"
+  ]
+}
 ];
