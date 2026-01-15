@@ -1,18 +1,16 @@
 "use client";
 
 import React from "react";
-// import Image from 'next/image'; // Nên dùng 'next/image' khi deploy
+// import Image from 'next/image'; 
 import {
-  Star, // Icon cho "Chuẩn 5 sao"
-  Clock, // Icon cho "Nhận mẫu siêu tốc"
-  Zap, // Icon cho "Trả kết quả nhanh nhất"
-  Check, // Icon cho các mục
-  Handshake, // Icon cho "Đồng hành"
+  Star,
+  Clock,
+  Zap,
+  Check,
+  Handshake,
 } from "lucide-react";
 
-// --- DỮ LIỆU PHÂN TÍCH TỪ ẢNH ---
-
-// 1. Dữ liệu cho 3 cột cam kết
+// --- DỮ LIỆU ---
 const commitments = [
   {
     icon: Star,
@@ -31,7 +29,6 @@ const commitments = [
   },
 ];
 
-// 2. Dữ liệu cho phần đồng hành
 const partnership = {
   title: "Đồng hành phát triển thương hiệu cùng đối tác",
   icon: Handshake,
@@ -41,26 +38,22 @@ const partnership = {
   ],
 };
 
-// Màu sắc (để nhất quán)
 const brandColors = {
   primary: "#1976D2",
   secondary: "#0D47A1",
 };
 
 // --- COMPONENT CHÍNH ---
-
 export default function OurServiceSystem() {
   return (
     <section
       id="he-thong-dich-vu"
       className="w-full py-12"
       style={{
-        background: `linear-gradient(to bottom, white, #e0f7fa, white)`, // trắng → xanh nhạt → trắng
+        background: `linear-gradient(to bottom, white, #e0f7fa, white)`,
       }}
     >
       <div className="container mx-auto max-w-7xl px-4">
-        {/* Grid layout 40% (ảnh) / 60% (nội dung) */}
-        {/* Dùng 5 cột, ảnh 2 cột, nội dung 3 cột */}
         <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-5 md:gap-16">
           {/* === CỘT ẢNH (40%) === */}
           <div className="md:col-span-2 flex flex-col items-center">
@@ -69,11 +62,11 @@ export default function OurServiceSystem() {
               alt="Hệ thống dịch vụ GennovaX"
               className="h-auto w-full rounded-2xl object-cover aspect-square"
               style={{
-                boxShadow: "0 4px 20px rgba(0, 128, 255, 0.6)", // shadow xanh tỏa đều
+                boxShadow: "0 4px 20px rgba(0, 128, 255, 0.6)",
               }}
             />
             <a
-              href="/gioi-thieu/danh-sach-phong-kham" // Thay bằng link bạn muốn
+              href="/gioi-thieu/danh-sach-phong-kham"
               className="mt-4 text-xs lg:text-lg text-center text-blue-600 text-opacity-80 font-medium inline-block underline hover:text-blue-800"
             >
               Chuỗi 68 phòng xét nghiệm trên toàn quốc.
@@ -82,29 +75,32 @@ export default function OurServiceSystem() {
 
           {/* === CỘT NỘI DUNG (60%) === */}
           <div className="md:col-span-3">
-            {/* Tiêu đề chính cho phần nội dung */}
-            {/* <h2 
-              className="text-3xl font-extrabold md:text-4xl" 
-              style={{ color: brandColors.primary }}
-            >
-              Vận Hành Xuất Sắc & Cam Kết Dịch Vụ
-            </h2>
-            <p className="mt-4 text-lg text-gray-600 md:text-xl">
-              Chúng tôi tối ưu hóa mọi quy trình để đảm bảo tốc độ, sự linh hoạt và 
-              chất lượng chuyên nghiệp nhất trong từng dịch vụ.
-            </p> */}
-
-            {/* Grid 3 cột cho 3 cam kết */}
-            <div className="my-8 mt-0 grid grid-cols-1 gap-6 sm:grid-cols-3">
+            
+            {/* --- PHẦN CAM KẾT (Đã chỉnh sửa scroll ngang mobile) --- */}
+            <div className="
+                my-8 mt-0 
+                flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory 
+                sm:grid sm:grid-cols-3 sm:gap-6 sm:overflow-visible sm:pb-0
+                scrollbar-hide
+            ">
               {commitments.map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-xl bg-gray-50 p-4 shadow-lg transition-shadow hover:shadow-xl"
+                  className="
+                    flex-shrink-0 w-[85vw] snap-center sm:w-auto
+                    rounded-xl bg-gray-50 p-4 shadow-lg transition-shadow hover:shadow-xl
+                  "
                 >
                   <item.icon
                     className="hidden lg:flex h-10 w-10 mb-3"
                     style={{ color: brandColors.secondary }}
                   />
+                  {/* Icon hiển thị trên mobile nếu muốn (tùy chọn) */}
+                  <item.icon
+                    className="flex lg:hidden h-8 w-8 mb-2"
+                    style={{ color: brandColors.secondary }}
+                  />
+                  
                   <h4 className="text-lg font-bold text-gray-800">
                     {item.title}
                   </h4>
@@ -116,10 +112,11 @@ export default function OurServiceSystem() {
                 </div>
               ))}
             </div>
+            {/* ------------------------------------------------------- */}
 
             {/* Phần 2: Đồng hành cùng đối tác */}
             <div
-              className="mt-10 rounded-xl p-6"
+              className="mt-6 sm:mt-10 rounded-xl p-6"
               style={{ backgroundColor: brandColors.primary }}
             >
               <div className="flex items-center">

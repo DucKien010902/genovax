@@ -3,8 +3,11 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { doctorsData, Doctor } from "@/data/doctors";
+import { doctorsData, Doctor } from "@/data/doctors"; // Giả sử bạn import từ file data
 import { MapPin, UserRound } from "lucide-react";
+
+// --- Types (Nếu chưa có file data riêng) ---
+
 
 export default function DoctorsList() {
   const [searchTerm] = useState("");
@@ -15,11 +18,12 @@ export default function DoctorsList() {
       (d) =>
         d.name.toLowerCase().includes(t) ||
         d.workplace.toLowerCase().includes(t) ||
-        d.title.toLowerCase().includes(t),
+        d.title.toLowerCase().includes(t)
     );
   }, [searchTerm]);
 
-  const topDoctors = filteredDoctors.slice(0, 3);
+  // Lấy danh sách (bạn có thể tăng số lượng lên >3 để test scroll rõ hơn)
+  const topDoctors = filteredDoctors.slice(0, 3); 
 
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 font-sans bg-slate-50">
@@ -33,11 +37,20 @@ export default function DoctorsList() {
           </div>
         </div>
 
-        {/* 3 Cards */}
+        {/* --- PHẦN CHỈNH SỬA TẠI ĐÂY --- */}
         {topDoctors.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
+          <div className="
+            flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory
+            sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-7 lg:gap-8 sm:overflow-visible sm:pb-0
+            scrollbar-hide
+          ">
             {topDoctors.map((doctor) => (
-              <DoctorCard key={doctor.id} doctor={doctor} />
+              <div 
+                key={doctor.id}
+                className="flex-shrink-0 w-[85vw] snap-center sm:w-auto"
+              >
+                <DoctorCard doctor={doctor} />
+              </div>
             ))}
           </div>
         ) : (
@@ -48,9 +61,10 @@ export default function DoctorsList() {
             </p>
           </div>
         )}
+        {/* ------------------------------- */}
 
         {/* More Button */}
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mt-6 sm:mt-10">
           <Link
             href="/gioi-thieu/doi-ngu-bac-sy"
             className="px-6 py-2.5 text-sm sm:text-base md:text-lg border-2 border-blue-500 border-dashed rounded-full 
@@ -69,12 +83,13 @@ export default function DoctorsList() {
 }
 
 /* ---------------------------------------------------
-   Doctor Card — Tối ưu Responsive
+   Doctor Card
 ---------------------------------------------------- */
 const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
   return (
     <div
       className="
+        h-full w-full
         group relative bg-white rounded-2xl shadow-sm border border-slate-200
         hover:shadow-xl hover:-translate-y-1 transition-all duration-300
         overflow-hidden flex flex-col
@@ -96,7 +111,7 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
                 className="object-cover"
                 onError={(e) => {
                   e.currentTarget.srcset = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    doctor.name,
+                    doctor.name
                   )}&background=random&size=256`;
                 }}
               />
@@ -105,28 +120,28 @@ const DoctorCard = ({ doctor }: { doctor: Doctor }) => {
         </div>
 
         {/* Info */}
-        <div className="text-center mb-4 lg:mb-6">
-          <p className="text-blue-600 font-semibold text-xs sm:text-sm uppercase tracking-wider mb-1">
-            {doctor.title}
-          </p>
-          <h3 className="text-lg sm:text-xl font-bold text-slate-800">
-            {doctor.name}
-          </h3>
+        <div className="text-center mb-4 lg:mb-6 flex-grow">
+            <p className="text-blue-600 font-semibold text-xs sm:text-sm uppercase tracking-wider mb-1">
+                {doctor.title}
+            </p>
+            <h3 className="text-lg sm:text-xl font-bold text-slate-800">
+                {doctor.name}
+            </h3>
 
-          <div className="mt-2 inline-flex items-center justify-center text-xs sm:text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
-            <MapPin className="w-3 h-3 mr-1" />
-            {doctor.workplace}
-          </div>
+            <div className="mt-2 inline-flex items-center justify-center text-xs sm:text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                <MapPin className="w-3 h-3 mr-1" />
+                {doctor.workplace}
+            </div>
         </div>
 
         {/* Roles */}
-        <ul className="space-y-1.5 sm:space-y-2 mb-6">
+        <ul className="space-y-1.5 sm:space-y-2 mb-6 min-h-[60px]"> {/* Thêm min-h để thẻ đều nhau hơn */}
           {doctor.roles.slice(0, 3).map((role, index) => (
             <li
               key={index}
               className="flex items-start text-xs sm:text-sm text-slate-600"
             >
-              <span className="mr-2 mt-1 w-1.5 h-1.5 bg-blue-400 rounded-full"></span>
+              <span className="mr-2 mt-1 w-1.5 h-1.5 bg-blue-400 rounded-full flex-shrink-0"></span>
               <span className="line-clamp-2">{role}</span>
             </li>
           ))}

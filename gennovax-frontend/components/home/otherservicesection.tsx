@@ -123,12 +123,9 @@ const OtherServices: React.FC = () => {
   return (
     <section className="py-5 pt-10 lg:py-15 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Tiêu đề Section (Sáng tạo) */}
+        {/* Tiêu đề Section */}
         <div className="text-center mb-8 lg:mb-16">
-          <div
-            className="inline-block px-5 py-2.5 border-3 border-dashed border-blue-400 rounded-full
-                       bg-white/80 backdrop-blur-sm"
-          >
+          <div className="inline-block px-5 py-2.5 border-3 border-dashed border-blue-400 rounded-full bg-white/80 backdrop-blur-sm">
             <h2 className="text-sm lg:text-3xl font-bold text-black">
               Dịch Vụ Nổi Bật Khác
               <span className="text-blue-700"> Của GennovaX</span>
@@ -136,12 +133,28 @@ const OtherServices: React.FC = () => {
           </div>
         </div>
 
-        {/* Grid 3 cột */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* --- PHẦN CHỈNH SỬA TẠI ĐÂY --- */}
+        <div
+          className="
+            flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory 
+            md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:pb-0
+            scrollbar-hide
+          "
+        >
           {serviceData.map((service) => (
-            <ServiceCard key={service.id} service={service} />
+            <div
+              key={service.id}
+              className="
+                flex-shrink-0 w-[85vw] snap-center 
+                sm:w-[60vw] md:w-auto md:flex-shrink
+              "
+            >
+              <ServiceCard service={service} />
+            </div>
           ))}
         </div>
+        {/* ------------------------------- */}
+        
       </div>
     </section>
   );

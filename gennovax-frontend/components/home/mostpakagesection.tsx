@@ -21,7 +21,7 @@ const popularPackagesData: PackageDetails[] = [
   {
     id: "adn-truoc-sinh-10ngay",
     name: "Xét nghiệm ADN Cha Con Trước Sinh (Không xâm lấn)",
-    tagline: "Sử dụng mẫu máu mẹ và 1 mẫu bất kỳ của cha",
+    tagline: "Sử dụng 01 mẫu bố giả định và 01 mẫu máu mẹ.",
     description: `Sử dụng 01 mẫu máu mẹ và 01 mẫu bất kỳ của cha (móng tay, tóc, bàn chải...). Áp dụng cho thai từ 7 tuần. Độ chính xác: 99,9999%. Bảo mật tuyệt đối. Trả kết quả sau 3–5 ngày làm việc.`,
     mainImageUrl:
       "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/500087657_122108016806870117_710668953486729298_n_wmcxfk.jpg",
@@ -31,7 +31,7 @@ const popularPackagesData: PackageDetails[] = [
   {
     id: "geni-8",
     name: "Xét nghiệm sàng lọc NIPT - Geni 8",
-    tagline: "Sàng lọc trước sinh không xâm lấn",
+    tagline: "Phát hiện lệch bội 3 cặp NST (13, 18, 21) và 5 hội chứng NST giới tính.",
     description:
       "Phát hiện lệch bội 3 cặp NST (13, 18, 21) và 5 hội chứng NST giới tính (Turner, Tam nhiễm X, Klinefelter, Jacobs, XXXY). Dành cho thai đơn từ 9 tuần. Kết quả có từ sau 3-5 ngày làm việc.",
     mainImageUrl:
@@ -42,7 +42,7 @@ const popularPackagesData: PackageDetails[] = [
   {
     id: "adn-phap-ly-2-mau-1-2ngay",
     name: "Xét nghiệm ADN (Pháp lý - 2 mẫu)",
-    tagline: "Xác định quan hệ huyết thống chuẩn pháp lý",
+    tagline: "Xác định quan hệ huyết thống chuẩn pháp lý.",
     description: `Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 2 mẫu/1 kết quả). Dùng cho các thủ tục như làm khai sinh, nhận cha/mẹ/con. Độ chính xác cao 99,9999%. Thời gian trả kết quả: 1-2 ngày làm việc.`,
     mainImageUrl:
       "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/496942572_122098102940870117_1791812201739354939_n_efjixl.jpg",
@@ -52,7 +52,7 @@ const popularPackagesData: PackageDetails[] = [
   {
     id: "geni-23",
     name: "Xét nghiệm sàng lọc NIPT - Geni 23",
-    tagline: "Sàng lọc toàn bộ 23 cặp nhiễm sắc thể",
+    tagline: "Phát hiện lệch bội toàn bộ 22 cặp NST thường và 5 hội chứng NST giới tính.",
     description:
       "Phát hiện lệch bội toàn bộ 22 cặp NST thường và 5 hội chứng giới tính: Turner (XO), tam nhiễm X (XXX), Klinefelter (XXY), Klinefelter mở rộng (XXXY), Jacobs (XYY). Áp dụng cho thai đơn từ 9 tuần. Thời gian trả kết quả: 3–5 ngày làm việc.",
     mainImageUrl:
