@@ -3,8 +3,7 @@
 
 import Link from "next/link";
 import React from "react";
-// Cần cài đặt: npm install react-bootstrap-icons
-import Image from "next/image"; // Sử dụng Next/Image để tối ưu ảnh
+import Image from "next/image";
 import {
   ArrowRightCircle,
   BriefcaseFill,
@@ -12,17 +11,15 @@ import {
   PeopleFill,
 } from "react-bootstrap-icons";
 
-// --- 1. Cấu trúc dữ liệu (TypeScript) ---
 export type Service = {
   id: string;
   title: string;
   description: string;
-  imageUrl: string; // Ảnh nền của card
-  icon: React.ComponentType<{ size?: number | string }>; // Component Icon
+  imageUrl: string;
+  icon: React.ComponentType<{ size?: number | string }>;
   href: string;
 };
 
-// --- 2. Dữ liệu mẫu (3 dịch vụ) ---
 const serviceData: Service[] = [
   {
     id: "tu-van",
@@ -30,7 +27,7 @@ const serviceData: Service[] = [
     description:
       "Kết nối trực tiếp với chuyên gia để giải mã gen, tư vấn chuyên sâu và xây dựng kế hoạch sức khỏe.",
     imageUrl:
-      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764730192/dl.beatsnoop.com-3000-O9KATiVLbI_bf17z3.jpg", // Placeholder: Bác sĩ và bệnh nhân
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764730192/dl.beatsnoop.com-3000-O9KATiVLbI_bf17z3.jpg",
     icon: PeopleFill,
     href: "/gioi-thieu#doi-ngu-va-thanh-tuu",
   },
@@ -39,7 +36,7 @@ const serviceData: Service[] = [
     title: "Chăm sóc thai kì",
     description: "Sàng lọc, chẩn đoán, trước, trong, sau khi mang thai.",
     imageUrl:
-      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764742688/gen-h-z7287822248537_47046515784e5e419d59740b0d1edc4d_y0x2mk.jpg", // Placeholder: Họp văn phòng
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764742688/gen-h-z7287822248537_47046515784e5e419d59740b0d1edc4d_y0x2mk.jpg",
     icon: BriefcaseFill,
     href: "/services/corporate-solutions",
   },
@@ -49,112 +46,155 @@ const serviceData: Service[] = [
     description:
       "Hợp tác R&D, ứng dụng công nghệ AI và giải trình tự gen thế hệ mới (NGS) vào y học chính xác.",
     imageUrl:
-      "https://genesolutions.vn/wp-content/uploads/2022/11/hoi-nghi-giam-doc-benh-vien_new-1.jpg", // Placeholder: Lab khoa học
+      "https://genesolutions.vn/wp-content/uploads/2022/11/hoi-nghi-giam-doc-benh-vien_new-1.jpg",
     icon: Flask,
     href: "/services/research-development",
   },
 ];
 
-// --- 3. Component Card Dịch Vụ (Item) ---
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
   const Icon = service.icon;
 
   return (
-    // Card bo tròn, đổ bóng và có hiệu ứng hover
-    <div
-      className="relative w-full h-80 lg:h-96 rounded-2xl overflow-hidden shadow-lg
-                 group transition-all duration-300 ease-in-out
-                 hover:shadow-2xl hover:scale-[1.03]"
+    <article
+      className="
+        group relative h-80 lg:h-96 w-full overflow-hidden rounded-3xl
+        bg-white ring-1 ring-blue-900/10 shadow-sm
+        transition-all duration-300
+        hover:-translate-y-1 hover:shadow-xl hover:ring-blue-900/20
+      "
     >
-      {/* 1. Hình ảnh nền (Sử dụng Next/Image) */}
-      <Image
-        src={service.imageUrl}
-        alt={service.title}
-        layout="fill"
-        objectFit="cover"
-        unoptimized
-        className="transition-transform duration-500 group-hover:scale-110"
-      />
+      {/* Accent line */}
+      <div className="absolute inset-x-0 top-0 z-10 h-1 bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500" />
 
-      {/* 2. Lớp phủ Gradient (Sáng tạo hơn) */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-2/4
-                   bg-gradient-to-t from-blue-600 via-blue-600/80 to-transparent"
-      />
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <Image
+          src={service.imageUrl}
+          alt={service.title}
+          fill
+          unoptimized
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+          sizes="(max-width: 768px) 85vw, (max-width: 1024px) 50vw, 33vw"
+          priority={false}
+        />
+        {/* medical overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/25 to-transparent" />
+      </div>
 
-      {/* 3. Nội dung Card (Overlay) */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-        {/* Icon (Thiết kế nổi bật) */}
+      {/* Content */}
+      <div className="relative z-10 flex h-full flex-col justify-end p-5 sm:p-6">
+        {/* Icon badge */}
         <div
-          className="w-14 h-14 rounded-full flex items-center justify-center
-                     bg-white/30 backdrop-blur-sm border border-white/50 mb-4
-                     transition-all duration-300 group-hover:bg-white/50 group-hover:scale-110"
+          className="
+            mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl
+            bg-white/15 ring-1 ring-white/25 backdrop-blur
+            transition-all duration-300
+            group-hover:bg-white/20 group-hover:scale-[1.03]
+          "
         >
-          <Icon size={28} />
+          <Icon size={26} />
         </div>
 
-        {/* Tiêu đề */}
-        <h3 className="text-2xl font-bold mb-2">{service.title}</h3>
+        <h3 className="text-lg sm:text-xl font-extrabold tracking-tight text-white">
+          {service.title}
+        </h3>
 
-        {/* Mô tả */}
-        <p className="text-sm text-white/90 mb-5">{service.description}</p>
+        <p className="mt-2 line-clamp-2 text-sm sm:text-base text-white/85 leading-relaxed">
+          {service.description}
+        </p>
 
-        {/* Nút Tìm hiểu (Thiết kế đẹp hơn) */}
-        {/* <Link
-          href={service.href}
-          onClick={(e)=>{
-            e.preventDefault()
-          }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full
-                     font-semibold text-sm text-blue-700 bg-white
-                     transition-all duration-300
-                     hover:bg-gray-100 hover:pl-6 shadow-md"
-        >
-          Tìm hiểu
-          <ArrowRightCircle className="transition-transform duration-300 group-hover:translate-x-1" />
-        </Link> */}
+        {/* Actions */}
+        <div className="mt-5 flex items-center gap-2">
+          <Link
+            href={service.href}
+            onClick={(e)=>{e.preventDefault()}}
+            className="
+              inline-flex items-center gap-2
+              rounded-2xl px-4 py-2.5 text-sm font-semibold
+              bg-white text-blue-900
+              ring-1 ring-white/30 shadow-sm
+              hover:bg-blue-50
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900
+              transition
+            "
+          >
+            Tìm hiểu
+            <ArrowRightCircle className="transition-transform duration-300 group-hover:translate-x-0.5" />
+          </Link>
+
+          {/* tiny hint pill */}
+          <span className="hidden sm:inline-flex items-center rounded-full bg-white/10 px-3 py-2 text-xs font-semibold text-white/85 ring-1 ring-white/15">
+            Xem chi tiết
+          </span>
+        </div>
       </div>
-    </div>
+    </article>
   );
 };
 
-// --- 4. Component Section Chính ---
 const OtherServices: React.FC = () => {
   return (
-    <section className="py-5 pt-10 lg:py-15 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Tiêu đề Section */}
-        <div className="text-center mb-8 lg:mb-16">
-          <div className="inline-block px-5 py-2.5 border-3 border-dashed border-blue-400 rounded-full bg-white/80 backdrop-blur-sm">
-            <h2 className="text-sm lg:text-3xl font-bold text-black">
-              Dịch Vụ Nổi Bật Khác
-              <span className="text-blue-700"> Của GennovaX</span>
-            </h2>
+    <section className="relative py-10 lg:py-16">
+      {/* Background giống tone section khác */}
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-50/70 via-white/40 to-white/70" />
+      <div className="absolute inset-0 bg-white/50" />
+
+      <div className="relative mx-auto max-w-7xl px-4">
+        {/* Header đồng bộ */}
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 ring-1 ring-blue-900/10 shadow-sm">
+            <span className="h-2 w-2 rounded-full bg-blue-600" />
+            <span className="text-xs sm:text-sm font-semibold text-blue-700">
+              Dịch vụ mở rộng
+            </span>
           </div>
+
+          <h2 className="mt-4 text-xl sm:text-2xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+            Dịch vụ nổi bật <span className="text-blue-700">khác</span>
+          </h2>
+
+          <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
+            Hệ sinh thái dịch vụ hỗ trợ từ tư vấn, chăm sóc thai kỳ đến hợp tác
+            nghiên cứu & phát triển.
+          </p>
         </div>
 
-        {/* --- PHẦN CHỈNH SỬA TẠI ĐÂY --- */}
+        {/* List: mobile scroll ngang, desktop grid */}
         <div
           className="
-            flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory 
-            md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:pb-0
-            scrollbar-hide
+            mt-8 lg:mt-12
+            flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory
+            lg:grid lg:grid-cols-3 lg:gap-7 lg:overflow-visible lg:pb-0
           "
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {serviceData.map((service) => (
             <div
               key={service.id}
-              className="
-                flex-shrink-0 w-[85vw] snap-center 
-                sm:w-[60vw] md:w-auto md:flex-shrink
-              "
+              className="flex-shrink-0 w-[85vw] snap-center sm:w-[60vw] md:w-auto"
             >
               <ServiceCard service={service} />
             </div>
           ))}
         </div>
-        {/* ------------------------------- */}
-        
+
+        {/* CTA tổng */}
+        <div className="mt-10 flex justify-center">
+          <Link
+            href="/dich-vu"
+            className="
+              inline-flex items-center justify-center
+              rounded-full px-6 py-3 text-sm sm:text-base font-semibold
+              text-blue-700 bg-white/90
+              ring-1 ring-blue-900/10 shadow-sm
+              hover:bg-white hover:ring-blue-900/20
+              transition
+            "
+          >
+            Xem toàn bộ dịch vụ →
+          </Link>
+        </div>
       </div>
     </section>
   );

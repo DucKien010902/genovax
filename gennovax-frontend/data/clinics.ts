@@ -1,6 +1,9 @@
 import { Clinic } from "@/types/clinic";
 
 export const clinicData: Clinic[] = [
+  // ======================
+  // 7 phòng đã có dữ liệu chi tiết (giữ nguyên)
+  // ======================
   {
     id: 1,
     clinicId: "GOLAB-HATINH",
@@ -10,7 +13,7 @@ export const clinicData: Clinic[] = [
     dateWork: "Thứ 2 - Chủ Nhật",
     phoneNumber: "0989 792 189",
     image:
-      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764226197/gen-h-z7267353458086_c57256b53d7ba5d6070191d7f5ad34cb_jjvpuw.jpg", // Ảnh demo
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764226197/gen-h-z7267353458086_c57256b53d7ba5d6070191d7f5ad34cb_jjvpuw.jpg",
     descriptions: [
       "Trung tâm xét nghiệm hiện đại bậc nhất tại khu vực Bắc Trung Bộ.",
       "Cung cấp dịch vụ lấy mẫu tại nhà nhanh chóng, tiện lợi.",
@@ -65,46 +68,6 @@ export const clinicData: Clinic[] = [
     isVerified: true,
   },
   {
-    id: 6,
-    clinicId: "GOLAB-HAIPHONG",
-    name: "Phòng xét nghiệm GOLAB Hải Phòng",
-    address: "Số 25 Lạch Tray, Quận Ngô Quyền, Thành phố Hải Phòng",
-    timeWork: "07:30 - 18:00",
-    dateWork: "Thứ 2 - Thứ 7",
-    phoneNumber: "0869 119 960",
-    image:
-      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764234542/gen-h-z7268171502417_b1429e52538d4a254f81a9170f40a98a_s1dkic.jpg", // Ảnh demo
-    descriptions: [
-      "Dịch vụ xét nghiệm uy tín tại thành phố Cảng.",
-      "Chuyên tầm soát ung thư và các bệnh lý di truyền.",
-      "Quy trình lấy mẫu 1 điểm chạm, không chờ đợi.",
-      "Hỗ trợ tư vấn kết quả trực tuyến 24/7.",
-    ],
-    mapEmbedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3728.5501091855836!2d106.68907!3d20.849865999999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314a7a91f0a7616d%3A0x5cac87228453df84!2zMjUgTOG6oWNoIFRyYXksIE5nw7QgUXV54buBbiwgSOG6o2kgUGjDsm5n!5e0!3m2!1svi!2s!4v1764235452506!5m2!1svi!2s",
-    isVerified: true,
-  },
-  {
-    id: 7,
-    clinicId: "GOLAB-VIETTRI",
-    name: "Trung tâm xét nghiệm GOLAB Việt Trì",
-    address: "307 Nguyễn Du kéo dài, Nông Trang, Tp Việt Trì, Phú Thọ",
-    timeWork: "07:00 - 17:00",
-    dateWork: "Thứ 2 - Chủ Nhật",
-    phoneNumber: "0904 928 992",
-    image:
-      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764234539/gen-h-z7268172756868_bf2f852e791cff9f1a3da0007cef30ba_epf1g8.jpg", // Ảnh demo
-    descriptions: [
-      "Mang công nghệ xét nghiệm tiêu chuẩn quốc tế về Đất Tổ.",
-      "Phục vụ hàng ngàn lượt khách hàng mỗi tháng.",
-      "Không gian phòng khám sạch sẽ, vô trùng.",
-      "Chi phí hợp lý, niêm yết công khai minh bạch.",
-    ],
-    mapEmbedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3716.4053088063447!2d105.3850124747773!3d21.33450247720813!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313492a168875b57%3A0xbf715b1ae4f2b5f6!2zMzA3IMSQxrDhu51uZyBOZ3V54buFbiBEdSwgS8OpbyBEw6BpLCBWaeG7h3QgVHLDrCwgUGjDuiBUaOG7jSwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1764237821161!5m2!1svi!2s",
-    isVerified: true,
-  },
-  {
     id: 4,
     clinicId: "GOLAB-HADONG",
     name: "Trung tâm xét nghiệm GOLAB Hà Đông",
@@ -146,6 +109,364 @@ export const clinicData: Clinic[] = [
     ],
     mapEmbedUrl:
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.148286613409!2d105.80626277476928!3d21.026751887848462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab6908cc5d0d%3A0x2a61be8e5b63386c!2zMzcgROG7kWMgdmnhu4duIFBo4bulIFPhuqNuLCBMw6FuZyBUaMaw4bujbmcsIEJhIMSQw6xuaCwgSMOgIE7hu5lpIDEwMDAwLCBWaeG7h3QgTmFt!5e0!3m2!1svi!2sus!4v1764237983819!5m2!1svi!2sus",
+    isVerified: true,
+  },
+  {
+    id: 6,
+    clinicId: "GOLAB-HAIPHONG",
+    name: "Phòng xét nghiệm GOLAB Hải Phòng",
+    address: "Số 25 Lạch Tray, Quận Ngô Quyền, Thành phố Hải Phòng",
+    timeWork: "07:30 - 18:00",
+    dateWork: "Thứ 2 - Thứ 7",
+    phoneNumber: "0869 119 960",
+    image:
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764234542/gen-h-z7268171502417_b1429e52538d4a254f81a9170f40a98a_s1dkic.jpg",
+    descriptions: [
+      "Dịch vụ xét nghiệm uy tín tại thành phố Cảng.",
+      "Chuyên tầm soát ung thư và các bệnh lý di truyền.",
+      "Quy trình lấy mẫu 1 điểm chạm, không chờ đợi.",
+      "Hỗ trợ tư vấn kết quả trực tuyến 24/7.",
+    ],
+    mapEmbedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3728.5501091855836!2d106.68907!3d20.849865999999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314a7a91f0a7616d%3A0x5cac87228453df84!2zMjUgTOG6oWNoIFRyYXksIE5nw7QgUXV54buBbiwgSOG6o2kgUGjDsm5n!5e0!3m2!1svi!2s!4v1764235452506!5m2!1svi!2s",
+    isVerified: true,
+  },
+  {
+    id: 7,
+    clinicId: "GOLAB-VIETTRI",
+    name: "Trung tâm xét nghiệm GOLAB Việt Trì",
+    address: "307 Nguyễn Du kéo dài, Nông Trang, Tp Việt Trì, Phú Thọ",
+    timeWork: "07:00 - 17:00",
+    dateWork: "Thứ 2 - Chủ Nhật",
+    phoneNumber: "0904 928 992",
+    image:
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1764234539/gen-h-z7268172756868_bf2f852e791cff9f1a3da0007cef30ba_epf1g8.jpg",
+    descriptions: [
+      "Mang công nghệ xét nghiệm tiêu chuẩn quốc tế về Đất Tổ.",
+      "Phục vụ hàng ngàn lượt khách hàng mỗi tháng.",
+      "Không gian phòng khám sạch sẽ, vô trùng.",
+      "Chi phí hợp lý, niêm yết công khai minh bạch.",
+    ],
+    mapEmbedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3716.4053088063447!2d105.3850124747773!3d21.33450247720813!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313492a168875b57%3A0xbf715b1ae4f2b5f6!2zMzA3IMSQxrDhu51uZyBOZ3V54buFbiBEdSwgS8OpbyBEw6BpLCBWaeG7h3QgVHLDrCwgUGjDuiBUaOG7jSwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1764237821161!5m2!1svi!2s",
+    isVerified: true,
+  },
+
+  // ======================
+  // 24 phòng còn lại trong nhóm “đang hoạt động” (chưa có chi tiết)
+  // Lưu ý: các field chưa có thì để rỗng / mảng rỗng
+  // ======================
+
+  // 1) Ninh Bình
+  {
+    id: 8,
+    clinicId: "GOLAB-NINHBINH",
+    name: "Trung tâm xét nghiệm GOLAB Ninh Bình",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "https://res.cloudinary.com/da6f4dmql/image/upload/v1769412561/z7469271715337_fb76ed4dd4d67b1f1cbc661a98aab63f_lpudrf.jpg",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 2) Nghệ An
+  {
+    id: 9,
+    clinicId: "GOLAB-NGHEAN",
+    name: "Trung tâm xét nghiệm GOLAB Nghệ An",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 3) An Giang
+  {
+    id: 10,
+    clinicId: "GOLAB-ANGIANG",
+    name: "Trung tâm xét nghiệm GOLAB An Giang",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 4) Pháp Vân
+  {
+    id: 11,
+    clinicId: "GOLAB-PHAPVAN",
+    name: "Trung tâm xét nghiệm GOLAB Pháp Vân",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 5) Quảng Bình
+  {
+    id: 12,
+    clinicId: "GOLAB-QUANGBINH",
+    name: "Trung tâm xét nghiệm GOLAB Quảng Bình",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "https://res.cloudinary.com/da6f4dmql/image/upload/v1769412561/z7469274587644_cf47773bc57d350a8a04bc46ca642316_haffsr.jpg",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 6) Vĩnh Phúc
+  {
+    id: 13,
+    clinicId: "GOLAB-VINHPHUC",
+    name: "Trung tâm xét nghiệm GOLAB Vĩnh Phúc",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 7) Hải Dương
+  {
+    id: 14,
+    clinicId: "GOLAB-HAIDUONG",
+    name: "Trung tâm xét nghiệm GOLAB Hải Dương",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 8) Quận 5 (BV Chợ Rẫy)
+  {
+    id: 15,
+    clinicId: "GOLAB-QUAN5-CHORAY",
+    name: "Trung tâm xét nghiệm GOLAB Quận 5 (BV Chợ Rẫy)",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 9) Đà Nẵng
+  {
+    id: 16,
+    clinicId: "GOLAB-DANANG",
+    name: "Trung tâm xét nghiệm GOLAB Đà Nẵng",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 10) Bình Định
+  {
+    id: 17,
+    clinicId: "GOLAB-BINHDINH",
+    name: "Trung tâm xét nghiệm GOLAB Bình Định",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 11) Quảng Nam
+  {
+    id: 18,
+    clinicId: "GOLAB-QUANGNAM",
+    name: "Trung tâm xét nghiệm GOLAB Quảng Nam",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 12) Thái Bình
+  {
+    id: 19,
+    clinicId: "GOLAB-THAIBINH",
+    name: "Trung tâm xét nghiệm GOLAB Thái Bình",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 13) Thủ Đức
+  {
+    id: 20,
+    clinicId: "GOLAB-THUDUC",
+    name: "Trung tâm xét nghiệm GOLAB Thủ Đức",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 14) Sơn La
+  {
+    id: 21,
+    clinicId: "GOLAB-SONLA",
+    name: "Trung tâm xét nghiệm GOLAB Sơn La",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 15) Thái Nguyên
+  {
+    id: 22,
+    clinicId: "GOLAB-THAINGUYEN",
+    name: "Trung tâm xét nghiệm GOLAB Thái Nguyên",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 16) Ninh Thuận
+  {
+    id: 23,
+    clinicId: "GOLAB-NINHTHUAN",
+    name: "Trung tâm xét nghiệm GOLAB Ninh Thuận",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 17) Lâm Đồng
+  {
+    id: 24,
+    clinicId: "GOLAB-LAMDONG",
+    name: "Trung tâm xét nghiệm GOLAB Lâm Đồng",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 18) Yên Bái
+  {
+    id: 25,
+    clinicId: "GOLAB-YENBAI",
+    name: "Trung tâm xét nghiệm GOLAB Yên Bái",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 19) Ngã Bảy
+  {
+    id: 26,
+    clinicId: "GOLAB-NGABAY",
+    name: "Trung tâm xét nghiệm GOLAB Ngã Bảy",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "https://res.cloudinary.com/da6f4dmql/image/upload/v1769412562/z7469263486263_8b40828a4413252932e6388932713ea0_rgu4ak.jpg",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 20) Medicare Sóc Trăng (Golab Sóc Trăng)
+  {
+    id: 27,
+    clinicId: "GOLAB-SOCTRANG-MEDICARE",
+    name: "Phòng khám Medicare Sóc Trăng (GOLAB Sóc Trăng)",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "https://res.cloudinary.com/da6f4dmql/image/upload/v1769412562/z7469267911729_f8e8a58cf2c00ac744db65ae93dba593_dtvnuf.jpg",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 21) Uông Bí
+  {
+    id: 28,
+    clinicId: "GOLAB-UONGBI",
+    name: "Trung tâm xét nghiệm GOLAB Uông Bí",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 22) Medicare Hậu Giang (Golab Hậu Giang)
+  {
+    id: 29,
+    clinicId: "GOLAB-HAUGIANG-MEDICARE",
+    name: "Phòng khám Medicare Hậu Giang (GOLAB Hậu Giang)",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "https://res.cloudinary.com/da6f4dmql/image/upload/v1769412562/z7469265080855_7d4cb7d83fe01f14fa187c8242f13e0b_tgytm7.jpg",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 23) Medicare Cần Thơ (Golab Cần Thơ)
+  {
+    id: 30,
+    clinicId: "GOLAB-CANTHO-MEDICARE",
+    name: "Phòng khám Medicare Cần Thơ (GOLAB Cần Thơ)",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "https://res.cloudinary.com/da6f4dmql/image/upload/v1769412562/z7469266180417_d4afbbf9b3870e84027d56d2299099af_iaygpx.jpg",
+    descriptions: [],
+    isVerified: true,
+  },
+  // 24) Phòng khám Hòa Bình (Golab Hòa Bình)
+  {
+    id: 31,
+    clinicId: "GOLAB-HOABINH",
+    name: "Phòng khám GOLAB Hòa Bình",
+    address: "",
+    timeWork: "",
+    dateWork: "",
+    phoneNumber: "",
+    image: "https://res.cloudinary.com/da6f4dmql/image/upload/v1769412566/z7469270932068_49c00e3ed603eed7aeda0883b4f0175b_vxtref.jpg",
+    descriptions: [],
     isVerified: true,
   },
 ];

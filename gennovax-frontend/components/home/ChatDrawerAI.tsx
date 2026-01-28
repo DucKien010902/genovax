@@ -67,7 +67,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({ isOpen, onClose }) => {
 
   const askQuestion1 = async (question: string): Promise<string> => {
     try {
-      const response = await fetch("https://d000ea660e40.ngrok-free.app/ask", {
+      const response = await fetch("https://e227c3cfa91d.ngrok-free.app/ask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

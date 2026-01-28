@@ -21,32 +21,40 @@ const allExperts: Expert[] = [
     name: "TS.BS Phan Cảnh Duy",
     title: "Phó Trưởng khoa Xét nghiệm",
     affiliation: "Trung tâm Ung Bướu, Bệnh viện Trung ương Huế",
-    image: "https://benhviennoitiet.vn/wp-content/uploads/2023/12/A-Hiep-web.jpg",
-    quote: "Tầm soát ung thư bằng xét nghiệm gen cho thấy sự phát triển vượt bậc của y sinh học. Đây là cơ hội thuận lợi để người bệnh có thể tìm ra phương thức xử lý khi phát hiện ở giai đoạn sớm...",
+    image:
+      "https://benhviennoitiet.vn/wp-content/uploads/2023/12/A-Hiep-web.jpg",
+    quote:
+      "Tầm soát ung thư bằng xét nghiệm gen cho thấy sự phát triển vượt bậc của y sinh học. Đây là cơ hội thuận lợi để người bệnh có thể tìm ra phương thức xử lý khi phát hiện ở giai đoạn sớm...",
   },
   {
     id: 2,
     name: "GS.TS Phạm Như Hiệp",
     title: "Giám đốc Bệnh viện",
     affiliation: "Bệnh viện Trung ương Huế",
-    image: "https://suckhoedoisong.qltns.mediacdn.vn/thumb_w/600/324455921873985536/2024/3/3/4296080207853344429926277667541941839027269n-17094331232751762434977-155-0-1139-984-crop-17094332140561102974289.jpg",
-    quote: "Giữa bối cảnh đại dịch COVID-19, tầm soát ung thư bằng xét nghiệm gen như muốn gióng lên hồi chuông báo động rằng bệnh nhân ung thư nói chung cũng như ung thư vú nói riêng...",
+    image:
+      "https://suckhoedoisong.qltns.mediacdn.vn/thumb_w/600/324455921873985536/2024/3/3/4296080207853344429926277667541941839027269n-17094331232751762434977-155-0-1139-984-crop-17094332140561102974289.jpg",
+    quote:
+      "Giữa bối cảnh đại dịch COVID-19, tầm soát ung thư bằng xét nghiệm gen như muốn gióng lên hồi chuông báo động rằng bệnh nhân ung thư nói chung cũng như ung thư vú nói riêng...",
   },
   {
     id: 3,
     name: "PGS.TS Trần Hồng Vân",
     title: "Phó Trưởng khoa Xét nghiệm",
     affiliation: "Bệnh viện Đại học Y Hà Nội",
-    image: "https://benhvienchamcuu.com/public_folder/image/2020/06/16/1592281740_74649_ts-pham-hong-van-vjpg.jpg",
-    quote: "Việc ứng dụng công nghệ gen trong y học chính xác mở ra tương lai mới. Nó không chỉ giúp phát hiện bệnh sớm mà còn định hướng điều trị trúng đích hiệu quả cho bệnh nhân.",
+    image:
+      "https://benhvienchamcuu.com/public_folder/image/2020/06/16/1592281740_74649_ts-pham-hong-van-vjpg.jpg",
+    quote:
+      "Việc ứng dụng công nghệ gen trong y học chính xác mở ra tương lai mới. Nó không chỉ giúp phát hiện bệnh sớm mà còn định hướng điều trị trúng đích hiệu quả cho bệnh nhân.",
   },
   {
     id: 4,
     name: "ThS.BS Bùi Kiều Yến Trang",
     title: "Bác sĩ di truyền",
     affiliation: "Bệnh viện Từ Dũ",
-    image: "https://trungtamadn.com/wp-content/uploads/2023/05/bui-kieu-yen-tran.jpg",
-    quote: "Sàng lọc NIPT và các xét nghiệm di truyền tiền làm tổ (PGT) đã giúp hàng ngàn cặp vợ chồng thực hiện hóa giấc mơ có một thai kỳ khỏe mạnh và an toàn tuyệt đối.",
+    image:
+      "https://trungtamadn.com/wp-content/uploads/2023/05/bui-kieu-yen-tran.jpg",
+    quote:
+      "Sàng lọc NIPT và các xét nghiệm di truyền tiền làm tổ (PGT) đã giúp hàng ngàn cặp vợ chồng thực hiện hóa giấc mơ có một thai kỳ khỏe mạnh và an toàn tuyệt đối.",
   },
 ];
 
@@ -89,7 +97,6 @@ export default function ExpertOpinions() {
 
         {/* Grid 2 Cột */}
         <div className="grid grid-cols-1 gap-8 md:gap-12 md:grid-cols-2 mt-8 md:mt-12">
-          
           {/* === CỘT TRÁI: COMMENT LỚN === */}
           <div className="flex flex-col justify-center text-white">
             <Quote
@@ -113,11 +120,13 @@ export default function ExpertOpinions() {
                 Mobile: flex row, overflow-x-auto (trượt ngang)
                 Desktop (md): block, space-y-6 (xếp dọc như cũ)
             */}
-            <div className="
+            <div
+              className="
                 flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory 
                 md:block md:space-y-6 md:pb-0 md:overflow-visible
                 scrollbar-hide
-            ">
+            "
+            >
               {expertsToShow.map((expert) => (
                 <div
                   key={expert.id}
@@ -137,14 +146,18 @@ export default function ExpertOpinions() {
                       <h4 className="text-lg font-bold text-blue-900">
                         {expert.name}
                       </h4>
-                      <p className="text-sm text-gray-600 line-clamp-1">{expert.title}</p>
+                      <p className="text-sm text-gray-600 line-clamp-1">
+                        {expert.title}
+                      </p>
                       <p className="text-sm text-gray-600 line-clamp-1">
                         {expert.affiliation}
                       </p>
                     </div>
                   </div>
                   <hr className="my-4 border-cyan-200" />
-                  <p className="text-sm text-gray-700 line-clamp-4">{expert.quote}</p>
+                  <p className="text-sm text-gray-700 line-clamp-4">
+                    {expert.quote}
+                  </p>
                 </div>
               ))}
             </div>

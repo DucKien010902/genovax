@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { CalendarCheckFill, InfoCircleFill } from "react-bootstrap-icons";
 import ConsultationModal from "./ConsultationModal";
 
@@ -17,12 +17,14 @@ export type PackageDetails = {
   smallLogoUrl: string;
   linkto: string;
 };
+
 const popularPackagesData: PackageDetails[] = [
   {
     id: "adn-truoc-sinh-10ngay",
     name: "Xét nghiệm ADN Cha Con Trước Sinh (Không xâm lấn)",
     tagline: "Sử dụng 01 mẫu bố giả định và 01 mẫu máu mẹ.",
-    description: `Sử dụng 01 mẫu máu mẹ và 01 mẫu bất kỳ của cha (móng tay, tóc, bàn chải...). Áp dụng cho thai từ 7 tuần. Độ chính xác: 99,9999%. Bảo mật tuyệt đối. Trả kết quả sau 3–5 ngày làm việc.`,
+    description:
+      "Sử dụng 01 mẫu máu mẹ và 01 mẫu bất kỳ của cha (móng tay, tóc, bàn chải...). Áp dụng cho thai từ 7 tuần. Độ chính xác: 99,9999%. Bảo mật tuyệt đối. Trả kết quả sau 3–5 ngày làm việc.",
     mainImageUrl:
       "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/500087657_122108016806870117_710668953486729298_n_wmcxfk.jpg",
     smallLogoUrl: "/images/genbio1.png",
@@ -31,7 +33,8 @@ const popularPackagesData: PackageDetails[] = [
   {
     id: "geni-8",
     name: "Xét nghiệm sàng lọc NIPT - Geni 8",
-    tagline: "Phát hiện lệch bội 3 cặp NST (13, 18, 21) và 5 hội chứng NST giới tính.",
+    tagline:
+      "Phát hiện lệch bội 3 cặp NST (13, 18, 21) và 5 hội chứng NST giới tính.",
     description:
       "Phát hiện lệch bội 3 cặp NST (13, 18, 21) và 5 hội chứng NST giới tính (Turner, Tam nhiễm X, Klinefelter, Jacobs, XXXY). Dành cho thai đơn từ 9 tuần. Kết quả có từ sau 3-5 ngày làm việc.",
     mainImageUrl:
@@ -43,7 +46,8 @@ const popularPackagesData: PackageDetails[] = [
     id: "adn-phap-ly-2-mau-1-2ngay",
     name: "Xét nghiệm ADN (Pháp lý - 2 mẫu)",
     tagline: "Xác định quan hệ huyết thống chuẩn pháp lý.",
-    description: `Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 2 mẫu/1 kết quả). Dùng cho các thủ tục như làm khai sinh, nhận cha/mẹ/con. Độ chính xác cao 99,9999%. Thời gian trả kết quả: 1-2 ngày làm việc.`,
+    description:
+      "Phục vụ thủ tục pháp lý: nhập tịch, định cư nước ngoài... (Dành cho 2 mẫu/1 kết quả). Dùng cho các thủ tục như làm khai sinh, nhận cha/mẹ/con. Độ chính xác cao 99,9999%. Thời gian trả kết quả: 1-2 ngày làm việc.",
     mainImageUrl:
       "https://res.cloudinary.com/da6f4dmql/image/upload/v1764579968/496942572_122098102940870117_1791812201739354939_n_efjixl.jpg",
     smallLogoUrl: "/images/genbio1.png",
@@ -52,7 +56,8 @@ const popularPackagesData: PackageDetails[] = [
   {
     id: "geni-23",
     name: "Xét nghiệm sàng lọc NIPT - Geni 23",
-    tagline: "Phát hiện lệch bội toàn bộ 22 cặp NST thường và 5 hội chứng NST giới tính.",
+    tagline:
+      "Phát hiện lệch bội toàn bộ 22 cặp NST thường và 5 hội chứng NST giới tính.",
     description:
       "Phát hiện lệch bội toàn bộ 22 cặp NST thường và 5 hội chứng giới tính: Turner (XO), tam nhiễm X (XXX), Klinefelter (XXY), Klinefelter mở rộng (XXXY), Jacobs (XYY). Áp dụng cho thai đơn từ 9 tuần. Thời gian trả kết quả: 3–5 ngày làm việc.",
     mainImageUrl:
@@ -63,104 +68,150 @@ const popularPackagesData: PackageDetails[] = [
 ];
 
 /* =======================
-   2. DATA
+UI helpers
 ======================= */
+function classNames(...s: Array<string | false | undefined>) {
+  return s.filter(Boolean).join(" ");
+}
 
 /* =======================
-   3. PACKAGE CARD
+PACKAGE CARD (Modern medical)
 ======================= */
 const PackageCard: React.FC<{
   pkg: PackageDetails;
   onConsult: () => void;
 }> = ({ pkg, onConsult }) => {
   return (
-    <div
+    <article
       className="
-        bg-white rounded-3xl shadow-lg overflow-hidden p-4 sm:p-5 lg:p-6
-        flex flex-col lg:flex-row gap-4 lg:gap-6
-        transition-all duration-300 hover:shadow-2xl
-        border-2 lg:border-4 border-blue-300 hover:border-blue-600 hover:-translate-y-1
+        group relative overflow-hidden rounded-3xl bg-white
+        ring-1 ring-blue-900/10 shadow-sm
+        transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-blue-900/20
       "
     >
-      {/* LEFT */}
-      <div className="w-full lg:w-2/5 flex flex-row lg:flex-col gap-3 flex-shrink-0">
-        <div className="w-1/2 lg:w-full">
-          <img
-            src={pkg.mainImageUrl}
-            alt={pkg.name}
-            className="w-full h-32 sm:h-40 lg:h-52 object-cover rounded-xl"
-          />
-        </div>
+      {/* Accent line (medical blue) */}
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500" />
 
-        <div className="w-[40%] lg:w-full mx-auto flex flex-col justify-center gap-2 lg:mt-4">
-  <Link
-    href={pkg.linkto}
-    className="flex items-center justify-center gap-2 px-3 py-3 rounded-full
-      text-[10px] lg:text-sm text-white font-medium
-      bg-gradient-to-r from-blue-600 to-blue-900 
-      hover:from-blue-700 hover:to-blue-950
-      border-2 lg:border-3 border-teal-300/60 
-      focus:outline-none focus:ring-2 focus:ring-teal-300/40 transition"
-  >
-    <InfoCircleFill />
-    Tìm hiểu thêm
-  </Link>
-
-  <button
-    onClick={onConsult}
-    className="flex items-center justify-center gap-2 px-3 py-3 rounded-full
-      text-[10px] lg:text-sm text-white font-medium
-      bg-gradient-to-r from-amber-400 to-orange-500 
-      hover:from-amber-500 hover:to-orange-600
-      border-2 lg:border-3 border-teal-300/60 
-      focus:outline-none focus:ring-2 focus:ring-teal-300/40
-      cursor-pointer transition"
-  >
-    <CalendarCheckFill />
-    Đặt hẹn tư vấn
-  </button>
-</div>
-
-      </div>
-
-      {/* RIGHT */}
-      <div className="w-full lg:w-3/5">
-        <div className="flex justify-between items-start gap-3 mb-3">
-          <h2 className="text-lg lg:text-xl font-bold leading-tight">
-            <span className="text-blue-600 text-sm lg:text-xl block">{pkg.name}</span>
-            <span className="text-gray-500 text-sm lg:text-base font-normal">
-              {pkg.tagline}
-            </span>
-          </h2>
-
-          <div className=" rounded-lg p-1 w-12 h-12 flex items-center justify-center flex-shrink-0">
+      <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] gap-4 p-4 sm:p-5">
+        {/* Image */}
+        <div className="relative">
+          <div className="relative overflow-hidden rounded-2xl bg-slate-100">
             <img
-              src={pkg.smallLogoUrl}
-              alt="logo"
-              className="w-full h-full object-contain"
+              src={pkg.mainImageUrl}
+              alt={pkg.name}
+              className="
+                h-40 w-full object-cover
+                transition-transform duration-500 group-hover:scale-[1.03]
+              "
+              loading="lazy"
             />
+            {/* Soft overlay for medical feel */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent" />
+          </div>
+
+          {/* Logo badge */}
+          <div
+            className="
+              mt-2 lg:mt-3
+              flex items-center gap-2 rounded-2xl bg-white/90 px-3 py-2
+              shadow-sm ring-1 ring-black/5 backdrop-blur hidden lg:flex
+            "
+          >
+            <span className="h-8 w-8 overflow-hidden rounded-xl bg-white ring-1 ring-blue-900/10">
+              <img
+                src={pkg.smallLogoUrl}
+                alt="logo"
+                className="h-full w-full object-contain"
+                loading="lazy"
+              />
+            </span>
+            <span className="text-[11px] font-semibold text-slate-700">
+              Dịch vụ phổ biến
+            </span>
           </div>
         </div>
 
-        <div className="hidden lg:flex border-b-2 border-dashed border-blue-400 mb-3 opacity-50" />
+        {/* Content */}
+        <div className="flex flex-col justify-between gap-4 pt-2 sm:pt-0">
+          <header className="space-y-2">
+            <h3 className="text-base sm:text-lg lg:text-xl font-bold leading-snug text-slate-900">
+              {pkg.name}
+            </h3>
 
-        <p className="hidden lg:flex text-gray-600 text-sm lg:text-base leading-relaxed line-clamp-4">
-          {pkg.description}
-        </p>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              {pkg.tagline}
+            </p>
+
+            <div className="hidden lg:block">
+              <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">
+                {pkg.description}
+              </p>
+            </div>
+          </header>
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Link
+              href={pkg.linkto}
+              className="
+                inline-flex items-center justify-center gap-2
+                rounded-2xl px-4 py-3 text-sm font-semibold
+                text-white shadow-sm
+                bg-gradient-to-r from-blue-600 to-blue-800
+                hover:from-blue-700 hover:to-blue-900
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-2
+                transition
+              "
+            >
+              <InfoCircleFill className="shrink-0" />
+              Tìm hiểu thêm
+            </Link>
+
+            <button
+              onClick={onConsult}
+              className="
+                inline-flex items-center justify-center gap-2
+                rounded-2xl px-4 py-3 text-sm font-semibold
+                text-blue-800 bg-blue-50
+                ring-1 ring-blue-200/70
+                hover:bg-blue-100 hover:ring-blue-300
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-2
+                transition
+              "
+              type="button"
+            >
+              <CalendarCheckFill className="shrink-0" />
+              Đặt hẹn tư vấn
+            </button>
+          </div>
+
+          {/* Small hint on mobile */}
+          <p className="lg:hidden text-xs text-slate-500 line-clamp-2">
+            {pkg.description}
+          </p>
+        </div>
       </div>
-    </div>
+    </article>
   );
 };
 
 /* =======================
-   4. MAIN SECTION
+MAIN SECTION (Modern hero + grid)
 ======================= */
 const PopularPackages: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
 
+  const title = useMemo(() => {
+    return {
+      badge: "Gói Xét Nghiệm",
+      main: "Phổ Biến",
+      sub: "Chọn gói phù hợp và đặt lịch tư vấn nhanh với đội ngũ chuyên môn.",
+    };
+  }, []);
+
   return (
-    <section className="py-8 lg:py-16 relative">
+    <section className="relative py-10 lg:py-16">
       {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -169,20 +220,31 @@ const PopularPackages: React.FC = () => {
             "url('https://res.cloudinary.com/da6f4dmql/image/upload/v1765522605/shutterstock_1530550610_effhxj.jpg')",
         }}
       />
-      <div className="absolute inset-0 bg-white/50" />
+      {/* Medical overlay: clean + readable */}
+      <div className="absolute inset-0 bg-white/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-50/70 via-white/40 to-white/70" />
 
-      <div className="relative max-w-7xl mx-auto px-4">
-        {/* Title */}
-        <div className="text-center mb-5 lg:mb-10">
-          <div className="inline-block px-5 py-2.5 border-3 border-dashed border-blue-400 rounded-full bg-white ">
-            <h2 className="text-sm lg:text-3xl font-bold">
-              Gói Xét Nghiệm <span className="text-blue-700">Phổ Biến</span>
-            </h2>
+      <div className="relative mx-auto max-w-7xl px-4">
+        {/* Header */}
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 ring-1 ring-blue-900/10 shadow-sm">
+            <span className="h-2 w-2 rounded-full bg-blue-600" />
+            <span className="text-xs sm:text-sm font-semibold text-blue-700">
+              {title.badge}
+            </span>
           </div>
+
+          <h2 className="mt-4 text-xl sm:text-2xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+            {title.main} <span className="text-blue-700">nhất</span>
+          </h2>
+
+          <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
+            {title.sub}
+          </p>
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="mt-8 lg:mt-12 grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-7">
           {popularPackagesData.map((pkg) => (
             <PackageCard
               key={pkg.id}
@@ -196,18 +258,24 @@ const PopularPackages: React.FC = () => {
         </div>
 
         {/* More */}
-        <div className="flex justify-center mt-10">
+        <div className="mt-10 flex justify-center">
           <Link
             href="/dich-vu"
-            className="px-5 py-2.5 border-2 border-blue-500 border-dashed rounded-full text-sm lg:text-xl
-              text-blue-600 bg-white hover:bg-blue-50 transition"
+            className="
+              inline-flex items-center justify-center
+              rounded-full px-6 py-3 text-sm sm:text-base font-semibold
+              text-blue-700 bg-white/90
+              ring-1 ring-blue-900/10 shadow-sm
+              hover:bg-white hover:ring-blue-900/20
+              transition
+            "
           >
-            Các gói xét nghiệm khác →
+            Xem tất cả gói xét nghiệm →
           </Link>
         </div>
       </div>
 
-      {/* ✅ MODAL – CHỈ 1 INSTANCE */}
+      {/* MODAL */}
       <ConsultationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
