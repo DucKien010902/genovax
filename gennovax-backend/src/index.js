@@ -8,6 +8,7 @@ import casesRoutes from "./routes/cases.routes.js";
 import doctorsRoutes from "./routes/doctors.routes.js";
 import servicesRoutes from "./routes/services.routes.js";
 import metaRoutes from "./routes/meta.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use("/api/cases", casesRoutes);
 app.use("/api/doctors", doctorsRoutes);
 app.use("/api/services", servicesRoutes);
 app.use("/api/meta", metaRoutes);
+app.use("/api/auth", authRoutes);
 
 // error handler
 app.use((err, req, res, next) => {

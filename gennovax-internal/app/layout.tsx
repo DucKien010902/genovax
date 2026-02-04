@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AppHeader from "@/components/AppHeader";
+import { AuthProvider } from "@/lib/auth";
+import Shell from "@/components/Shell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,20 +16,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Manager-GX",
+  title: "Manage-GX",
   description: "Gennovax-managerment",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-full overflow-hidden`}>
-        <div className="h-screen flex flex-col">
-          <AppHeader />
-          <main className="flex-1 min-h-0">{children}</main>
-        </div>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full overflow-hidden`}
+      >
+        <AuthProvider>
+        <Shell>{children}</Shell>
+        </AuthProvider>
       </body>
     </html>
   );
 }
-

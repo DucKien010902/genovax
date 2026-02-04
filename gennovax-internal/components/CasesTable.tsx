@@ -240,7 +240,9 @@ function Pill({
     slate: "bg-slate-50 text-slate-700 ring-slate-200",
   };
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ${map[tone]}`}>
+    <span
+      className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ${map[tone]}`}
+    >
       {text || "—"}
     </span>
   );
@@ -250,13 +252,19 @@ function Check({ ok }: { ok: boolean }) {
   return (
     <span
       className={`inline-flex h-6 w-6 items-center justify-center rounded-lg ring-1 ${
-        ok ? "bg-emerald-600 text-white ring-emerald-700" : "bg-white text-neutral-400 ring-black/10"
+        ok
+          ? "bg-emerald-600 text-white ring-emerald-700"
+          : "bg-white text-neutral-400 ring-black/10"
       }`}
     >
       {ok ? "✓" : ""}
     </span>
   );
 }
+
+const thBase =
+  "px-3 py-3 text-center font-semibold uppercase tracking-wide whitespace-nowrap";
+const tdBase = "px-3 py-3 text-center";
 
 export default function CasesTable({
   rows,
@@ -265,30 +273,35 @@ export default function CasesTable({
 }: {
   rows: CaseRecord[];
   loading?: boolean;
-  onRowClick: (r: CaseRecord) => void; // dùng để mở Drawer/Modal chi tiết
+  onRowClick: (r: CaseRecord) => void;
 }) {
   return (
     <div className="rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
       {/* TABLE ONLY SCROLL */}
       <div className="max-h-[72vh] overflow-auto">
-        {/* giảm min width để đỡ phải cuộn ngang nhiều */}
         <table className="min-w-[1200px] w-full text-sm">
-          <thead className="sticky top-0 z-10 bg-white">
-            <tr className="border-b text-xs text-neutral-500">
-              <th className="px-3 py-3 sticky left-0 bg-white z-20">STT</th>
-              <th className="px-3 py-3">Ngày</th>
-              <th className="px-3 py-3">Mã ca</th>
-              <th className="px-3 py-3">Họ tên</th>
-              <th className="px-3 py-3">Lab</th>
-              <th className="px-3 py-3">Dịch vụ</th>
-              <th className="px-3 py-3">Mã hàng</th>
-              <th className="px-3 py-3">NVKD</th>
-              <th className="px-3 py-3">Thu mẫu</th>
-              <th className="px-3 py-3">Đã TT</th>
-              <th className="px-3 py-3 text-right">Tiền thu</th>
+          <thead className="sticky top-0 z-10">
+            <tr className="border-b text-[11px] text-neutral-600">
+              <th
+                className={`${thBase} sticky left-0 z-30 bg-white shadow-[1px_0_0_rgba(0,0,0,0.06)]`}
+              >
+                STT
+              </th>
 
-              {/* cột action */}
-              <th className="px-3 py-3 sticky right-0 bg-white z-20 text-right">
+              <th className={`${thBase} bg-neutral-50`}>Ngày</th>
+              <th className={`${thBase} bg-white`}>Mã ca</th>
+              <th className={`${thBase} bg-neutral-50`}>Họ tên</th>
+              <th className={`${thBase} bg-white`}>Nguồn</th>
+              <th className={`${thBase} bg-neutral-50`}>Lab</th>
+              <th className={`${thBase} bg-white`}>Dịch vụ</th>
+              <th className={`${thBase} bg-neutral-50`}>Tên dịch vụ</th>
+              <th className={`${thBase} bg-white`}>NVKD</th>
+              <th className={`${thBase} bg-neutral-50`}>Đã TT</th>
+              <th className={`${thBase} bg-white text-right`}>Tiền thu</th>
+
+              <th
+                className={`${thBase}  z-30 bg-white text-right shadow-[-1px_0_0_rgba(0,0,0,0.06)]`}
+              >
                 Chi tiết
               </th>
             </tr>
@@ -297,13 +310,19 @@ export default function CasesTable({
           <tbody className="divide-y">
             {loading ? (
               <tr>
-                <td className="px-4 py-6 text-neutral-500" colSpan={12}>
+                <td
+                  className="px-4 py-6 text-neutral-500 text-center"
+                  colSpan={12}
+                >
                   Đang tải…
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
-                <td className="px-4 py-6 text-neutral-500" colSpan={12}>
+                <td
+                  className="px-4 py-6 text-neutral-500 text-center"
+                  colSpan={12}
+                >
                   Chưa có dữ liệu.
                 </td>
               </tr>
@@ -311,68 +330,77 @@ export default function CasesTable({
               rows.map((r, idx) => (
                 <tr
                   key={r._id}
-                  onClick={() => onRowClick(r)} // click cả dòng vẫn mở chi tiết
-                  className="hover:bg-neutral-50 cursor-pointer"
+                  onClick={() => onRowClick(r)}
+                  className="cursor-pointer odd:bg-white even:bg-neutral-50/40 hover:bg-indigo-50/40"
                 >
-                  <td className="px-3 py-3 sticky left-0 bg-white z-10 font-medium">
+                  <td className="px-3 py-3 sticky left-0 z-20 bg-inherit font-semibold text-neutral-900 text-center">
                     {r.stt || idx + 1}
                   </td>
 
-                  <td className="px-3 py-3">
+                  <td className={`${tdBase} text-sky-700 font-medium`}>
                     {r.date ? new Date(r.date).toLocaleDateString() : "—"}
                   </td>
 
-                  <td className="px-3 py-3 font-semibold text-neutral-900">
+                  <td className={`${tdBase} font-extrabold text-indigo-900`}>
                     {r.caseCode || "—"}
                   </td>
 
-                  <td className="px-3 py-3">
-                    <div className="max-w-[220px] truncate">
+                  <td className={`${tdBase}`}>
+                    <div className="max-w-[220px] mx-auto truncate font-semibold text-neutral-900">
                       {r.patientName || "—"}
                     </div>
                   </td>
 
-                  <td className="px-3 py-3">
+                  <td className={`${tdBase} text-neutral-700`}>
+                    <div className="max-w-[200px] mx-auto truncate">
+                      {r.source || "—"}
+                    </div>
+                  </td>
+
+                  <td className={`${tdBase}`}>
                     <Pill text={r.lab || "—"} tone="slate" />
                   </td>
 
-                  <td className="px-3 py-3">
+                  <td className={`${tdBase}`}>
                     <Pill
                       text={r.serviceType}
-                      tone={r.serviceType === "NIPT" ? "rose" : r.serviceType === "ADN" ? "blue" : "emerald"}
+                      tone={
+                        r.serviceType === "NIPT"
+                          ? "rose"
+                          : r.serviceType === "ADN"
+                            ? "blue"
+                            : "emerald"
+                      }
                     />
                   </td>
 
-                  <td className="px-3 py-3">
-                    <Pill text={r.serviceCode || "—"} tone="amber" />
+                  <td className={`${tdBase}`}>
+                    <div className="max-w-[240px] mx-auto truncate font-semibold text-violet-900">
+                      {r.serviceName || "—"}
+                    </div>
                   </td>
 
-                  <td className="px-3 py-3">
-                    <div className="max-w-[180px] truncate">
+                  <td className={`${tdBase} text-emerald-800 font-medium`}>
+                    <div className="max-w-[180px] mx-auto truncate">
                       {r.salesOwner || "—"}
                     </div>
                   </td>
 
-                  <td className="px-3 py-3">
-                    <div className="max-w-[160px] truncate">
-                      {r.sampleCollector || "—"}
+                  <td className={`${tdBase}`}>
+                    <div className="mx-auto w-fit">
+                      <Check ok={!!r.paid} />
                     </div>
                   </td>
 
-                  <td className="px-3 py-3">
-                    <Check ok={!!r.paid} />
-                  </td>
-
-                  <td className="px-3 py-3 text-right font-semibold">
+                  <td className="px-3 py-3 text-right font-extrabold tabular-nums text-amber-900">
                     {(r.collectedAmount ?? 0).toLocaleString()}
                   </td>
 
-                  {/* Action: sticky phải */}
-                  <td className="px-3 py-3 sticky right-0 bg-white z-10 text-right">
+                  <td className="px-3 py-3  z-20 bg-inherit text-right">
                     <button
                       className="rounded-xl bg-neutral-900 px-3 py-1.5 text-xs font-semibold text-white hover:opacity-95"
                       onClick={(e) => {
-                        e.stopPropagation(); // ✅ tránh kích hoạt onRowClick 2 lần / tránh click row
+                        e.stopPropagation();
                         onRowClick(r);
                       }}
                     >

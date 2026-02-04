@@ -10,7 +10,7 @@ const PriceByLevelSchema = new mongoose.Schema(
 
 const ServiceSchema = new mongoose.Schema(
   {
-    serviceType: { type: String, enum: ["NIPT", "ADN", "CELL"], required: true },
+    serviceType: { type: String, enum: ["NIPT", "ADN", "HPV"], required: true },
     serviceCode: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     turnaroundHours: { type: Number, default: 48 },

@@ -1,6 +1,9 @@
 "use client";
 
 import { ServiceType } from "@/lib/types";
+import DateRangePicker from "@/components/DatePicker"; // ✅ sửa path nếu bạn đặt chỗ khác
+import DatePicker from "@/components/DatePicker";
+import SingleDatePicker from "@/components/DatePicker";
 
 const serviceMeta: Record<
   ServiceType,
@@ -16,8 +19,8 @@ const serviceMeta: Record<
     desc: "Sàng lọc trước sinh",
     pill: "bg-rose-600 text-white",
   },
-  CELL: {
-    title: "CELL",
+  HPV: {
+    title: "HPV",
     desc: "Tế bào / HPV / combo",
     pill: "bg-emerald-600 text-white",
   },
@@ -56,16 +59,15 @@ export default function CasesHeader(props: {
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            {/* Search */}
             <div className="relative">
               <input
                 value={props.q}
                 onChange={(e) => props.setQ(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    e.preventDefault(); // tránh submit / reload nếu có form
-                    if (!props.loading) {
-                      props.onApply(); // Enter là lọc luôn
-                    }
+                    e.preventDefault();
+                    if (!props.loading) props.onApply();
                   }
                 }}
                 placeholder="Tìm theo mã ca / tên / mã hàng..."
@@ -73,25 +75,34 @@ export default function CasesHeader(props: {
               />
             </div>
 
+            {/* ✅ DateRangePicker thay cho 2 input date */}
             <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={props.from}
-                onChange={(e) => props.setFrom(e.target.value)}
-                className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none"
-              />
-              <span className="text-xs text-neutral-500">→</span>
-              <input
-                type="date"
-                value={props.to}
-                onChange={(e) => props.setTo(e.target.value)}
-                className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none"
-              />
-            </div>
+  <SingleDatePicker
+    value={props.from}
+    onChange={props.setFrom}
+    placeholder="Từ ngày"
+    disabled={!!props.loading}
+    popoverWidth="lg"
+    months={1}
+    buttonClassName="w-[160px]"
+  />
+  <span className="text-xs text-neutral-500">→</span>
+  <SingleDatePicker
+    value={props.to}
+    onChange={props.setTo}
+    placeholder="Đến ngày"
+    disabled={!!props.loading}
+    popoverWidth="lg"
+    months={1}
+    buttonClassName="w-[160px]"
+  />
+</div>
 
+            {/* Actions */}
             <button
               onClick={props.onApply}
-              className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
+              className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
+              disabled={props.loading}
             >
               {props.loading ? "Đang lọc..." : "Lọc"}
             </button>

@@ -117,22 +117,67 @@ export default function CasesPage() {
     setOpen(false);
     setEditing(null);
   };
+  function validateCaseDraft(d: CaseDraft) {
+  const errs: string[] = [];
+
+  // ✅ bắt buộc chung
+  if (!d.caseCode) errs.push("Thiếu mã Code.");
+  if (!d.serviceType) errs.push("Thiếu loại dịch vụ (serviceType).");
+  if (!d.patientName?.trim()) errs.push("Thiếu họ và tên khách hàng.");
+  if (!d.source?.trim()) errs.push("Thiếu nguồn.");
+  if (!d.lab?.trim()) errs.push("Thiếu Lab.");
+  if (!d.salesOwner?.trim()) errs.push("Thiếu NVKD phụ trách.");
+  if (!d.sampleCollector?.trim()) errs.push("Thiếu người thu mẫu.");
+
+  // ✅ dịch vụ + giá
+  if (!d.serviceCode?.trim()) errs.push("Chưa chọn dịch vụ (mã).");
+  if (!d.serviceName?.trim()) errs.push("Chưa có tên dịch vụ.");
+  if (!d.collectedAmount || d.collectedAmount <= 0)
+    errs.push("Tiền thu chưa được tính (giá = 0).");
+
+  // ✅ luồng xử lý
+  if (!d.transferStatus?.trim()) errs.push("Thiếu trạng thái chuyển lab.");
+  if (!d.receiveStatus?.trim()) errs.push("Thiếu trạng thái tiếp nhận.");
+  if (!d.processStatus?.trim()) errs.push("Thiếu trạng thái xử lý.");
+  if (!d.feedbackStatus?.trim()) errs.push("Thiếu trạng thái phản hồi.");
+
+  // ✅ ngày nhận (nếu bạn coi là bắt buộc)
+  if (!d.receivedAt) errs.push("Chưa chọn ngày nhận mẫu.");
+
+  // ✅ nếu tick xuất hóa đơn thì bắt buộc invoiceInfo
+  if (d.invoiceRequested && !d.invoiceInfo?.trim())
+    errs.push("Đã chọn xuất hóa đơn nhưng thiếu thông tin hóa đơn.");
+
+  // ✅ nếu muốn bắt caseCode bắt buộc thì bật dòng này
+  // if (!d.caseCode?.trim()) errs.push("Thiếu mã ca.");
+
+  return errs;
+}
 
   const onSave = async (data: CaseDraft) => {
-    if (data.isDraft) {
-      const created = await api.createCase(data);
-      setRows((prev) => [created, ...prev]);
-      setOpen(false);
-      setEditing(null);
-      return;
-    }
-    if (data._id) {
-      const updated = await api.updateCase(data._id, data);
-      setRows((prev) => prev.map((x) => (x._id === updated._id ? updated : x)));
-      setOpen(false);
-      setEditing(null);
-    }
-  };
+  const errs = validateCaseDraft(data);
+  if (errs.length) {
+    // tạm thời dùng alert, sau bạn thay bằng toast UI
+    alert("Không thể lưu vì thiếu thông tin:\n\n- " + errs.join("\n- "));
+    return;
+  }
+
+  if (data.isDraft) {
+    const created = await api.createCase(data);
+    setRows((prev) => [created, ...prev]);
+    setOpen(false);
+    setEditing(null);
+    return;
+  }
+
+  if (data._id) {
+    const updated = await api.updateCase(data._id, data);
+    setRows((prev) => prev.map((x) => (x._id === updated._id ? updated : x)));
+    setOpen(false);
+    setEditing(null);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-50 via-neutral-50 to-neutral-100">

@@ -7,6 +7,7 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "seed": "node src/seed.js",
+    "seed:users": "node src/seedUsers.js",
     "watch": "sass --watch src/resource/scss/index.scss src/public/css/index.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

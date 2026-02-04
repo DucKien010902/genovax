@@ -17,7 +17,11 @@ async function j<T>(res: Response): Promise<T> {
   }
   return res.json() as Promise<T>;
 }
-
+export type Role = "admin" | "staff";
+export type LoginResponse = {
+  token: string; // JWT
+  user: { id: string; name: string; email: string; role: Role };
+};
 export const api = {
   options: () =>
     fetch(`${API_BASE}/meta/options`).then((r) => j<OptionsMap>(r)),
@@ -67,4 +71,15 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(patch),
     }).then((r) => j<CaseRecord>(r)),
+  login: (payload: { email: string; password: string }) =>
+    fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).then((r) => j<LoginResponse>(r)),
+
+  me: (token: string) =>
+    fetch(`${API_BASE}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then((r) => j<LoginResponse["user"]>(r)),
 };

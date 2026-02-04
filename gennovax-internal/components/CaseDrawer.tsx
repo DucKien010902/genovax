@@ -2,12 +2,35 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { CaseDraft, OptionsMap, ServiceItem } from "@/lib/types";
+import SingleDatePicker from "./DatePicker";
 
 /** ✅ FE map nguồn -> cấp đại lý (không đụng DB) */
-const SOURCE_TO_AGENT: Record<string, { level: string; label: string }> = {
-  "CTV Xinh": { level: "cap3", label: "Cấp 3" },
-  "BS Thoa": { level: "cap2", label: "Cấp 2" },
-  "PK Âu Cơ": { level: "cap1", label: "Cấp 1" },
+/** ✅ FE map nguồn -> cấp đại lý (không đụng DB) */
+const SOURCE_TO_AGENT: Record<
+  string,
+  { level: "cap1" | "cap2" | "cap3" | "ctv"; label: string }
+> = {
+  // bạn cung cấp
+  "CTV Xinh": { level: "cap2", label: "Cấp 2" },
+  "PK Âu Cơ": { level: "ctv", label: "CTV" },
+
+  // bạn nói "huyền: cấp 1" -> có 2 nguồn liên quan Huyền trong list sources
+  "CTV Huyền": { level: "cap1", label: "Cấp 1" },
+  "Huyền - BVDK ngã 4 Hồ": { level: "cap1", label: "Cấp 1" },
+
+  "PKĐK AGAPE": { level: "cap2", label: "Cấp 2" },
+  "BS Thoa": { level: "ctv", label: "CTV" },
+  "BS Hậu - PK SPK Mẹ và Bé": { level: "ctv", label: "CTV" },
+
+  "Golab Hải Phòng": { level: "cap3", label: "Cấp 3" },
+  "PK Mỹ Lộc": { level: "cap3", label: "Cấp 3" },
+  "CTV Lý": { level: "cap3", label: "Cấp 3" },
+
+  "Golab Quảng Bình": { level: "cap2", label: "Cấp 2" },
+  "CTV Tú - Vũng Tàu": { level: "cap2", label: "Cấp 2" },
+  "Golab Thanh Hoá": { level: "cap1", label: "Cấp 1" },
+  "Golab Hà Tĩnh": { level: "cap2", label: "Cấp 2" },
+  "CTV Thảo": { level: "cap1", label: "Cấp 1" },
 };
 
 function cn(...a: Array<string | false | null | undefined>) {
@@ -59,15 +82,6 @@ function fmtMoney(v: number) {
   return (v ?? 0).toLocaleString("vi-VN");
 }
 
-function isoFromDateOnly(dateStr: string) {
-  // dateStr "YYYY-MM-DD" => ISO
-  const d = new Date(dateStr + "T00:00:00");
-  return d.toISOString();
-}
-
-function dateOnlyFromISO(iso: string) {
-  return iso.slice(0, 10);
-}
 
 function addHoursISO(iso: string, hours: number) {
   const d = new Date(iso);
@@ -76,91 +90,7 @@ function addHoursISO(iso: string, hours: number) {
 }
 
 /** ✅ Modal date picker to, dễ bấm */
-function DatePickerModal({
-  open,
-  title,
-  valueISO,
-  onClose,
-  onPick,
-}: {
-  open: boolean;
-  title: string;
-  valueISO: string | null;
-  onClose: () => void;
-  onPick: (isoOrNull: string | null) => void;
-}) {
-  const [tmp, setTmp] = useState<string>("");
 
-  useEffect(() => {
-    setTmp(valueISO ? dateOnlyFromISO(valueISO) : "");
-  }, [valueISO, open]);
-
-  if (!open) return null;
-
-  return (
-    <div className="fixed inset-0 z-[60]">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="absolute left-1/2 top-1/2 w-[92vw] max-w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-white shadow-2xl ring-1 ring-black/10">
-        <div className="flex items-center justify-between border-b px-5 py-4">
-          <div>
-            <div className="text-sm text-neutral-500">Chọn ngày</div>
-            <div className="text-lg font-semibold">{title}</div>
-          </div>
-          <button
-            className="rounded-2xl px-3 py-2 text-sm hover:bg-neutral-100"
-            onClick={onClose}
-          >
-            Đóng
-          </button>
-        </div>
-
-        <div className="p-5 space-y-4">
-          <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-rose-50 p-4 ring-1 ring-black/5">
-            <div className="text-xs text-neutral-600 mb-2">
-              Bấm để chọn ngày (ô lớn)
-            </div>
-            <input
-              type="date"
-              value={tmp}
-              onChange={(e) => setTmp(e.target.value)}
-              className="w-full rounded-2xl border border-black/10 bg-white px-4 py-4 text-base shadow-sm outline-none focus:ring-4 focus:ring-blue-200"
-            />
-          </div>
-
-          <div className="flex items-center justify-between gap-2">
-            <button
-              className="rounded-2xl px-4 py-3 text-sm font-semibold ring-1 ring-black/10 hover:bg-neutral-50"
-              onClick={() => {
-                onPick(null);
-                onClose();
-              }}
-            >
-              Xóa ngày
-            </button>
-
-            <div className="flex gap-2">
-              <button
-                className="rounded-2xl px-4 py-3 text-sm font-semibold ring-1 ring-black/10 hover:bg-neutral-50"
-                onClick={onClose}
-              >
-                Hủy
-              </button>
-              <button
-                className="rounded-2xl bg-neutral-900 px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
-                onClick={() => {
-                  onPick(tmp ? isoFromDateOnly(tmp) : null);
-                  onClose();
-                }}
-              >
-                Chọn
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function CaseDrawer({
   open,
@@ -185,6 +115,22 @@ export default function CaseDrawer({
 
   const [pickSentOpen, setPickSentOpen] = useState(false);
   const [pickRecvOpen, setPickRecvOpen] = useState(false);
+  function isoDateFromISODateTime(iso?: string | null) {
+  if (!iso) return "";
+  // lấy YYYY-MM-DD từ ISO datetime
+  // new Date(iso).toISOString() sẽ ra dạng UTC, dùng slice(0,10) để lấy ngày
+  try {
+    return new Date(iso).toISOString().slice(0, 10);
+  } catch {
+    return "";
+  }
+}
+
+function isoDateTimeFromISODate(date: string) {
+  if (!date) return null;
+  // lưu về ISO datetime để tương thích logic addHoursISO/dueDate
+  return new Date(`${date}T00:00:00.000Z`).toISOString();
+}
 
   useEffect(() => setForm(data), [data]);
 
@@ -206,8 +152,7 @@ export default function CaseDrawer({
   // ===== derived agent from source mapping =====
   const agent = useMemo(() => {
     if (!form) return { level: "", label: "" };
-    const m = SOURCE_TO_AGENT[form.source];
-    return m ?? { level: "", label: "" };
+    return SOURCE_TO_AGENT[form.source] ?? { level: "", label: "" };
   }, [form?.source]);
 
   // ===== compute price realtime -> set collectedAmount =====
@@ -277,7 +222,7 @@ export default function CaseDrawer({
               <div className="text-xs font-semibold text-blue-700">
                 Ca: {form.serviceType}
               </div>
-              <div className="text-xl font-extrabold tracking-tight text-neutral-900">
+              <div className="text-xl font-bold tracking-tight text-neutral-900">
                 {form.patientName || "Ca mới"}
               </div>
               <div className="mt-1 flex flex-wrap gap-2 text-xs">
@@ -322,7 +267,7 @@ export default function CaseDrawer({
                   className="w-full rounded-2xl border border-black/10 bg-white px-3 py-2.5 text-sm shadow-sm outline-none focus:ring-4 focus:ring-blue-200"
                   value={form.caseCode}
                   onChange={(e) => set({ caseCode: e.target.value })}
-                  placeholder="(có thể để trống)"
+                  placeholder="Nhập mã ca"
                 />
               </div>
 
@@ -387,15 +332,32 @@ export default function CaseDrawer({
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div>
                 <div className="mb-1 text-xs text-neutral-500">
-                  Dịch vụ (mã hàng)
+                  Dịch vụ (mã)
                 </div>
                 <Select
                   value={form.serviceCode}
-                  onChange={(v) => set({ serviceCode: v })}
+                  onChange={(v) => {
+                    const s = services.find((x) => x.serviceCode === v) ?? null;
+
+                    set({
+                      serviceCode: v,
+                      serviceName: s?.name ?? "",
+                      serviceId: s?._id ?? null,
+                    });
+                  }}
                   items={serviceItemsForSelect}
                   placeholder="Chọn dịch vụ..."
                   tone="emerald"
                 />
+              </div>
+
+              <div>
+                <div className="mb-1 text-xs text-neutral-500">Tên dịch vụ</div>
+                <div className="rounded-2xl border border-black/10 bg-white px-3 py-2.5 text-sm shadow-sm">
+                  <div className=" text-neutral-900">
+                    {form.serviceName || "—"}
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -480,18 +442,19 @@ export default function CaseDrawer({
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div>
                 <div className="mb-1 text-xs text-neutral-500">Ngày nhận</div>
-                <button
-                  type="button"
-                  className="w-full rounded-2xl border border-black/10 bg-white px-3 py-3 text-left text-sm shadow-sm hover:bg-neutral-50"
-                  onClick={() => setPickRecvOpen(true)}
-                >
-                  {form.receivedAt
-                    ? new Date(form.receivedAt).toLocaleDateString()
-                    : "Chọn ngày..."}
-                </button>
+                <SingleDatePicker
+  value={isoDateFromISODateTime(form.receivedAt)}
+  onChange={(d) => set({ receivedAt: isoDateTimeFromISODate(d) })}
+  placeholder="Chọn ngày..."
+  disabled={false}
+  popoverWidth="lg"
+  months={1}
+  buttonClassName="w-full px-3 py-3 text-left" // ✅ nhìn giống input cũ
+/>
+
               </div>
 
-              <div>
+              {/* <div>
                 <div className="mb-1 text-xs text-neutral-500">
                   Ngày gửi mẫu
                 </div>
@@ -504,7 +467,7 @@ export default function CaseDrawer({
                     ? new Date(form.sentAt).toLocaleDateString()
                     : "Chọn ngày..."}
                 </button>
-              </div>
+              </div> */}
             </div>
 
             <div className="mt-3 rounded-3xl bg-gradient-to-r from-slate-50 to-blue-50 p-4 ring-1 ring-black/5">
@@ -605,20 +568,9 @@ export default function CaseDrawer({
       </div>
 
       {/* ✅ Modals chọn ngày */}
-      <DatePickerModal
-        open={pickRecvOpen}
-        title="Ngày nhận"
-        valueISO={form.receivedAt}
-        onClose={() => setPickRecvOpen(false)}
-        onPick={(isoOrNull) => set({ receivedAt: isoOrNull })}
-      />
-      <DatePickerModal
-        open={pickSentOpen}
-        title="Ngày gửi mẫu"
-        valueISO={form.sentAt}
-        onClose={() => setPickSentOpen(false)}
-        onPick={(isoOrNull) => set({ sentAt: isoOrNull })}
-      />
+      
+   
+
     </div>
   );
 }

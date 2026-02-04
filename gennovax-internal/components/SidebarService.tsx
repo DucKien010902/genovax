@@ -23,8 +23,8 @@ function Icon({ t, active }: { t: ServiceType; active: boolean }) {
       on: "bg-blue-600 text-white ring-blue-700 shadow-sm",
       off: "bg-blue-50 text-blue-700 ring-blue-200",
     },
-    CELL: {
-      glyph: "CELL",
+    HPV: {
+      glyph: "HPV",
       on: "bg-emerald-600 text-white ring-emerald-700 shadow-sm",
       off: "bg-emerald-50 text-emerald-700 ring-emerald-200",
     },
@@ -63,8 +63,8 @@ export default function SidebarService({
           desc: "Giám định & pháp lý",
         },
         {
-          key: "CELL",
-          label: "CELL",
+          key: "HPV",
+          label: "HPV",
           badge: "Tế bào",
           desc: "Xét nghiệm tế bào",
         },
@@ -77,7 +77,7 @@ export default function SidebarService({
   return (
     <aside
       className={cn(
-        "shrink-0 border-r border-black/5 bg-gradient-to-b from-white via-white to-neutral-50/70",
+        "shrink-0 border-r-4 border-gray-200 bg-gradient-to-b from-white via-white to-neutral-50/70",
         "backdrop-blur supports-[backdrop-filter]:bg-white/70",
         "sticky top-0 h-screen ",
         widthCls,
@@ -87,7 +87,7 @@ export default function SidebarService({
       <div className="px-4 pt-4">
         <div className="flex items-center justify-between">
           <div className={cn("min-w-0", collapsed && "hidden")}>
-            <div className="text-sm font-extrabold tracking-tight text-neutral-900">
+            <div className="text-lg font-bold tracking-tight text-neutral-900">
               Danh mục dịch vụ
             </div>
             <div className="mt-0.5 text-xs text-neutral-500">
@@ -137,7 +137,7 @@ export default function SidebarService({
                 hover: "hover:bg-blue-50/60",
                 soft: "bg-blue-50 text-blue-700 ring-blue-200",
               },
-              CELL: {
+              HPV: {
                 ring: "ring-emerald-200",
                 hover: "hover:bg-emerald-50/60",
                 soft: "bg-emerald-50 text-emerald-700 ring-emerald-200",
@@ -156,7 +156,7 @@ export default function SidebarService({
                     ? "flex items-center justify-center"
                     : "flex items-center gap-3",
                   is
-                    ? cn("bg-neutral-900 text-white ring-neutral-900")
+                    ? cn("bg-purple-600 text-white ")
                     : cn("bg-white ring-black/5", tone[it.key].hover),
                 )}
               >
