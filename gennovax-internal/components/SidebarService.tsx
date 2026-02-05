@@ -77,7 +77,7 @@ export default function SidebarService({
   return (
     <aside
       className={cn(
-        "shrink-0 border-r-4 border-gray-200 bg-gradient-to-b from-white via-white to-neutral-50/70",
+        "shrink-0 border-r border-blue-400 bg-gradient-to-b from-white via-white to-neutral-50/70",
         "backdrop-blur supports-[backdrop-filter]:bg-white/70",
         "sticky top-0 h-screen ",
         widthCls,
@@ -99,7 +99,7 @@ export default function SidebarService({
             type="button"
             onClick={() => setCollapsed((v) => !v)}
             className={cn(
-              "ml-auto inline-flex items-center gap-2 rounded-2xl px-3 py-2 text-xs font-semibold",
+              "ml-auto inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold",
               "ring-1 ring-black/10 bg-white hover:bg-neutral-50 shadow-sm",
             )}
             title={collapsed ? "Phóng to sidebar" : "Thu nhỏ sidebar"}
@@ -107,9 +107,9 @@ export default function SidebarService({
             <span className="text-sm" aria-hidden="true">
               {collapsed ? "»" : "«"}
             </span>
-            <span className={cn(collapsed && "hidden")}>
+            {/* <span className={cn(collapsed && "hidden")}>
               {collapsed ? "Mở" : "Thu"}
-            </span>
+            </span> */}
           </button>
         </div>
 
@@ -150,13 +150,13 @@ export default function SidebarService({
                 onClick={() => onChange(it.key)}
                 title={`${it.label} — ${it.desc}`}
                 className={cn(
-                  "group w-full rounded-3xl px-3 py-3 text-left transition",
+                  "group w-full rounded-xl px-3 py-3 text-left transition",
                   "ring-1 shadow-sm",
                   collapsed
                     ? "flex items-center justify-center"
                     : "flex items-center gap-3",
                   is
-                    ? cn("bg-purple-600 text-white ")
+                    ? cn("bg-blue-400 text-white ")
                     : cn("bg-white ring-black/5", tone[it.key].hover),
                 )}
               >

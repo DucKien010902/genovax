@@ -262,9 +262,10 @@ function Check({ ok }: { ok: boolean }) {
   );
 }
 
+// ✅ thêm đường phân cách dọc mờ
 const thBase =
-  "px-3 py-3 text-center font-semibold uppercase tracking-wide whitespace-nowrap";
-const tdBase = "px-3 py-3 text-center";
+  "px-3 py-3 text-center font-semibold uppercase tracking-wide whitespace-nowrap border-r border-black/5";
+const tdBase = "px-3 py-3 text-center border-r border-black/5";
 
 export default function CasesTable({
   rows,
@@ -283,7 +284,7 @@ export default function CasesTable({
           <thead className="sticky top-0 z-10">
             <tr className="border-b text-[11px] text-neutral-600">
               <th
-                className={`${thBase} sticky left-0 z-30 bg-white shadow-[1px_0_0_rgba(0,0,0,0.06)]`}
+                className={`${thBase} sticky top-0 left-0 z-50 bg-white shadow-[1px_0_0_rgba(0,0,0,0.06)]`}
               >
                 STT
               </th>
@@ -300,7 +301,7 @@ export default function CasesTable({
               <th className={`${thBase} bg-white text-right`}>Tiền thu</th>
 
               <th
-                className={`${thBase}  z-30 bg-white text-right shadow-[-1px_0_0_rgba(0,0,0,0.06)]`}
+                className={`${thBase} border-r-0 z-30 bg-white text-right shadow-[-1px_0_0_rgba(0,0,0,0.06)]`}
               >
                 Chi tiết
               </th>
@@ -333,7 +334,7 @@ export default function CasesTable({
                   onClick={() => onRowClick(r)}
                   className="cursor-pointer odd:bg-white even:bg-neutral-50/40 hover:bg-indigo-50/40"
                 >
-                  <td className="px-3 py-3 sticky left-0 z-20 bg-inherit font-semibold text-neutral-900 text-center">
+                  <td className="px-3 py-3 sticky left-0 z-20 bg-white font-semibold text-neutral-900 text-center border-r border-black/5">
                     {r.stt || idx + 1}
                   </td>
 
@@ -345,8 +346,8 @@ export default function CasesTable({
                     {r.caseCode || "—"}
                   </td>
 
-                  <td className={`${tdBase}`}>
-                    <div className="max-w-[220px] mx-auto truncate font-semibold text-neutral-900">
+                  <td className={tdBase}>
+                    <div className="max-w-[220px] mx-auto truncate  text-neutral-900">
                       {r.patientName || "—"}
                     </div>
                   </td>
@@ -357,24 +358,24 @@ export default function CasesTable({
                     </div>
                   </td>
 
-                  <td className={`${tdBase}`}>
+                  <td className={tdBase}>
                     <Pill text={r.lab || "—"} tone="slate" />
                   </td>
 
-                  <td className={`${tdBase}`}>
+                  <td className={tdBase}>
                     <Pill
                       text={r.serviceType}
                       tone={
                         r.serviceType === "NIPT"
                           ? "rose"
                           : r.serviceType === "ADN"
-                            ? "blue"
-                            : "emerald"
+                          ? "blue"
+                          : "emerald"
                       }
                     />
                   </td>
 
-                  <td className={`${tdBase}`}>
+                  <td className={tdBase}>
                     <div className="max-w-[240px] mx-auto truncate font-semibold text-violet-900">
                       {r.serviceName || "—"}
                     </div>
@@ -386,17 +387,17 @@ export default function CasesTable({
                     </div>
                   </td>
 
-                  <td className={`${tdBase}`}>
+                  <td className={tdBase}>
                     <div className="mx-auto w-fit">
                       <Check ok={!!r.paid} />
                     </div>
                   </td>
 
-                  <td className="px-3 py-3 text-right font-extrabold tabular-nums text-amber-900">
+                  <td className="px-3 py-3 text-right font-extrabold tabular-nums text-amber-900 border-r border-black/5">
                     {(r.collectedAmount ?? 0).toLocaleString()}
                   </td>
 
-                  <td className="px-3 py-3  z-20 bg-inherit text-right">
+                  <td className="px-3 py-3 border-r-0 z-20 bg-inherit text-right">
                     <button
                       className="rounded-xl bg-neutral-900 px-3 py-1.5 text-xs font-semibold text-white hover:opacity-95"
                       onClick={(e) => {

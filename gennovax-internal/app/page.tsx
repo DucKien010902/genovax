@@ -16,7 +16,7 @@ import type {
 } from "@/lib/types";
 
 export default function CasesPage() {
-  const [serviceType, setServiceType] = useState<ServiceType>("ADN");
+  const [serviceType, setServiceType] = useState<ServiceType>("NIPT");
   const [options, setOptions] = useState<OptionsMap>({});
   const [rows, setRows] = useState<CaseRecord[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
