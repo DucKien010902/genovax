@@ -90,7 +90,7 @@ export const ServicesData: PackageDetails[] = [
     name: "Xét nghiệm định type HPV nguy cơ cao (23 type)",
     description:
       "Định type cho 12 types HPV nguy cơ cao (16, 18, 31, 33,...) và 11 types HPV khác (6, 11, 42,...).",
-    returnTime: "5-7 ngày làm việc",
+    returnTime: "1-2 ngày làm việc",
     price: 500000,
     category: "HPV",
   },
@@ -99,10 +99,38 @@ export const ServicesData: PackageDetails[] = [
     name: "Xét nghiệm định type HPV nguy cơ cao (40 type)",
     description:
       "Định type cho 20 type HPV nguy cơ cao, 2 type nguy cơ thấp (6, 11) và phát hiện 18 type HPV khác.",
-    returnTime: "5-7 ngày làm việc",
+    returnTime: "1-2 ngày làm việc",
     price: 700000,
     category: "HPV",
   },
+  {
+    id: "cellprep",
+    name: "Kỹ thuật tế bào học nhúng dịch Cell Prep",
+    description:
+      "Kỹ thuật xét nghiệm tế bào học cổ tử cung giúp phát hiện sớm các tổn thương tiền ung thư và ung thư cổ tử cung, độ chính xác cao hơn PAP-Smear truyền thống.",
+    returnTime: "1-2 ngày làm việc",
+    price: 400000,
+    category: "HPV",
+  },
+  {
+    id: "combo-cellprep-hpv-23",
+    name: "Combo Cell Prep + HPV (23 type)",
+    description:
+      "Kết hợp Cell Prep giúp phát hiện sớm tổn thương tiền ung thư và xét nghiệm định danh 23 type HPV, giúp tầm soát toàn diện nguy cơ ung thư cổ tử cung.",
+    returnTime: "1-2 ngày làm việc",
+    price: 850000,
+    category: "HPV",
+  },
+  {
+    id: "combo-cellprep-hpv-40",
+    name: "Combo Cell Prep + HPV (40 type)",
+    description:
+      "Kết hợp Cell Prep giúp phát hiện sớm tổn thương tiền ung thư và xét nghiệm định danh 40 type HPV, giúp phát hiện sớm mọi nguy cơ và bảo vệ phụ nữ khỏi ung thư cổ tử cung với độ chính xác cao.",
+    returnTime: "1-2 ngày làm việc",
+    price: 1000000,
+    category: "HPV",
+  },
+  
 
   // === ADN (DỮ LIỆU MỚI THÊM) ===
   {

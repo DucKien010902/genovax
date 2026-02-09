@@ -133,7 +133,7 @@ export default function OurServiceSystem() {
                     transition
                   "
                 >
-                  Chuỗi 68 phòng xét nghiệm trên toàn quốc
+                  Chuỗi 66 phòng xét nghiệm trên toàn quốc
                 </Link>
               </div>
             </div>
