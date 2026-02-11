@@ -1,226 +1,3 @@
-// "use client";
-
-// import { CaseRecord } from "@/lib/types";
-
-// function Pill({
-//   text,
-//   tone,
-// }: {
-//   text: string;
-//   tone: "blue" | "rose" | "emerald" | "amber" | "slate";
-// }) {
-//   const map: Record<typeof tone, string> = {
-//     blue: "bg-blue-50 text-blue-700 ring-blue-200",
-//     rose: "bg-rose-50 text-rose-700 ring-rose-200",
-//     emerald: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-//     amber: "bg-amber-50 text-amber-800 ring-amber-200",
-//     slate: "bg-slate-50 text-slate-700 ring-slate-200",
-//   };
-//   return (
-//     <span
-//       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ${map[tone]}`}
-//     >
-//       {text || "—"}
-//     </span>
-//   );
-// }
-
-// function Check({ ok }: { ok: boolean }) {
-//   return (
-//     <span
-//       className={`inline-flex h-6 w-6 items-center justify-center rounded-lg ring-1 ${ok ? "bg-emerald-600 text-white ring-emerald-700" : "bg-white text-neutral-400 ring-black/10"}`}
-//     >
-//       {ok ? "✓" : ""}
-//     </span>
-//   );
-// }
-
-// export default function CasesTable({
-//   rows,
-//   loading,
-//   onRowClick,
-// }: {
-//   rows: CaseRecord[];
-//   loading?: boolean;
-//   onRowClick: (r: CaseRecord) => void;
-// }) {
-//   return (
-//     <div className="rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
-//       {/* ONLY TABLE SCROLLS */}
-//       <div className="max-h-[72vh] overflow-auto">
-//         <table className="min-w-[2200px] w-full text-sm">
-//           <thead className="sticky top-0 z-10 bg-white">
-//             <tr className="border-b text-xs text-neutral-500">
-//               <th className="px-3 py-3 sticky left-0 bg-white z-20">STT</th>
-//               <th className="px-3 py-3  bg-white z-20">
-//                 Ngày
-//               </th>
-
-//               <th className="px-3 py-3">Xuất HĐ</th>
-//               <th className="px-3 py-3">Mã ca</th>
-//               <th className="px-3 py-3">Họ và tên</th>
-//               <th className="px-3 py-3">Lab</th>
-//               <th className="px-3 py-3">Dịch vụ</th>
-//               <th className="px-3 py-3">Mã hàng</th>
-//               <th className="px-3 py-3">Thông tin chi tiết thêm</th>
-//               <th className="px-3 py-3">Nguồn</th>
-//               <th className="px-3 py-3">NVKD phụ trách</th>
-//               <th className="px-3 py-3">Thu mẫu</th>
-//               <th className="px-3 py-3">Ngày gửi mẫu</th>
-//               <th className="px-3 py-3">Đã thanh toán</th>
-//               <th className="px-3 py-3">Ngày trả kết quả</th>
-//               <th className="px-3 py-3">Cấp đại lý</th>
-//               <th className="px-3 py-3">Tiền thu</th>
-//               <th className="px-3 py-3">Mức chuyển lab</th>
-//               <th className="px-3 py-3">Tiếp nhận mẫu</th>
-//               <th className="px-3 py-3">Xử lý mẫu</th>
-//               <th className="px-3 py-3">Phản hồi</th>
-//               <th className="px-3 py-3">GL trả</th>
-//               <th className="px-3 py-3">GX nhận</th>
-//               <th className="px-3 py-3">Trả file mềm</th>
-//               <th className="px-3 py-3">Trả file cứng</th>
-//               <th className="px-3 py-3">Thông tin xuất hóa đơn</th>
-//             </tr>
-//           </thead>
-
-//           <tbody className="divide-y">
-//             {loading ? (
-//               <tr>
-//                 <td className="px-4 py-6 text-neutral-500" colSpan={26}>
-//                   Đang tải…
-//                 </td>
-//               </tr>
-//             ) : rows.length === 0 ? (
-//               <tr>
-//                 <td className="px-4 py-6 text-neutral-500" colSpan={26}>
-//                   Chưa có dữ liệu.
-//                 </td>
-//               </tr>
-//             ) : (
-//               rows.map((r, idx) => (
-//                 <tr
-//                   key={r._id}
-//                   onClick={() => onRowClick(r)}
-//                   className="hover:bg-neutral-50 cursor-pointer"
-//                 >
-//                   {/* sticky left columns */}
-//                   <td className="px-3 py-3 sticky left-0 bg-white z-10 font-medium">
-//                     {r.stt || idx + 1}
-//                   </td>
-//                   <td className="px-3 py-3  bg-white z-10">
-//                     {r.date ? new Date(r.date).toLocaleDateString() : "—"}
-//                   </td>
-
-//                   <td className="px-3 py-3">
-//                     <Check ok={!!r.invoiceRequested} />
-//                   </td>
-//                   <td className="px-3 py-3 font-semibold text-neutral-900">
-//                     {r.caseCode || "—"}
-//                   </td>
-//                   <td className="px-3 py-3">{r.patientName || "—"}</td>
-//                   <td className="px-3 py-3">
-//                     <Pill text={r.lab || "—"} tone="slate" />
-//                   </td>
-
-//                   <td className="px-3 py-3">
-//                     <Pill
-//                       text={r.serviceType}
-//                       tone={
-//                         r.serviceType === "NIPT"
-//                           ? "rose"
-//                           : r.serviceType === "ADN"
-//                             ? "blue"
-//                             : "emerald"
-//                       }
-//                     />
-//                   </td>
-
-//                   <td className="px-3 py-3">
-//                     <Pill text={r.serviceCode || "—"} tone="amber" />
-//                   </td>
-
-//                   <td className="px-3 py-3 max-w-[360px]">
-//                     <div className="line-clamp-2 text-neutral-700">
-//                       {r.detailNote || "—"}
-//                     </div>
-//                   </td>
-
-//                   <td className="px-3 py-3">
-//                     <Pill text={r.source || "—"} tone="slate" />
-//                   </td>
-//                   <td className="px-3 py-3">{r.salesOwner || "—"}</td>
-//                   <td className="px-3 py-3">{r.sampleCollector || "—"}</td>
-
-//                   <td className="px-3 py-3">
-//                     {r.sentAt ? new Date(r.sentAt).toLocaleDateString() : "—"}
-//                   </td>
-
-//                   <td className="px-3 py-3">
-//                     <Check ok={!!r.paid} />
-//                   </td>
-
-//                   <td className="px-3 py-3">
-//                     {r.dueDate ? new Date(r.dueDate).toLocaleDateString() : "—"}
-//                   </td>
-
-//                   <td className="px-3 py-3">
-//                     <Pill
-//                       text={r.agentTierLabel || r.agentLevel || "—"}
-//                       tone="blue"
-//                     />
-//                   </td>
-
-//                   <td className="px-3 py-3 font-semibold">
-//                     {(r.collectedAmount ?? 0).toLocaleString()}
-//                   </td>
-
-//                   <td className="px-3 py-3">
-//                     <Pill text={r.transferStatus || "—"} tone="amber" />
-//                   </td>
-//                   <td className="px-3 py-3">
-//                     <Pill text={r.receiveStatus || "—"} tone="emerald" />
-//                   </td>
-//                   <td className="px-3 py-3">
-//                     <Pill text={r.processStatus || "—"} tone="slate" />
-//                   </td>
-//                   <td className="px-3 py-3">
-//                     <Pill text={r.feedbackStatus || "—"} tone="rose" />
-//                   </td>
-
-//                   <td className="px-3 py-3">
-//                     <Check ok={!!r.glReturned} />
-//                   </td>
-//                   <td className="px-3 py-3">
-//                     <Check ok={!!r.gxReceived} />
-//                   </td>
-//                   <td className="px-3 py-3">
-//                     <Check ok={!!r.softFileDone} />
-//                   </td>
-//                   <td className="px-3 py-3">
-//                     <Check ok={!!r.hardFileDone} />
-//                   </td>
-
-//                   <td className="px-3 py-3 max-w-[420px]">
-//                     <div className="line-clamp-2 text-neutral-700">
-//                       {r.invoiceInfo || "—"}
-//                     </div>
-//                   </td>
-//                 </tr>
-//               ))
-//             )}
-//           </tbody>
-//         </table>
-//       </div>
-
-//       <div className="flex items-center justify-between px-4 py-3 text-xs text-neutral-500 border-t bg-neutral-50">
-//         <div>Tip: Cuộn ngang chỉ ở bảng. Click 1 dòng để mở chi tiết.</div>
-//         <div>
-//           Tổng: <b className="text-neutral-900">{rows.length}</b>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 "use client";
 
 import { CaseRecord } from "@/lib/types";
@@ -241,7 +18,7 @@ function Pill({
   };
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ${map[tone]}`}
+      className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ${map[tone]} whitespace-nowrap`}
     >
       {text || "—"}
     </span>
@@ -251,7 +28,7 @@ function Pill({
 function Check({ ok }: { ok: boolean }) {
   return (
     <span
-      className={`inline-flex h-6 w-6 items-center justify-center rounded-lg ring-1 ${
+      className={`inline-flex h-5 w-5 items-center justify-center rounded-md ring-1 ${
         ok
           ? "bg-emerald-600 text-white ring-emerald-700"
           : "bg-white text-neutral-400 ring-black/10"
@@ -262,10 +39,44 @@ function Check({ ok }: { ok: boolean }) {
   );
 }
 
-// ✅ thêm đường phân cách dọc mờ
+function SttBadge({ stt, dueDate }: { stt: number; dueDate: string | null }) {
+  const now = Date.now();
+
+  let cls = "bg-slate-100 text-slate-700 ring-slate-200";
+  if (dueDate) {
+    const t = new Date(dueDate).getTime();
+    const diff = t - now;
+
+    if (Number.isFinite(t)) {
+      if (diff < 0) cls = "bg-violet-600 text-white ring-violet-700";
+      else if (diff < 6 * 60 * 60 * 1000)
+        cls = "bg-rose-600 text-white ring-rose-700";
+      else if (diff < 24 * 60 * 60 * 1000)
+        cls = "bg-amber-500 text-white ring-amber-600";
+      else cls = "bg-emerald-600 text-white ring-emerald-700";
+    }
+  }
+
+  return (
+    <span
+      className={`inline-flex h-6 min-w-6 items-center justify-center rounded-lg px-1.5 text-[11px] font-extrabold ring-1 ${cls}`}
+      title={
+        dueDate ? `Hạn KQ: ${new Date(dueDate).toLocaleString()}` : "Chưa có hạn KQ"
+      }
+    >
+      {stt}
+    </span>
+  );
+}
+
+// ✅ cột co tối thiểu: dùng table-fixed + colgroup set width theo nội dung cần
+// ✅ ô dài: cho xuống dòng tối đa 2 dòng (line-clamp-2), KHÔNG dùng truncate/ellipsis
 const thBase =
-  "px-3 py-3 text-center font-semibold uppercase tracking-wide whitespace-nowrap border-r border-black/5";
-const tdBase = "px-3 py-3 text-center border-r border-black/5";
+  "px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap border-r border-black/5";
+const tdBase =
+  "px-3 py-2 text-left text-[12px] leading-5 border-r border-black/5 align-top";
+
+const wrap2 = "line-clamp-2 break-words whitespace-normal";
 
 export default function CasesTable({
   rows,
@@ -278,31 +89,48 @@ export default function CasesTable({
 }) {
   return (
     <div className="rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
-      {/* TABLE ONLY SCROLL */}
       <div className="max-h-[72vh] overflow-auto">
-        <table className="min-w-[1200px] w-full text-sm">
+        {/* ✅ table-fixed giúp cột không phình vô hạn; width được điều bởi colgroup */}
+        <table className="w-full min-w-[980px] table-fixed text-neutral-900">
+          {/* ✅ set độ rộng tối thiểu đúng “cần thôi” */}
+          <colgroup>
+            <col className="w-[56px]" />   {/* STT */}
+            <col className="w-[80px]" />   {/* Ngày */}
+            <col className="w-[120px]" />  {/* Trạng thái */}
+            <col className="w-[120px]" />  {/* Mã ca */}
+            <col className="w-[140px]" />  {/* Họ và tên (wrap 2 dòng) */}
+            <col className="w-[140px]" />  {/* Nguồn (wrap 2 dòng) */}
+            <col className="w-[80px]" />  {/* NVKD (wrap 2 dòng) */}
+            <col className="w-[90px]" />   {/* Dịch vụ */}
+            <col className="w-[160px]" />  {/* Tên dịch vụ (wrap 2 dòng + code dòng nhỏ) */}
+            <col className="w-[64px]" />   {/* Đã TT */}
+            <col className="w-[110px]" />  {/* Tiền thu */}
+            <col className="w-[92px]" />   {/* Chi tiết */}
+          </colgroup>
+
           <thead className="sticky top-0 z-10">
-            <tr className="border-b text-[11px] text-neutral-600">
+            <tr className="border-b bg-white text-neutral-600">
               <th
-                className={`${thBase} sticky top-0 left-0 z-50 bg-white shadow-[1px_0_0_rgba(0,0,0,0.06)]`}
+                className={`${thBase} sticky left-0 z-50 bg-white shadow-[1px_0_0_rgba(0,0,0,0.06)]`}
               >
                 STT
               </th>
 
               <th className={`${thBase} bg-neutral-50`}>Ngày</th>
-              <th className={`${thBase} bg-white`}>Mã ca</th>
-              <th className={`${thBase} bg-neutral-50`}>Họ tên</th>
+              <th className={`${thBase} bg-white`}>Trạng thái</th>
+              <th className={`${thBase} bg-neutral-50`}>Mã ca</th>
+              <th className={`${thBase} bg-white`}>Họ và tên</th>
+
               <th className={`${thBase} bg-white`}>Nguồn</th>
-              <th className={`${thBase} bg-neutral-50`}>Lab</th>
+              <th className={`${thBase} bg-neutral-50`}>NVKD</th>
+
               <th className={`${thBase} bg-white`}>Dịch vụ</th>
               <th className={`${thBase} bg-neutral-50`}>Tên dịch vụ</th>
-              <th className={`${thBase} bg-white`}>NVKD</th>
-              <th className={`${thBase} bg-neutral-50`}>Đã TT</th>
-              <th className={`${thBase} bg-white text-right`}>Tiền thu</th>
 
-              <th
-                className={`${thBase} border-r-0 z-30 bg-white text-right shadow-[-1px_0_0_rgba(0,0,0,0.06)]`}
-              >
+              <th className={`${thBase} bg-white`}>Đã TT</th>
+              <th className={`${thBase} bg-neutral-50 text-right`}>Tiền thu</th>
+
+              <th className={`${thBase} bg-white border-r-0 text-right`}>
                 Chi tiết
               </th>
             </tr>
@@ -311,19 +139,13 @@ export default function CasesTable({
           <tbody className="divide-y">
             {loading ? (
               <tr>
-                <td
-                  className="px-4 py-6 text-neutral-500 text-center"
-                  colSpan={12}
-                >
+                <td className="px-4 py-6 text-neutral-500" colSpan={12}>
                   Đang tải…
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
-                <td
-                  className="px-4 py-6 text-neutral-500 text-center"
-                  colSpan={12}
-                >
+                <td className="px-4 py-6 text-neutral-500" colSpan={12}>
                   Chưa có dữ liệu.
                 </td>
               </tr>
@@ -332,34 +154,37 @@ export default function CasesTable({
                 <tr
                   key={r._id}
                   onClick={() => onRowClick(r)}
-                  className="cursor-pointer odd:bg-white even:bg-neutral-50/40 hover:bg-indigo-50/40"
+                  className="cursor-pointer odd:bg-white even:bg-neutral-50/40 hover:bg-sky-50"
                 >
-                  <td className="px-3 py-3 sticky left-0 z-20 bg-white font-semibold text-neutral-900 text-center border-r border-black/5">
-                    {r.stt || idx + 1}
+                  <td className="px-3 py-2 sticky left-0 z-20 bg-white border-r border-black/5">
+                    <SttBadge stt={r.stt || idx + 1} dueDate={r.dueDate} />
                   </td>
 
                   <td className={`${tdBase} text-sky-700 font-medium`}>
                     {r.date ? new Date(r.date).toLocaleDateString() : "—"}
                   </td>
 
-                  <td className={`${tdBase} font-extrabold text-indigo-900`}>
+                  <td className={tdBase}>
+                    <Pill text={r.processStatus || "—"} tone="slate" />
+                  </td>
+
+                  <td className={`${tdBase} font-extrabold text-indigo-900 whitespace-nowrap`}>
                     {r.caseCode || "—"}
                   </td>
 
+                  {/* ✅ xuống dòng tối đa 2 dòng */}
                   <td className={tdBase}>
-                    <div className="max-w-[220px] mx-auto truncate  text-neutral-900">
-                      {r.patientName || "—"}
-                    </div>
-                  </td>
-
-                  <td className={`${tdBase} text-neutral-700`}>
-                    <div className="max-w-[200px] mx-auto truncate">
-                      {r.source || "—"}
-                    </div>
+                    <div className={`${wrap2} font-semibold`}>{r.patientName || "—"}</div>
                   </td>
 
                   <td className={tdBase}>
-                    <Pill text={r.lab || "—"} tone="slate" />
+                    <div className={`${wrap2} text-neutral-700`}>{r.source || "—"}</div>
+                  </td>
+
+                  <td className={tdBase}>
+                    <div className={`${wrap2} text-emerald-800 font-medium`}>
+                      {r.salesOwner || "—"}
+                    </div>
                   </td>
 
                   <td className={tdBase}>
@@ -376,30 +201,28 @@ export default function CasesTable({
                   </td>
 
                   <td className={tdBase}>
-                    <div className="max-w-[240px] mx-auto truncate font-semibold text-violet-900">
+                    {/* ✅ tên: 2 dòng; code: 1 dòng nhỏ dưới */}
+                    <div className={`${wrap2} font-semibold text-violet-900`}>
                       {r.serviceName || "—"}
                     </div>
-                  </td>
-
-                  <td className={`${tdBase} text-emerald-800 font-medium`}>
-                    <div className="max-w-[180px] mx-auto truncate">
-                      {r.salesOwner || "—"}
+                    <div className="mt-0.5 text-[11px] text-neutral-500 break-words">
+                      {r.serviceCode || ""}
                     </div>
                   </td>
 
                   <td className={tdBase}>
-                    <div className="mx-auto w-fit">
+                    <div className="w-fit">
                       <Check ok={!!r.paid} />
                     </div>
                   </td>
 
-                  <td className="px-3 py-3 text-right font-extrabold tabular-nums text-amber-900 border-r border-black/5">
+                  <td className="px-3 py-2 text-right text-[12px] font-extrabold tabular-nums text-amber-900 border-r border-black/5 whitespace-nowrap">
                     {(r.collectedAmount ?? 0).toLocaleString()}
                   </td>
 
-                  <td className="px-3 py-3 border-r-0 z-20 bg-inherit text-right">
+                  <td className="px-3 py-2 border-r-0 text-right">
                     <button
-                      className="rounded-xl bg-neutral-900 px-3 py-1.5 text-xs font-semibold text-white hover:opacity-95"
+                      className="rounded-lg bg-sky-600 px-2.5 py-1 text-[11px] font-bold text-white hover:opacity-95 whitespace-nowrap"
                       onClick={(e) => {
                         e.stopPropagation();
                         onRowClick(r);
@@ -415,8 +238,8 @@ export default function CasesTable({
         </table>
       </div>
 
-      <div className="flex items-center justify-between px-4 py-3 text-xs text-neutral-500 border-t bg-neutral-50">
-        <div>Tip: Cuộn ngang chỉ ở bảng. Bấm “Xem” để mở chi tiết đầy đủ.</div>
+      <div className="flex items-center justify-between px-4 py-3 text-[11px] text-neutral-500 border-t bg-neutral-50">
+        <div>Tip: Cuộn ngang chỉ ở bảng. Bấm “Xem” để mở chi tiết.</div>
         <div>
           Tổng: <b className="text-neutral-900">{rows.length}</b>
         </div>

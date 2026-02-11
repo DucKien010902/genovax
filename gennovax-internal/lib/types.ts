@@ -74,6 +74,9 @@ export type CaseRecord = {
 
   createdBy: string;
   updatedBy: string;
+  registrationImageUrl?: string;
+resultImageUrls?: string[];
+
 };
 
 export type CaseDraft = Omit<CaseRecord, "_id"> & {

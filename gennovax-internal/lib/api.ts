@@ -178,3 +178,42 @@ optionsAdminDeleteKey: (key: string) =>
   }).then((r) => j<{ ok: true }>(r)),
 
 };
+export const caseApi = {
+  analytics: (params: {
+    serviceType?: ServiceType | ""; // "" hoặc undefined => ALL
+    from?: string;
+    to?: string;
+    top?: number;
+  }) => {
+    const qs = new URLSearchParams(
+      Object.entries(params).reduce((acc, [k, v]) => {
+        if (v !== undefined && v !== "" && v !== null) acc[k] = String(v);
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString();
+
+    return authFetch(`${API_BASE}/cases/analytics?${qs}`).then((r) =>
+      j<{
+        kpis: {
+          totalCases: number;
+          paidCases: number;
+          totalRevenue: number;
+          totalListPrice: number;
+          paidRate: number;
+        };
+        bySource: Array<{
+          source: string;
+          totalCases: number;
+          paidCases: number;
+          revenue: number;
+          listPrice: number;
+          paidRate: number;
+        }>;
+        topSources: Array<{ source: string; revenue: number; paidCases: number; totalCases: number }>;
+        monthly: Array<Record<string, any>>; // {ym, totalRevenue, ...sourceKeys}
+        sourceKeys: string[];
+      }>(r)
+    );
+  },
+};
+

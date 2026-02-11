@@ -47,7 +47,7 @@ export default function AdminDoctorsPage() {
 
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const title = useMemo(() => "Quản lý Doctors", []);
+  const title = useMemo(() => "Quản lý nguồn thu", []);
 
   const load = async () => {
     setErr(null);
@@ -266,7 +266,7 @@ export default function AdminDoctorsPage() {
           <div className="lg:col-span-2 rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <div className="text-sm font-bold text-neutral-900">Danh sách Doctors</div>
+                <div className="text-sm font-bold text-neutral-900">Danh sách nguồn thu</div>
                 <div className="mt-1 text-xs text-neutral-500">
                   {loading ? "Đang tải…" : `${items.length} mục`}
                 </div>

@@ -22,21 +22,22 @@ app.use(express.json({ limit: "2mb" }));
 
 const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || "http://localhost:3000")
   .split(",")
-  .map((s) => s.trim());
+  .map((s) => s.trim())
+  .filter(Boolean);
 
-app.use(
-  cors({
-    origin: function (origin, cb) {
-      // Cho phép non-browser (origin undefined) đi qua CORS layer,
-      // vì CORS chỉ là cơ chế trình duyệt.
-      // Chặn Postman sẽ làm ở browserGate.
-      if (!origin) return cb(null, true);
-      if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
-      return cb(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin(origin, cb) {
+    if (!origin) return cb(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    return cb(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.get("/health", (req, res) => res.json({ ok: true }));
 

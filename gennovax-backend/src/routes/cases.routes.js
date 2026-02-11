@@ -5,11 +5,236 @@ import { computeDueDate } from "../services/dueDate.service.js";
 
 const router = Router();
 
-function toDateOrNull(v) {
-  if (!v) return null;
-  const d = new Date(v);
-  return isNaN(d.getTime()) ? null : d;
+// function toDateOrNull(v) {
+//   if (!v) return null;
+//   const d = new Date(v);
+//   return isNaN(d.getTime()) ? null : d;
+// }
+function toDateOrNull(x) {
+  if (!x) return null;
+  const d = new Date(String(x));
+  return Number.isNaN(d.getTime()) ? null : d;
 }
+
+router.get("/analytics", async (req, res, next) => {
+  try {
+    const { serviceType, from = "", to = "", top = "10" } = req.query;
+
+    const match = {};
+    if (serviceType) match.serviceType = String(serviceType);
+
+    const fromD = toDateOrNull(from);
+    const toD = toDateOrNull(to);
+
+    const date2Range = {};
+    if (fromD) date2Range.$gte = fromD;
+    if (toD) {
+      const end = new Date(toD);
+      end.setHours(23, 59, 59, 999);
+      date2Range.$lte = end;
+    }
+
+    const sourceExpr = {
+      $ifNull: [
+        { $cond: [{ $eq: ["$source", ""] }, null, "$source"] },
+        "Unknown",
+      ],
+    };
+
+    const topN = Math.max(
+      1,
+      Math.min(50, parseInt(String(top || "10"), 10) || 10)
+    );
+
+    const [result] = await Case.aggregate([
+      { $match: match },
+
+      // ✅ normalize date -> date2 (Date | string | null)
+      {
+        $addFields: {
+          date2: {
+            $switch: {
+              branches: [
+                // date đã là Date
+                {
+                  case: { $eq: [{ $type: "$date" }, "date"] },
+                  then: "$date",
+                },
+                // date là string
+                {
+                  case: { $eq: [{ $type: "$date" }, "string"] },
+                  then: {
+                    $dateFromString: {
+                      dateString: "$date",
+                      // Nếu date string của bạn là "DD/MM/YYYY" thì mở format dưới đây:
+                      // format: "%d/%m/%Y",
+                      onError: null,
+                      onNull: null,
+                    },
+                  },
+                },
+              ],
+              default: null,
+            },
+          },
+        },
+      },
+
+      // ✅ apply range filter trên date2 (an toàn)
+      ...(Object.keys(date2Range).length
+        ? [{ $match: { date2: date2Range } }]
+        : []),
+
+      // ✅ nếu muốn bỏ record date2 null để chart khỏi rác
+      { $match: { date2: { $ne: null } } },
+
+      {
+        $facet: {
+          kpis: [
+            {
+              $group: {
+                _id: null,
+                totalCases: { $sum: 1 },
+                paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
+                totalRevenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                totalListPrice: { $sum: { $ifNull: ["$price", 0] } },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                totalCases: 1,
+                paidCases: 1,
+                totalRevenue: 1,
+                totalListPrice: 1,
+                paidRate: {
+                  $cond: [
+                    { $gt: ["$totalCases", 0] },
+                    { $divide: ["$paidCases", "$totalCases"] },
+                    0,
+                  ],
+                },
+              },
+            },
+          ],
+
+          bySource: [
+            {
+              $group: {
+                _id: sourceExpr,
+                totalCases: { $sum: 1 },
+                paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
+                revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                listPrice: { $sum: { $ifNull: ["$price", 0] } },
+              },
+            },
+            { $addFields: { source: "$_id" } },
+            {
+              $project: {
+                _id: 0,
+                source: 1,
+                totalCases: 1,
+                paidCases: 1,
+                revenue: 1,
+                listPrice: 1,
+                paidRate: {
+                  $cond: [
+                    { $gt: ["$totalCases", 0] },
+                    { $divide: ["$paidCases", "$totalCases"] },
+                    0,
+                  ],
+                },
+              },
+            },
+            { $sort: { revenue: -1, paidCases: -1, totalCases: -1 } },
+          ],
+
+          monthlyBySource: [
+            {
+              $group: {
+                _id: {
+                  ym: { $dateToString: { format: "%Y-%m", date: "$date2" } }, // ✅ dùng date2
+                  source: sourceExpr,
+                },
+                revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                cases: { $sum: 1 },
+                paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                ym: "$_id.ym",
+                source: "$_id.source",
+                revenue: 1,
+                cases: 1,
+                paidCases: 1,
+              },
+            },
+            { $sort: { ym: 1 } },
+          ],
+
+          topSources: [
+            {
+              $group: {
+                _id: sourceExpr,
+                revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
+                totalCases: { $sum: 1 },
+              },
+            },
+            { $sort: { revenue: -1 } },
+            { $limit: topN },
+            {
+              $project: {
+                _id: 0,
+                source: "$_id",
+                revenue: 1,
+                paidCases: 1,
+                totalCases: 1,
+              },
+            },
+          ],
+        },
+      },
+    ]);
+
+    const monthlyRaw = result?.monthlyBySource || [];
+    const allSources = Array.from(new Set(monthlyRaw.map((x) => x.source)));
+
+    const map = new Map();
+    for (const row of monthlyRaw) {
+      const key = row.ym;
+      if (!map.has(key))
+        map.set(key, { ym: key, totalRevenue: 0, totalCases: 0, paidCases: 0 });
+      const obj = map.get(key);
+      obj[row.source] = row.revenue;
+      obj.totalRevenue += row.revenue || 0;
+      obj.totalCases += row.cases || 0;
+      obj.paidCases += row.paidCases || 0;
+    }
+    const monthly = Array.from(map.values()).sort((a, b) =>
+      String(a.ym).localeCompare(String(b.ym))
+    );
+
+    res.json({
+      kpis:
+        result?.kpis?.[0] || {
+          totalCases: 0,
+          paidCases: 0,
+          totalRevenue: 0,
+          totalListPrice: 0,
+          paidRate: 0,
+        },
+      bySource: result?.bySource || [],
+      topSources: result?.topSources || [],
+      monthly,
+      sourceKeys: allSources,
+    });
+  } catch (e) {
+    next(e);
+  }
+});
 
 // GET /api/cases?serviceType=ADN&q=...&from=YYYY-MM-DD&to=YYYY-MM-DD
 router.get("/", async (req, res, next) => {

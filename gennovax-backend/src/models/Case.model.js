@@ -50,6 +50,8 @@ const CaseSchema = new mongoose.Schema(
 
     createdBy: { type: String, default: "" },
     updatedBy: { type: String, default: "" },
+    registrationImageUrl: { type: String, default: "" },
+resultImageUrls: { type: [String], default: [] },
   },
   { timestamps: true }
 );

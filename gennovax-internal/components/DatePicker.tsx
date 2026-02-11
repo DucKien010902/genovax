@@ -63,7 +63,7 @@ export default function SingleDatePicker(props: {
   }, [selected, placeholder]);
 
   const popW =
-    popoverWidth === "lg" ? "w-[340px] sm:w-[420px]" : "w-[300px] sm:w-[360px]";
+    popoverWidth === "lg" ? "w-[280px] sm:w-[360px]" : "w-[200px] sm:w-[280px]";
 
   return (
     <div className={cn("relative", className)}>
