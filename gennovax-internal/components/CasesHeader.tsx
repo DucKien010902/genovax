@@ -77,26 +77,26 @@ export default function CasesHeader(props: {
 
             {/* ✅ DateRangePicker thay cho 2 input date */}
             <div className="flex items-center gap-2">
-  <SingleDatePicker
-    value={props.from}
-    onChange={props.setFrom}
-    placeholder="Từ ngày"
-    disabled={!!props.loading}
-    popoverWidth="lg"
-    months={1}
-    buttonClassName="w-[160px]"
-  />
-  <span className="text-xs text-neutral-500">→</span>
-  <SingleDatePicker
-    value={props.to}
-    onChange={props.setTo}
-    placeholder="Đến ngày"
-    disabled={!!props.loading}
-    popoverWidth="lg"
-    months={1}
-    buttonClassName="w-[160px]"
-  />
-</div>
+              <SingleDatePicker
+                value={props.from}
+                onChange={props.setFrom}
+                placeholder="Từ ngày"
+                disabled={!!props.loading}
+                popoverWidth="lg"
+                months={1}
+                buttonClassName="w-[160px]"
+              />
+              <span className="text-xs text-neutral-500">→</span>
+              <SingleDatePicker
+                value={props.to}
+                onChange={props.setTo}
+                placeholder="Đến ngày"
+                disabled={!!props.loading}
+                popoverWidth="lg"
+                months={1}
+                buttonClassName="w-[160px]"
+              />
+            </div>
 
             {/* Actions */}
             <button

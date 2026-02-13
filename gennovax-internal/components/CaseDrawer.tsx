@@ -1,7 +1,13 @@
 "use client";
 
 import axios from "axios";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { CaseDraft, OptionsMap, ServiceItem } from "@/lib/types";
 import SingleDatePicker from "./DatePicker";
 
@@ -47,7 +53,7 @@ const SOURCE_TO_SALES_OWNER: Record<string, string> = {
   "PK Phong Dương": "Phong",
 
   // Thảo
-  "QC": "Thảo",
+  QC: "Thảo",
 
   // Liêm
   "PK Mỹ Lộc": "Liêm",
@@ -96,7 +102,7 @@ function Select({
       className={cn(
         "w-full rounded-xl border bg-white px-3 py-2 text-[12px] shadow-sm outline-none",
         "focus:ring-4 focus:ring-offset-0",
-        toneCls[tone]
+        toneCls[tone],
       )}
     >
       <option value="">{placeholder ?? "Chọn..."}</option>
@@ -145,10 +151,18 @@ function isoDateTimeFromISODate(date: string) {
   return new Date(`${date}T00:00:00+07:00`).toISOString();
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="min-w-0">
-      <div className="mb-1 text-[11px] font-semibold text-neutral-500">{label}</div>
+      <div className="mb-1 text-[11px] font-semibold text-neutral-500">
+        {label}
+      </div>
       {children}
     </div>
   );
@@ -177,7 +191,7 @@ function Input({
       className={cn(
         "w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm outline-none",
         "focus:ring-4",
-        toneCls[tone]
+        toneCls[tone],
       )}
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -212,7 +226,7 @@ function Textarea({
       className={cn(
         "w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm outline-none",
         "focus:ring-4",
-        toneCls[tone]
+        toneCls[tone],
       )}
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -245,6 +259,8 @@ export default function CaseDrawer({
   const set = (patch: Partial<CaseDraft>) =>
     setForm((prev) => (prev ? { ...prev, ...patch } : prev));
 
+  const [collectedAmountManual, setCollectedAmountManual] = useState(false);
+
   // ===== selected service =====
   const selectedService = useMemo(() => {
     if (!form) return null;
@@ -259,28 +275,33 @@ export default function CaseDrawer({
     if (!form) return { level: "", label: "" };
     return SOURCE_TO_AGENT[form.source] ?? { level: "", label: "" };
   }, [form?.source]);
-
+  const suggestedPrice = useMemo(() => {
+    if (!selectedService || !agent.level) return 0;
+    const found = (selectedService.pricesByLevel || []).find(
+      (p) => p.level === agent.level,
+    );
+    return found?.price ?? 0;
+  }, [selectedService?.serviceCode, agent.level]);
   // ===== compute price realtime -> set collectedAmount =====
   useEffect(() => {
     if (!form) return;
-
-    if (form.agentLevel !== agent.level) set({ agentLevel: agent.level });
-    if (form.agentTierLabel !== agent.label) set({ agentTierLabel: agent.label });
-
     if (!selectedService || !agent.level) {
-      if ((form.collectedAmount ?? 0) !== 0) set({ collectedAmount: 0 });
+      if (!collectedAmountManual && (form.collectedAmount ?? 0) !== 0)
+        set({ collectedAmount: 0 });
       return;
     }
-
-    const found = (selectedService.pricesByLevel || []).find(
-      (p) => p.level === agent.level
-    );
-    const price = found?.price ?? 0;
-
-    if ((form.collectedAmount ?? 0) !== price) set({ collectedAmount: price });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedService?.serviceCode, agent.level, agent.label, form?.collectedAmount]);
-
+    if (
+      !collectedAmountManual &&
+      (form.collectedAmount ?? 0) !== suggestedPrice
+    ) {
+      set({ collectedAmount: suggestedPrice });
+    }
+  }, [
+    selectedService?.serviceCode,
+    agent.level,
+    suggestedPrice,
+    collectedAmountManual,
+  ]);
   // ===== compute due date realtime =====
   useEffect(() => {
     if (!form) return;
@@ -292,6 +313,7 @@ export default function CaseDrawer({
     if (due !== form.dueDate) set({ dueDate: due });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedService?.serviceCode, form?.receivedAt, form?.dueDate]);
+  // ===== suggested price (auto) =====
 
   // =========================
   // ✅ UPLOAD IMAGE (Cloudinary)
@@ -318,7 +340,7 @@ export default function CaseDrawer({
 
     const response = await axios.post(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-      formData
+      formData,
     );
 
     const url = String(response.data.secure_url || "");
@@ -338,13 +360,15 @@ export default function CaseDrawer({
         const url = await uploadToCloudinary(file);
         set({ registrationImageUrl: url });
       } catch (err: any) {
-        setImageUploadError(err?.message || "Tải ảnh lên thất bại. Vui lòng thử lại.");
+        setImageUploadError(
+          err?.message || "Tải ảnh lên thất bại. Vui lòng thử lại.",
+        );
       } finally {
         setIsUploadingImage(false);
         e.target.value = "";
       }
     },
-    [form, set, uploadToCloudinary]
+    [form, set, uploadToCloudinary],
   );
 
   const handleUploadResults = useCallback(
@@ -362,7 +386,9 @@ export default function CaseDrawer({
 
         const remain = Math.max(0, 2 - current.length);
         if (remain <= 0) {
-          throw new Error("Ảnh kết quả tối đa 2 ảnh. Hãy xoá bớt nếu muốn tải thêm.");
+          throw new Error(
+            "Ảnh kết quả tối đa 2 ảnh. Hãy xoá bớt nếu muốn tải thêm.",
+          );
         }
 
         const picked = files.slice(0, remain);
@@ -375,13 +401,15 @@ export default function CaseDrawer({
 
         set({ resultImageUrls: [...current, ...uploaded] as any });
       } catch (err: any) {
-        setImageUploadError(err?.message || "Tải ảnh lên thất bại. Vui lòng thử lại.");
+        setImageUploadError(
+          err?.message || "Tải ảnh lên thất bại. Vui lòng thử lại.",
+        );
       } finally {
         setIsUploadingImage(false);
         e.target.value = "";
       }
     },
-    [form, set, uploadToCloudinary]
+    [form, set, uploadToCloudinary],
   );
 
   const removeRegistration = useCallback(() => {
@@ -397,7 +425,7 @@ export default function CaseDrawer({
       current.splice(idx, 1);
       set({ resultImageUrls: current as any });
     },
-    [form, set]
+    [form, set],
   );
 
   if (!open || !form) return null;
@@ -409,13 +437,17 @@ export default function CaseDrawer({
       value: s.serviceCode,
     }));
 
-  const registrationUrl = (form as any).registrationImageUrl as string | undefined;
-  const resultUrls = (Array.isArray((form as any).resultImageUrls)
-    ? ((form as any).resultImageUrls as string[])
-    : []) as string[];
+  const registrationUrl = (form as any).registrationImageUrl as
+    | string
+    | undefined;
+  const resultUrls = (
+    Array.isArray((form as any).resultImageUrls)
+      ? ((form as any).resultImageUrls as string[])
+      : []
+  ) as string[];
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50 text-red">
       {/* backdrop */}
       <div className="absolute inset-0 bg-black/35" onClick={onClose} />
 
@@ -424,7 +456,7 @@ export default function CaseDrawer({
         <div
           className={cn(
             "w-[70vw] h-[90vh] rounded-3xl bg-white shadow-2xl ring-1 ring-black/10",
-            "overflow-hidden"
+            "overflow-hidden",
           )}
         >
           {/* Header */}
@@ -508,7 +540,7 @@ export default function CaseDrawer({
           </div>
 
           {/* Body */}
-          <div className="h-[calc(90vh-56px)] overflow-auto p-4">
+          <div className="h-[calc(90vh-56px)] overflow-auto p-4 text-black">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
               {/* Cột 1 */}
               <section className="rounded-2xl bg-white p-3 ring-1 ring-black/5">
@@ -620,13 +652,74 @@ export default function CaseDrawer({
                     </Field>
                   </div>
 
-                  <Field label="Tiền thu (auto)">
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2">
-                      <div className="text-[11px] font-semibold text-emerald-700">
-                        Tự tính theo Nguồn + Dịch vụ
+                  <Field label="Tiền thu">
+                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3">
+                      {/* Header nhỏ: Auto */}
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <div>
+                          <div className="text-[11px] font-semibold text-emerald-700">
+                            Tự động theo nguồn + dịch vụ
+                          </div>
+                        </div>
+
+                        <span className="rounded-full bg-white/70 px-2 py-1 text-[11px] font-bold text-emerald-800 ring-1 ring-black/5">
+                          {collectedAmountManual ? "chỉnh tay" : "auto"}
+                        </span>
                       </div>
-                      <div className="text-[14px] font-bold text-emerald-700">
-                        {fmtMoney(form.collectedAmount ?? 0)}
+
+                      {/* 2 cột cùng style */}
+                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                        {/* Card: Tiền thu */}
+                        <div className="rounded-xl bg-white/70 p-3 ring-1 ring-black/5">
+                          <div className="mb-2 flex items-center justify-between">
+                            <div className="text-[11px] font-semibold text-neutral-500">
+                              Tiền thu (có thể chỉnh)
+                            </div>
+
+                            <button
+                              type="button"
+                              className="rounded-lg bg-white px-2 py-1 text-[11px] font-bold ring-1 ring-black/10 hover:bg-neutral-50 disabled:opacity-60"
+                              onClick={() => {
+                                set({ collectedAmount: suggestedPrice });
+                                setCollectedAmountManual(false);
+                              }}
+                              disabled={isUploadingImage}
+                              title="Đưa tiền thu về giá auto"
+                            >
+                              Reset
+                            </button>
+                          </div>
+
+                          <Input
+                            value={String(form.collectedAmount ?? 0)}
+                            onChange={(v) => {
+                              const n =
+                                Number(String(v).replace(/[^\d]/g, "")) || 0;
+                              set({ collectedAmount: n });
+                              setCollectedAmountManual(true);
+                            }}
+                            placeholder="Nhập số tiền..."
+                            tone="emerald"
+                          />
+                        </div>
+
+                        {/* Card: Hiển thị */}
+                        <div className="rounded-xl bg-white/70 p-3 ring-1 ring-black/5">
+                          <div className="text-[11px] font-semibold text-neutral-500">
+                            Hiển thị
+                          </div>
+                          <div className="mt-1 text-[14px] font-bold text-emerald-700">
+                            {fmtMoney(form.collectedAmount ?? 0)}
+                          </div>
+
+                          <div className="mt-2 text-[11px] text-neutral-500">
+                            (
+                            {collectedAmountManual
+                              ? "đã override"
+                              : "đang theo auto"}
+                            )
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </Field>
@@ -711,11 +804,11 @@ export default function CaseDrawer({
                         className={cn(
                           "w-full rounded-xl px-3 py-2 text-[12px] font-bold",
                           "bg-white ring-1 ring-black/10 shadow-sm hover:bg-neutral-50",
-                          "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200"
+                          "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200",
                         )}
                         onClick={() => {
                           const ok = window.confirm(
-                            "Xác nhận lấy thời điểm hiện tại (giờ Việt Nam) làm 'Ngày nhận'?"
+                            "Xác nhận lấy thời điểm hiện tại (giờ Việt Nam) làm 'Ngày nhận'?",
                           );
                           if (!ok) return;
                           set({ receivedAt: nowVNISOString() as any });
@@ -737,9 +830,12 @@ export default function CaseDrawer({
                     </div>
                     <div className="mt-1 text-[12px] font-bold text-neutral-900">
                       {(form as any).dueDate
-                        ? new Date((form as any).dueDate).toLocaleString("vi-VN", {
-                            timeZone: "Asia/Ho_Chi_Minh",
-                          })
+                        ? new Date((form as any).dueDate).toLocaleString(
+                            "vi-VN",
+                            {
+                              timeZone: "Asia/Ho_Chi_Minh",
+                            },
+                          )
                         : "—"}
                     </div>
                   </div>
@@ -776,7 +872,9 @@ export default function CaseDrawer({
                         <input
                           type="checkbox"
                           checked={!!(form as any).glReturned}
-                          onChange={(e) => set({ glReturned: e.target.checked })}
+                          onChange={(e) =>
+                            set({ glReturned: e.target.checked })
+                          }
                         />
                         GL trả
                       </label>
@@ -785,7 +883,9 @@ export default function CaseDrawer({
                         <input
                           type="checkbox"
                           checked={!!(form as any).gxReceived}
-                          onChange={(e) => set({ gxReceived: e.target.checked })}
+                          onChange={(e) =>
+                            set({ gxReceived: e.target.checked })
+                          }
                         />
                         GX nhận
                       </label>
@@ -794,7 +894,9 @@ export default function CaseDrawer({
                         <input
                           type="checkbox"
                           checked={!!(form as any).softFileDone}
-                          onChange={(e) => set({ softFileDone: e.target.checked })}
+                          onChange={(e) =>
+                            set({ softFileDone: e.target.checked })
+                          }
                         />
                         Trả file mềm
                       </label>
@@ -803,7 +905,9 @@ export default function CaseDrawer({
                         <input
                           type="checkbox"
                           checked={!!(form as any).hardFileDone}
-                          onChange={(e) => set({ hardFileDone: e.target.checked })}
+                          onChange={(e) =>
+                            set({ hardFileDone: e.target.checked })
+                          }
                         />
                         Trả file cứng
                       </label>
@@ -878,7 +982,9 @@ export default function CaseDrawer({
                             onClick={() => regInputRef.current?.click()}
                             disabled={isUploadingImage}
                           >
-                            {isUploadingImage ? "Đang tải..." : "Tải ảnh đơn đăng ký"}
+                            {isUploadingImage
+                              ? "Đang tải..."
+                              : "Tải ảnh đơn đăng ký"}
                           </button>
                         )}
                       </div>

@@ -10,24 +10,26 @@ function cn(...a: Array<string | false | null | undefined>) {
 function Icon({ t, active }: { t: ServiceType; active: boolean }) {
   const base =
     "grid h-9 w-9 place-items-center rounded-2xl ring-1 transition duration-200";
-  const styles: Record<ServiceType, { on: string; off: string; glyph: string }> =
-    {
-      NIPT: {
-        glyph: "NIPT",
-        on: "bg-rose-600 text-white ring-rose-700 shadow-sm",
-        off: "bg-rose-50 text-rose-700 ring-rose-200",
-      },
-      ADN: {
-        glyph: "ADN",
-        on: "bg-blue-600 text-white ring-blue-700 shadow-sm",
-        off: "bg-blue-50 text-blue-700 ring-blue-200",
-      },
-      HPV: {
-        glyph: "HPV",
-        on: "bg-emerald-600 text-white ring-emerald-700 shadow-sm",
-        off: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-      },
-    };
+  const styles: Record<
+    ServiceType,
+    { on: string; off: string; glyph: string }
+  > = {
+    NIPT: {
+      glyph: "NIPT",
+      on: "bg-rose-600 text-white ring-rose-700 shadow-sm",
+      off: "bg-rose-50 text-rose-700 ring-rose-200",
+    },
+    ADN: {
+      glyph: "ADN",
+      on: "bg-blue-600 text-white ring-blue-700 shadow-sm",
+      off: "bg-blue-50 text-blue-700 ring-blue-200",
+    },
+    HPV: {
+      glyph: "HPV",
+      on: "bg-emerald-600 text-white ring-emerald-700 shadow-sm",
+      off: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+    },
+  };
 
   const s = styles[t];
   return (
@@ -96,7 +98,9 @@ export default function SidebarService({
       <div className="px-3 pt-3">
         <div className="flex items-center gap-2">
           {/* Mini brand dot */}
-          <div className={`${collapsed?'hidden':'flex'} grid h-9 w-9 place-items-center rounded-2xl bg-purple-900 text-white text-[11px] font-extrabold`}>
+          <div
+            className={`${collapsed ? "hidden" : "flex"} grid h-9 w-9 place-items-center rounded-2xl bg-purple-900 text-white text-[11px] font-extrabold`}
+          >
             GX
           </div>
 

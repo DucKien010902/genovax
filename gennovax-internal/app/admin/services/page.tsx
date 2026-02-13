@@ -119,7 +119,9 @@ export default function AdminServicesPage() {
 
       if (editingId) {
         const updated = await api.serviceUpdate(editingId, payload);
-        setItems((prev) => prev.map((x) => (x._id === editingId ? updated : x)));
+        setItems((prev) =>
+          prev.map((x) => (x._id === editingId ? updated : x)),
+        );
       } else {
         const created = await api.serviceCreate(payload);
         setItems((prev) => [created, ...prev]);
@@ -178,7 +180,12 @@ export default function AdminServicesPage() {
                 <div className="text-2xl font-bold tracking-tight text-neutral-900">
                   {pageTitle}
                 </div>
-                <span className={cn("inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1", toneByType(serviceType))}>
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1",
+                    toneByType(serviceType),
+                  )}
+                >
                   {serviceType}
                 </span>
                 {isAdmin ? (
@@ -193,7 +200,8 @@ export default function AdminServicesPage() {
               </div>
 
               <div className="mt-1 text-sm text-neutral-600">
-                CRUD Service + bảng giá theo level • Giao diện hiện đại & dễ dùng
+                CRUD Service + bảng giá theo level • Giao diện hiện đại & dễ
+                dùng
               </div>
             </div>
 
@@ -242,7 +250,12 @@ export default function AdminServicesPage() {
               <Row label="serviceType">
                 <select
                   value={form.serviceType || serviceType}
-                  onChange={(e) => setForm((p) => ({ ...p, serviceType: e.target.value as any }))}
+                  onChange={(e) =>
+                    setForm((p) => ({
+                      ...p,
+                      serviceType: e.target.value as any,
+                    }))
+                  }
                   className="w-full rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
                 >
                   <option value="NIPT">NIPT</option>
@@ -267,7 +280,9 @@ export default function AdminServicesPage() {
                 label="turnaroundHours"
                 placeholder="48"
                 value={String(form.turnaroundHours ?? 48)}
-                onChange={(v) => setForm((p) => ({ ...p, turnaroundHours: Number(v || 0) }))}
+                onChange={(v) =>
+                  setForm((p) => ({ ...p, turnaroundHours: Number(v || 0) }))
+                }
                 rightHint="giờ"
                 inputMode="numeric"
               />
@@ -276,8 +291,12 @@ export default function AdminServicesPage() {
               <div className="rounded-3xl border border-black/10 bg-neutral-50 p-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-bold text-neutral-900">Bảng giá theo level</div>
-                    <div className="text-xs text-neutral-500">VD: cap1/cap2/cap3…</div>
+                    <div className="text-sm font-bold text-neutral-900">
+                      Bảng giá theo level
+                    </div>
+                    <div className="text-xs text-neutral-500">
+                      VD: cap1/cap2/cap3…
+                    </div>
                   </div>
                   <button
                     onClick={addPriceRow}
@@ -292,13 +311,19 @@ export default function AdminServicesPage() {
                     <div key={idx} className="grid grid-cols-12 gap-2">
                       <input
                         value={x.level}
-                        onChange={(e) => updatePriceRow(idx, { level: e.target.value })}
+                        onChange={(e) =>
+                          updatePriceRow(idx, { level: e.target.value })
+                        }
                         placeholder="cap1"
                         className="col-span-5 rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
                       />
                       <input
                         value={String(x.price)}
-                        onChange={(e) => updatePriceRow(idx, { price: Number(e.target.value || 0) })}
+                        onChange={(e) =>
+                          updatePriceRow(idx, {
+                            price: Number(e.target.value || 0),
+                          })
+                        }
                         placeholder="1000000"
                         inputMode="numeric"
                         className="col-span-5 rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
@@ -318,13 +343,19 @@ export default function AdminServicesPage() {
               {/* Active */}
               <label className="flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 shadow-sm">
                 <div>
-                  <div className="text-sm font-semibold text-neutral-900">Trạng thái</div>
-                  <div className="text-xs text-neutral-500">Bật/tắt hiển thị service</div>
+                  <div className="text-sm font-semibold text-neutral-900">
+                    Trạng thái
+                  </div>
+                  <div className="text-xs text-neutral-500">
+                    Bật/tắt hiển thị service
+                  </div>
                 </div>
                 <input
                   type="checkbox"
                   checked={form.isActive !== false}
-                  onChange={(e) => setForm((p) => ({ ...p, isActive: e.target.checked }))}
+                  onChange={(e) =>
+                    setForm((p) => ({ ...p, isActive: e.target.checked }))
+                  }
                   className="h-5 w-5 accent-indigo-600"
                 />
               </label>
@@ -359,7 +390,12 @@ export default function AdminServicesPage() {
                 </div>
               </div>
 
-              <span className={cn("inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1", toneByType(serviceType))}>
+              <span
+                className={cn(
+                  "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1",
+                  toneByType(serviceType),
+                )}
+              >
                 {serviceType}
               </span>
             </div>
@@ -382,7 +418,7 @@ export default function AdminServicesPage() {
                         key={s._id}
                         className={cn(
                           "rounded-3xl border border-black/10 bg-white p-4 shadow-sm transition",
-                          "hover:shadow-md"
+                          "hover:shadow-md",
                         )}
                       >
                         <div className="flex items-start justify-between gap-3">
@@ -392,7 +428,12 @@ export default function AdminServicesPage() {
                                 {s.serviceCode} • {s.name}
                               </div>
 
-                              <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1", toneByType(s.serviceType))}>
+                              <span
+                                className={cn(
+                                  "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1",
+                                  toneByType(s.serviceType),
+                                )}
+                              >
                                 {s.serviceType}
                               </span>
 
@@ -401,7 +442,7 @@ export default function AdminServicesPage() {
                                   "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1",
                                   active
                                     ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-                                    : "bg-rose-50 text-rose-700 ring-rose-200"
+                                    : "bg-rose-50 text-rose-700 ring-rose-200",
                                 )}
                               >
                                 {active ? "Active" : "Inactive"}
@@ -425,7 +466,9 @@ export default function AdminServicesPage() {
                                   </span>
                                 ))
                               ) : (
-                                <span className="text-xs text-neutral-500">—</span>
+                                <span className="text-xs text-neutral-500">
+                                  —
+                                </span>
                               )}
                             </div>
                           </div>
@@ -483,7 +526,9 @@ function SelectPill(props: { value: string; onChange: (v: string) => void }) {
 function Row(props: { label: string; children: any }) {
   return (
     <div>
-      <div className="mb-1 text-xs font-semibold text-neutral-700">{props.label}</div>
+      <div className="mb-1 text-xs font-semibold text-neutral-700">
+        {props.label}
+      </div>
       {props.children}
     </div>
   );
@@ -499,7 +544,9 @@ function Field(props: {
 }) {
   return (
     <div>
-      <div className="mb-1 text-xs font-semibold text-neutral-700">{props.label}</div>
+      <div className="mb-1 text-xs font-semibold text-neutral-700">
+        {props.label}
+      </div>
       <div className="relative">
         <input
           value={props.value}
@@ -508,7 +555,7 @@ function Field(props: {
           inputMode={props.inputMode}
           className={cn(
             "w-full rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm shadow-sm outline-none",
-            "focus:ring-4 focus:ring-indigo-200"
+            "focus:ring-4 focus:ring-indigo-200",
           )}
         />
         {props.rightHint && (
@@ -525,7 +572,10 @@ function SkeletonList() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="rounded-3xl border border-black/10 bg-white p-4">
+        <div
+          key={i}
+          className="rounded-3xl border border-black/10 bg-white p-4"
+        >
           <div className="h-4 w-2/3 rounded bg-neutral-100" />
           <div className="mt-3 h-3 w-1/3 rounded bg-neutral-100" />
           <div className="mt-3 flex gap-2">

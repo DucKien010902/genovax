@@ -21,7 +21,8 @@ function cn(...a: Array<string | false | null | undefined>) {
 
 function pillTone(level?: string) {
   const v = (level || "").toLowerCase();
-  if (v.includes("cap1")) return "bg-emerald-50 text-emerald-700 ring-emerald-200";
+  if (v.includes("cap1"))
+    return "bg-emerald-50 text-emerald-700 ring-emerald-200";
   if (v.includes("cap2")) return "bg-blue-50 text-blue-700 ring-blue-200";
   if (v.includes("cap3")) return "bg-amber-50 text-amber-800 ring-amber-200";
   return "bg-neutral-100 text-neutral-700 ring-black/5";
@@ -104,7 +105,9 @@ export default function AdminDoctorsPage() {
 
       if (editingId) {
         const updated = await api.doctorUpdate(editingId, payload);
-        setItems((prev) => prev.map((x) => (x._id === editingId ? updated : x)));
+        setItems((prev) =>
+          prev.map((x) => (x._id === editingId ? updated : x)),
+        );
       } else {
         const created = await api.doctorCreate(payload);
         setItems((prev) => [created, ...prev]);
@@ -153,7 +156,8 @@ export default function AdminDoctorsPage() {
               </div>
 
               <div className="mt-1 text-sm text-neutral-600">
-                CRUD Doctor (admin mới được sửa/xóa/thêm) • Giao diện đồng bộ & hiện đại
+                CRUD Doctor (admin mới được sửa/xóa/thêm) • Giao diện đồng bộ &
+                hiện đại
               </div>
             </div>
 
@@ -225,7 +229,9 @@ export default function AdminDoctorsPage() {
                 <Field
                   label="Tier label"
                   value={form.agentTierLabel || ""}
-                  onChange={(v) => setForm((p) => ({ ...p, agentTierLabel: v }))}
+                  onChange={(v) =>
+                    setForm((p) => ({ ...p, agentTierLabel: v }))
+                  }
                   placeholder="VD: Đại lý vàng"
                   rightHint="tag"
                 />
@@ -266,7 +272,9 @@ export default function AdminDoctorsPage() {
           <div className="lg:col-span-2 rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <div className="text-sm font-bold text-neutral-900">Danh sách nguồn thu</div>
+                <div className="text-sm font-bold text-neutral-900">
+                  Danh sách nguồn thu
+                </div>
                 <div className="mt-1 text-xs text-neutral-500">
                   {loading ? "Đang tải…" : `${items.length} mục`}
                 </div>
@@ -309,7 +317,7 @@ export default function AdminDoctorsPage() {
                       key={d._id}
                       className={cn(
                         "rounded-3xl border border-black/10 bg-white p-4 shadow-sm transition",
-                        "hover:shadow-md"
+                        "hover:shadow-md",
                       )}
                     >
                       <div className="flex items-start justify-between gap-3">
@@ -324,7 +332,7 @@ export default function AdminDoctorsPage() {
                                 "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1",
                                 active
                                   ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-                                  : "bg-rose-50 text-rose-700 ring-rose-200"
+                                  : "bg-rose-50 text-rose-700 ring-rose-200",
                               )}
                             >
                               {active ? "Active" : "Inactive"}
@@ -333,7 +341,7 @@ export default function AdminDoctorsPage() {
                             <span
                               className={cn(
                                 "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1",
-                                pillTone(d.agentLevel)
+                                pillTone(d.agentLevel),
                               )}
                             >
                               {d.agentLevel || "—"}
@@ -352,7 +360,10 @@ export default function AdminDoctorsPage() {
                             </span>
                             {d.address ? (
                               <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 ring-1 ring-black/5">
-                                📍 <span className="max-w-[520px] truncate">{d.address}</span>
+                                📍{" "}
+                                <span className="max-w-[520px] truncate">
+                                  {d.address}
+                                </span>
                               </span>
                             ) : (
                               <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 ring-1 ring-black/5">
@@ -410,7 +421,9 @@ function Field(props: {
 }) {
   return (
     <div>
-      <div className="mb-1 text-xs font-semibold text-neutral-700">{props.label}</div>
+      <div className="mb-1 text-xs font-semibold text-neutral-700">
+        {props.label}
+      </div>
       <div className="relative">
         <input
           value={props.value}
@@ -418,7 +431,7 @@ function Field(props: {
           placeholder={props.placeholder}
           className={cn(
             "w-full rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm shadow-sm outline-none",
-            "focus:ring-4 focus:ring-indigo-200"
+            "focus:ring-4 focus:ring-indigo-200",
           )}
         />
         {props.rightHint && (
@@ -440,8 +453,12 @@ function ToggleCard(props: {
   return (
     <label className="flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 shadow-sm">
       <div>
-        <div className="text-sm font-semibold text-neutral-900">{props.label}</div>
-        {props.desc ? <div className="text-xs text-neutral-500">{props.desc}</div> : null}
+        <div className="text-sm font-semibold text-neutral-900">
+          {props.label}
+        </div>
+        {props.desc ? (
+          <div className="text-xs text-neutral-500">{props.desc}</div>
+        ) : null}
       </div>
       <input
         type="checkbox"
@@ -457,7 +474,10 @@ function SkeletonList() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="rounded-3xl border border-black/10 bg-white p-4">
+        <div
+          key={i}
+          className="rounded-3xl border border-black/10 bg-white p-4"
+        >
           <div className="h-4 w-2/3 rounded bg-neutral-100" />
           <div className="mt-3 h-3 w-1/3 rounded bg-neutral-100" />
           <div className="mt-3 flex gap-2">

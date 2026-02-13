@@ -15,7 +15,11 @@ export const metadata: Metadata = {
   description: "Gennovax-managerment",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className="h-full">
       <body className={`${roboto.variable} antialiased h-full  font-sans`}>

@@ -61,7 +61,9 @@ function SttBadge({ stt, dueDate }: { stt: number; dueDate: string | null }) {
     <span
       className={`inline-flex h-6 min-w-6 items-center justify-center rounded-lg px-1.5 text-[11px] font-extrabold ring-1 ${cls}`}
       title={
-        dueDate ? `Hạn KQ: ${new Date(dueDate).toLocaleString()}` : "Chưa có hạn KQ"
+        dueDate
+          ? `Hạn KQ: ${new Date(dueDate).toLocaleString()}`
+          : "Chưa có hạn KQ"
       }
     >
       {stt}
@@ -94,18 +96,19 @@ export default function CasesTable({
         <table className="w-full min-w-[980px] table-fixed text-neutral-900">
           {/* ✅ set độ rộng tối thiểu đúng “cần thôi” */}
           <colgroup>
-            <col className="w-[56px]" />   {/* STT */}
-            <col className="w-[80px]" />   {/* Ngày */}
-            <col className="w-[120px]" />  {/* Trạng thái */}
-            <col className="w-[120px]" />  {/* Mã ca */}
-            <col className="w-[140px]" />  {/* Họ và tên (wrap 2 dòng) */}
-            <col className="w-[140px]" />  {/* Nguồn (wrap 2 dòng) */}
-            <col className="w-[80px]" />  {/* NVKD (wrap 2 dòng) */}
-            <col className="w-[90px]" />   {/* Dịch vụ */}
-            <col className="w-[160px]" />  {/* Tên dịch vụ (wrap 2 dòng + code dòng nhỏ) */}
-            <col className="w-[64px]" />   {/* Đã TT */}
-            <col className="w-[110px]" />  {/* Tiền thu */}
-            <col className="w-[92px]" />   {/* Chi tiết */}
+            <col className="w-[56px]" /> {/* STT */}
+            <col className="w-[80px]" /> {/* Ngày */}
+            <col className="w-[120px]" /> {/* Trạng thái */}
+            <col className="w-[120px]" /> {/* Mã ca */}
+            <col className="w-[140px]" /> {/* Họ và tên (wrap 2 dòng) */}
+            <col className="w-[140px]" /> {/* Nguồn (wrap 2 dòng) */}
+            <col className="w-[80px]" /> {/* NVKD (wrap 2 dòng) */}
+            <col className="w-[90px]" /> {/* Dịch vụ */}
+            <col className="w-[160px]" />{" "}
+            {/* Tên dịch vụ (wrap 2 dòng + code dòng nhỏ) */}
+            <col className="w-[64px]" /> {/* Đã TT */}
+            <col className="w-[110px]" /> {/* Tiền thu */}
+            <col className="w-[92px]" /> {/* Chi tiết */}
           </colgroup>
 
           <thead className="sticky top-0 z-10">
@@ -168,17 +171,23 @@ export default function CasesTable({
                     <Pill text={r.processStatus || "—"} tone="slate" />
                   </td>
 
-                  <td className={`${tdBase} font-extrabold text-indigo-900 whitespace-nowrap`}>
+                  <td
+                    className={`${tdBase} font-extrabold text-indigo-900 whitespace-nowrap`}
+                  >
                     {r.caseCode || "—"}
                   </td>
 
                   {/* ✅ xuống dòng tối đa 2 dòng */}
                   <td className={tdBase}>
-                    <div className={`${wrap2} font-semibold`}>{r.patientName || "—"}</div>
+                    <div className={`${wrap2} font-semibold`}>
+                      {r.patientName || "—"}
+                    </div>
                   </td>
 
                   <td className={tdBase}>
-                    <div className={`${wrap2} text-neutral-700`}>{r.source || "—"}</div>
+                    <div className={`${wrap2} text-neutral-700`}>
+                      {r.source || "—"}
+                    </div>
                   </td>
 
                   <td className={tdBase}>
@@ -194,8 +203,8 @@ export default function CasesTable({
                         r.serviceType === "NIPT"
                           ? "rose"
                           : r.serviceType === "ADN"
-                          ? "blue"
-                          : "emerald"
+                            ? "blue"
+                            : "emerald"
                       }
                     />
                   </td>

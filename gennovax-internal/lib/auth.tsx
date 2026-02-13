@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { api, type Role } from "@/lib/api";
 
 type User = { id: string; name: string; email: string; role: Role };
@@ -28,7 +34,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const u = localStorage.getItem(LS_USER);
     if (t) setToken(t);
     if (u) {
-      try { setUser(JSON.parse(u)); } catch {}
+      try {
+        setUser(JSON.parse(u));
+      } catch {}
     }
     setLoading(false);
   }, []);
@@ -37,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const res = await api.login({ email, password });
     setToken(res.token);
     setUser(res.user);
-    console.log(res.token)
+    console.log(res.token);
     localStorage.setItem(LS_TOKEN, res.token);
     localStorage.setItem(LS_USER, JSON.stringify(res.user));
   };
@@ -49,14 +57,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(LS_USER);
   };
 
-  const value = useMemo<AuthState>(() => ({
-    token,
-    user,
-    loading,
-    login,
-    logout,
-    isAdmin: user?.role === "admin",
-  }), [token, user, loading]);
+  const value = useMemo<AuthState>(
+    () => ({
+      token,
+      user,
+      loading,
+      login,
+      logout,
+      isAdmin: user?.role === "admin",
+    }),
+    [token, user, loading],
+  );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

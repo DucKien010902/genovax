@@ -52,7 +52,10 @@ export default function AdminDashboardPage() {
 
   // monthly zoom = number of months shown
   const [monthsWindow, setMonthsWindow] = useState<number>(12);
-  const [brush, setBrush] = useState<{ startIndex: number; endIndex: number } | null>(null);
+  const [brush, setBrush] = useState<{
+    startIndex: number;
+    endIndex: number;
+  } | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -102,14 +105,14 @@ export default function AdminDashboardPage() {
     return arr;
   }, [monthly]);
 
-const months = useMemo<string[]>(
-  () => (monthlyBarsData as Array<{ ym: string }>).map((x) => String(x.ym)),
-  [monthlyBarsData]
-);
-
+  const months = useMemo<string[]>(
+    () => (monthlyBarsData as Array<{ ym: string }>).map((x) => String(x.ym)),
+    [monthlyBarsData],
+  );
 
   useEffect(() => {
-    if (!pickedMonth && months.length) setPickedMonth(months[months.length - 1]);
+    if (!pickedMonth && months.length)
+      setPickedMonth(months[months.length - 1]);
   }, [months, pickedMonth]);
 
   // init brush window = last N months
@@ -164,12 +167,17 @@ const months = useMemo<string[]>(
           map.set(k, (map.get(k) || 0) + v);
         }
       }
-      const arr = Array.from(map.entries()).map(([source, revenue]) => ({ source, revenue }));
+      const arr = Array.from(map.entries()).map(([source, revenue]) => ({
+        source,
+        revenue,
+      }));
       arr.sort((a, b) => b.revenue - a.revenue);
       return arr.slice(0, clamp(top, 1, 50));
     }
 
-    const row = monthlyBarsData.find((x: any) => String(x.ym) === String(pickedMonth));
+    const row = monthlyBarsData.find(
+      (x: any) => String(x.ym) === String(pickedMonth),
+    );
     if (!row) return [];
     const arr = sourceKeys.map((k) => ({
       source: k,
@@ -179,9 +187,12 @@ const months = useMemo<string[]>(
     return arr.slice(0, clamp(top, 1, 50));
   }, [monthlyBarsData, sourceKeys, scopeMode, pickedMonth, top]);
 
-  const topSources = topSourcesComputed.length ? topSourcesComputed : topSourcesFromApi;
+  const topSources = topSourcesComputed.length
+    ? topSourcesComputed
+    : topSourcesFromApi;
 
-  const empty = !monthlyBarsData.length && !bySource.length && !topSources.length;
+  const empty =
+    !monthlyBarsData.length && !bySource.length && !topSources.length;
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
@@ -193,7 +204,9 @@ const months = useMemo<string[]>(
               <span className="text-lg">📊</span>
             </div>
             <div>
-              <div className="text-sm font-semibold leading-5">Admin Dashboard</div>
+              <div className="text-sm font-semibold leading-5">
+                Admin Dashboard
+              </div>
               <div className="text-xs text-neutral-500 dark:text-neutral-400">
                 Doanh thu • Nguồn • Theo tháng
               </div>
@@ -230,7 +243,9 @@ const months = useMemo<string[]>(
             />
 
             <div className="flex h-10 items-center gap-2 rounded-2xl border border-black/10 bg-white px-3 text-sm shadow-sm dark:border-white/10 dark:bg-neutral-900">
-              <span className="text-neutral-500 dark:text-neutral-400">Top</span>
+              <span className="text-neutral-500 dark:text-neutral-400">
+                Top
+              </span>
               <input
                 type="number"
                 value={top}
@@ -247,7 +262,7 @@ const months = useMemo<string[]>(
               className={cn(
                 "h-10 rounded-2xl px-4 text-sm font-semibold shadow-sm",
                 "bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white",
-                "hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                "hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed",
               )}
             >
               {loading ? "Loading..." : "Apply"}
@@ -260,10 +275,30 @@ const months = useMemo<string[]>(
       <div className="mx-auto max-w-6xl px-4 py-6">
         {/* KPI */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard title="Tổng doanh thu (thực thu)" value={money(kpis.totalRevenue)} sub="VNĐ" icon="💰" />
-          <KpiCard title="Tổng số ca" value={money(kpis.totalCases)} sub="cases" icon="🧾" />
-          <KpiCard title="Số ca đã thu" value={money(kpis.paidCases)} sub={`Paid rate: ${pct(kpis.paidRate)}`} icon="✅" />
-          <KpiCard title="Tổng giá niêm yết" value={money(kpis.totalListPrice)} sub="(sum price)" icon="🏷️" />
+          <KpiCard
+            title="Tổng doanh thu (thực thu)"
+            value={money(kpis.totalRevenue)}
+            sub="VNĐ"
+            icon="💰"
+          />
+          <KpiCard
+            title="Tổng số ca"
+            value={money(kpis.totalCases)}
+            sub="cases"
+            icon="🧾"
+          />
+          <KpiCard
+            title="Số ca đã thu"
+            value={money(kpis.paidCases)}
+            sub={`Paid rate: ${pct(kpis.paidRate)}`}
+            icon="✅"
+          />
+          <KpiCard
+            title="Tổng giá niêm yết"
+            value={money(kpis.totalListPrice)}
+            sub="(sum price)"
+            icon="🏷️"
+          />
         </div>
 
         {/* TOP + RANKING (trên) */}
@@ -271,7 +306,9 @@ const months = useMemo<string[]>(
           <Card>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <div className="text-sm font-semibold">Top nguồn theo doanh thu</div>
+                <div className="text-sm font-semibold">
+                  Top nguồn theo doanh thu
+                </div>
                 <div className="text-xs text-neutral-500 dark:text-neutral-400">
                   Lọc theo <b>Tổng</b> hoặc theo <b>tháng</b>
                 </div>
@@ -301,7 +338,9 @@ const months = useMemo<string[]>(
 
             <div className="mt-3">
               <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                {scopeMode === "total" ? "Đang xem: cộng dồn tất cả tháng" : `Đang xem: tháng ${pickedMonth || "—"}`}
+                {scopeMode === "total"
+                  ? "Đang xem: cộng dồn tất cả tháng"
+                  : `Đang xem: tháng ${pickedMonth || "—"}`}
               </div>
 
               <div className="mt-3 h-[320px]">
@@ -310,15 +349,19 @@ const months = useMemo<string[]>(
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="source" hide />
                     <YAxis tickFormatter={(v) => money(v)} />
-                    <Tooltip formatter={(v: any) => money(Number(v || 0))} labelFormatter={(l) => `Nguồn: ${l}`} />
+                    <Tooltip
+                      formatter={(v: any) => money(Number(v || 0))}
+                      labelFormatter={(l) => `Nguồn: ${l}`}
+                    />
                     <Legend />
-                    <Bar dataKey="revenue" name="Revenue" radius={[10, 10, 0, 0]} fill={COLOR_PRIMARY} />
+                    <Bar
+                      dataKey="revenue"
+                      name="Revenue"
+                      radius={[10, 10, 0, 0]}
+                      fill={COLOR_PRIMARY}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
-              </div>
-
-              <div className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
-                Tip: muốn drill-down theo nguồn (ca, dịch vụ, trạng thái...) thì mình có thể bọc thêm endpoint chi tiết theo source.
               </div>
             </div>
           </Card>
@@ -350,14 +393,23 @@ const months = useMemo<string[]>(
                 </thead>
                 <tbody>
                   {bySource.map((x: any, idx: number) => (
-                    <tr key={x.source} className="border-t border-black/5 dark:border-white/10">
-                      <Td className="w-10 text-neutral-500 dark:text-neutral-400">{idx + 1}</Td>
+                    <tr
+                      key={x.source}
+                      className="border-t border-black/5 dark:border-white/10"
+                    >
+                      <Td className="w-10 text-neutral-500 dark:text-neutral-400">
+                        {idx + 1}
+                      </Td>
                       <Td className="font-medium">{x.source}</Td>
                       <Td right className="font-semibold tabular-nums">
                         {money(x.revenue)}
                       </Td>
-                      <Td right className="tabular-nums">{x.totalCases}</Td>
-                      <Td right className="tabular-nums">{x.paidCases}</Td>
+                      <Td right className="tabular-nums">
+                        {x.totalCases}
+                      </Td>
+                      <Td right className="tabular-nums">
+                        {x.paidCases}
+                      </Td>
                       <Td right className="tabular-nums">
                         <span
                           className={cn(
@@ -365,8 +417,8 @@ const months = useMemo<string[]>(
                             x.paidRate >= 0.7
                               ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
                               : x.paidRate >= 0.4
-                              ? "bg-amber-500/10 text-amber-700 dark:text-amber-300"
-                              : "bg-rose-500/10 text-rose-700 dark:text-rose-300"
+                                ? "bg-amber-500/10 text-amber-700 dark:text-amber-300"
+                                : "bg-rose-500/10 text-rose-700 dark:text-rose-300",
                           )}
                         >
                           {pct(x.paidRate)}
@@ -377,18 +429,16 @@ const months = useMemo<string[]>(
 
                   {!bySource.length ? (
                     <tr>
-                      <td className="px-3 py-10 text-center text-sm text-neutral-500 dark:text-neutral-400" colSpan={6}>
+                      <td
+                        className="px-3 py-10 text-center text-sm text-neutral-500 dark:text-neutral-400"
+                        colSpan={6}
+                      >
                         {loading ? "Đang tải..." : "Không có dữ liệu"}
                       </td>
                     </tr>
                   ) : null}
                 </tbody>
               </table>
-            </div>
-
-            <div className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
-              Tip: nếu muốn “nguồn chính = key”, bạn có thể tách riêng dashboard theo từng nguồn bằng query{" "}
-              <code className="rounded bg-black/5 px-1 dark:bg-white/10">?source=...</code>
             </div>
           </Card>
         </div>
@@ -398,9 +448,12 @@ const months = useMemo<string[]>(
           <Card>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <div className="text-sm font-semibold">Doanh thu theo tháng</div>
+                <div className="text-sm font-semibold">
+                  Doanh thu theo tháng
+                </div>
                 <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                  Zoom theo <b>số tháng</b> hiển thị (không phải kéo pixel) • Kéo thanh dưới để chọn khoảng tháng
+                  Zoom theo <b>số tháng</b> hiển thị (không phải kéo pixel) •
+                  Kéo thanh dưới để chọn khoảng tháng
                 </div>
               </div>
 
@@ -424,7 +477,9 @@ const months = useMemo<string[]>(
                 </button>
 
                 <div className="text-xs text-neutral-500 dark:text-neutral-400 tabular-nums">
-                  {brush ? `${brush.endIndex - brush.startIndex + 1} tháng` : `${monthsWindow} tháng`}
+                  {brush
+                    ? `${brush.endIndex - brush.startIndex + 1} tháng`
+                    : `${monthsWindow} tháng`}
                 </div>
 
                 <button
@@ -473,7 +528,12 @@ const months = useMemo<string[]>(
                     <YAxis tickFormatter={(v) => money(v)} />
                     <Tooltip formatter={(v: any) => money(Number(v || 0))} />
                     <Legend />
-                    <Bar dataKey="totalRevenue" name="Total Revenue" fill={COLOR_PRIMARY} radius={[10, 10, 0, 0]} />
+                    <Bar
+                      dataKey="totalRevenue"
+                      name="Total Revenue"
+                      fill={COLOR_PRIMARY}
+                      radius={[10, 10, 0, 0]}
+                    />
 
                     {/* ✅ brush = chọn range tháng để zoom */}
                     <Brush
@@ -486,7 +546,9 @@ const months = useMemo<string[]>(
                       onChange={(r: any) => {
                         if (!r) return;
                         const s = Number(r.startIndex ?? 0);
-                        const e = Number(r.endIndex ?? monthlyBarsData.length - 1);
+                        const e = Number(
+                          r.endIndex ?? monthlyBarsData.length - 1,
+                        );
                         setBrush({ startIndex: s, endIndex: e });
                         setMonthsWindow(e - s + 1);
                       }}
@@ -501,9 +563,6 @@ const months = useMemo<string[]>(
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="text-xs text-neutral-500 dark:text-neutral-400">
                   So sánh theo nguồn (Line) • tối đa 8 nguồn
-                </div>
-                <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                  (Line chart cũng follow brush range)
                 </div>
               </div>
 
@@ -546,7 +605,9 @@ const months = useMemo<string[]>(
                       onChange={(r: any) => {
                         if (!r) return;
                         const s = Number(r.startIndex ?? 0);
-                        const e = Number(r.endIndex ?? monthlyBarsData.length - 1);
+                        const e = Number(
+                          r.endIndex ?? monthlyBarsData.length - 1,
+                        );
                         setBrush({ startIndex: s, endIndex: e });
                         setMonthsWindow(e - s + 1);
                       }}
@@ -558,7 +619,9 @@ const months = useMemo<string[]>(
 
             {empty ? (
               <div className="mt-3 text-sm text-neutral-500 dark:text-neutral-400">
-                {loading ? "Đang tải dữ liệu..." : "Không có dữ liệu trong khoảng lọc hiện tại."}
+                {loading
+                  ? "Đang tải dữ liệu..."
+                  : "Không có dữ liệu trong khoảng lọc hiện tại."}
               </div>
             ) : null}
           </Card>
@@ -571,7 +634,16 @@ const months = useMemo<string[]>(
 /* ================= UI atoms ================= */
 
 function palette(i: number) {
-  const colors = ["#22c55e", "#06b6d4", "#f59e0b", "#a78bfa", "#fb7185", "#34d399", "#60a5fa", "#f472b6"];
+  const colors = [
+    "#22c55e",
+    "#06b6d4",
+    "#f59e0b",
+    "#a78bfa",
+    "#fb7185",
+    "#34d399",
+    "#60a5fa",
+    "#f472b6",
+  ];
   return colors[i % colors.length];
 }
 
@@ -598,9 +670,17 @@ function KpiCard({
     <div className="rounded-3xl border border-black/5 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-neutral-900">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="text-xs text-neutral-500 dark:text-neutral-400">{title}</div>
-          <div className="mt-2 text-2xl font-extrabold tracking-tight tabular-nums">{value}</div>
-          {sub ? <div className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{sub}</div> : null}
+          <div className="text-xs text-neutral-500 dark:text-neutral-400">
+            {title}
+          </div>
+          <div className="mt-2 text-2xl font-extrabold tracking-tight tabular-nums">
+            {value}
+          </div>
+          {sub ? (
+            <div className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+              {sub}
+            </div>
+          ) : null}
         </div>
         <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500/20 to-fuchsia-500/20 ring-1 ring-black/5 dark:ring-white/10">
           <span className="text-lg">{icon || "✨"}</span>
@@ -629,7 +709,7 @@ function SelectPill({
       className={cn(
         "h-10 rounded-2xl border border-black/10 bg-white px-3 text-sm shadow-sm outline-none",
         "focus:ring-2 focus:ring-indigo-300 dark:border-white/10 dark:bg-neutral-900 dark:focus:ring-white/15",
-        "disabled:opacity-60 disabled:cursor-not-allowed"
+        "disabled:opacity-60 disabled:cursor-not-allowed",
       )}
     >
       {options.map((o) => (
@@ -663,7 +743,7 @@ function Segment({
               "h-8 rounded-2xl px-3 text-sm font-semibold transition",
               active
                 ? "bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white"
-                : "text-neutral-600 hover:bg-black/5 dark:text-neutral-300 dark:hover:bg-white/5"
+                : "text-neutral-600 hover:bg-black/5 dark:text-neutral-300 dark:hover:bg-white/5",
             )}
           >
             {o.label}
@@ -674,13 +754,19 @@ function Segment({
   );
 }
 
-function Th({ children, right }: { children: React.ReactNode; right?: boolean }) {
+function Th({
+  children,
+  right,
+}: {
+  children: React.ReactNode;
+  right?: boolean;
+}) {
   return (
     <th
       className={cn(
         "px-3 py-2 text-left font-semibold",
         "border-b border-black/5 dark:border-white/10",
-        right && "text-right"
+        right && "text-right",
       )}
     >
       {children}
@@ -697,5 +783,9 @@ function Td({
   right?: boolean;
   className?: string;
 }) {
-  return <td className={cn("px-3 py-2", right && "text-right", className)}>{children}</td>;
+  return (
+    <td className={cn("px-3 py-2", right && "text-right", className)}>
+      {children}
+    </td>
+  );
 }

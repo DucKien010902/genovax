@@ -127,7 +127,7 @@ export default function LoginPage() {
                     placeholder="admin@genno.local"
                     className={cn(
                       "w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-black shadow-sm outline-none",
-                      "focus:ring-4 focus:ring-indigo-200"
+                      "focus:ring-4 focus:ring-indigo-200",
                     )}
                   />
                 </div>
@@ -150,7 +150,7 @@ export default function LoginPage() {
                     placeholder="••••••••"
                     className={cn(
                       "w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-black shadow-sm outline-none",
-                      "focus:ring-4 focus:ring-indigo-200"
+                      "focus:ring-4 focus:ring-indigo-200",
                     )}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !loading) onSubmit();

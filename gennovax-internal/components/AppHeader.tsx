@@ -44,10 +44,26 @@ export default function AppHeader() {
   const isAdmin = user.role === "admin";
 
   const adminItems = [
-    { label: "Thống kê doanh thu", desc: "Tổng hợp doanh thu theo tháng", href: "/admin/dashboard" },
-    { label: "Thêm xóa nguồn thu mẫu", desc: "Thêm/sửa/xóa nguồn thu", href: "/admin/doctors" },
-    { label: "Thêm xóa dịch vụ", desc: "Gói dịch vụ & bảng giá", href: "/admin/services" },
-    { label: "Thêm xóa value lựa chọn", desc: "Danh mục lựa chọn (meta)", href: "/admin/options" },
+    {
+      label: "Thống kê doanh thu",
+      desc: "Tổng hợp doanh thu theo tháng",
+      href: "/admin/dashboard",
+    },
+    {
+      label: "Thêm xóa nguồn thu mẫu",
+      desc: "Thêm/sửa/xóa nguồn thu",
+      href: "/admin/doctors",
+    },
+    {
+      label: "Thêm xóa dịch vụ",
+      desc: "Gói dịch vụ & bảng giá",
+      href: "/admin/services",
+    },
+    {
+      label: "Thêm xóa value lựa chọn",
+      desc: "Danh mục lựa chọn (meta)",
+      href: "/admin/options",
+    },
   ];
 
   return (
@@ -59,7 +75,6 @@ export default function AppHeader() {
           src="https://img.powerpoint.com.vn/uploads/2024/08/19/background-thuyet-trinh-chu-de-y-te-powerpoint_040637978.jpg"
           alt="Header background"
           className="object-cover"
-          
         />
         {/* lớp phủ xanh dịu */}
         <div className="absolute inset-0 bg-gradient-to-b from-sky-100/80 via-white/70 to-white/80" />
@@ -131,7 +146,7 @@ export default function AppHeader() {
                   }}
                   className={cn(
                     "flex items-center gap-2 rounded-2xl border border-black/10 bg-white/80 px-3 py-2 shadow-md hover:bg-white/90 backdrop-blur",
-                    openAdmin && "ring-4 ring-indigo-200"
+                    openAdmin && "ring-4 ring-indigo-200",
                   )}
                 >
                   <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-50/90 text-indigo-700 ring-1 ring-indigo-200 font-black shadow-sm">
@@ -202,7 +217,7 @@ export default function AppHeader() {
                                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:ring-offset-2",
                                 active
                                   ? "bg-gradient-to-r from-indigo-50 to-fuchsia-50 ring-1 ring-indigo-200"
-                                  : "hover:bg-neutral-50/70"
+                                  : "hover:bg-neutral-50/70",
                               )}
                             >
                               {/* left accent bar */}
@@ -211,7 +226,7 @@ export default function AppHeader() {
                                   "absolute left-0 top-2 bottom-2 w-1 rounded-full transition",
                                   active
                                     ? "bg-gradient-to-b from-indigo-600 to-fuchsia-600"
-                                    : "bg-transparent group-hover:bg-black/10"
+                                    : "bg-transparent group-hover:bg-black/10",
                                 )}
                               />
 
@@ -222,13 +237,13 @@ export default function AppHeader() {
                                     "grid h-10 w-10 place-items-center rounded-2xl ring-1 transition",
                                     active
                                       ? "bg-white/70 text-indigo-700 ring-indigo-200"
-                                      : "bg-white/80 text-neutral-700 ring-black/5 group-hover:bg-white/90"
+                                      : "bg-white/80 text-neutral-700 ring-black/5 group-hover:bg-white/90",
                                   )}
                                 >
                                   <span
                                     className={cn(
                                       "text-xs font-black",
-                                      active && "text-indigo-700"
+                                      active && "text-indigo-700",
                                     )}
                                   >
                                     {it.label?.[0]?.toUpperCase() ?? "•"}
@@ -246,7 +261,7 @@ export default function AppHeader() {
                                         "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 transition",
                                         active
                                           ? "bg-indigo-100 text-indigo-700 ring-indigo-200"
-                                          : "bg-neutral-100 text-neutral-600 ring-black/5 group-hover:bg-indigo-50 group-hover:text-indigo-700 group-hover:ring-indigo-200"
+                                          : "bg-neutral-100 text-neutral-600 ring-black/5 group-hover:bg-indigo-50 group-hover:text-indigo-700 group-hover:ring-indigo-200",
                                       )}
                                     >
                                       Tools
@@ -261,7 +276,7 @@ export default function AppHeader() {
                                 <div
                                   className={cn(
                                     "mt-1 text-neutral-400 transition group-hover:translate-x-0.5 group-hover:text-neutral-600",
-                                    active && "text-indigo-600"
+                                    active && "text-indigo-600",
                                   )}
                                 >
                                   ▸

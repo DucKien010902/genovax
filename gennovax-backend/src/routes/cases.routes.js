@@ -266,6 +266,7 @@ router.get("/", async (req, res, next) => {
         { patientName: { $regex: s, $options: "i" } },
         { serviceCode: { $regex: s, $options: "i" } },
         { serviceName: { $regex: s, $options: "i" } },
+        { source: { $regex: s, $options: "i" } },
       ];
     }
 
