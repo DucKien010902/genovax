@@ -25,6 +25,7 @@ const CaseSchema = new mongoose.Schema(
 
     paid: { type: Boolean, default: false },
     collectedAmount: { type: Number, default: 0 },
+    costPrice: { type: Number, default: 0 },
 
     // workflow
     lab: { type: String, default: "" },

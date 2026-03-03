@@ -49,25 +49,20 @@ router.get("/analytics", async (req, res, next) => {
     const [result] = await Case.aggregate([
       { $match: match },
 
-      // ✅ normalize date -> date2 (Date | string | null)
       {
         $addFields: {
           date2: {
             $switch: {
               branches: [
-                // date đã là Date
                 {
                   case: { $eq: [{ $type: "$date" }, "date"] },
                   then: "$date",
                 },
-                // date là string
                 {
                   case: { $eq: [{ $type: "$date" }, "string"] },
                   then: {
                     $dateFromString: {
                       dateString: "$date",
-                      // Nếu date string của bạn là "DD/MM/YYYY" thì mở format dưới đây:
-                      // format: "%d/%m/%Y",
                       onError: null,
                       onNull: null,
                     },
@@ -80,12 +75,10 @@ router.get("/analytics", async (req, res, next) => {
         },
       },
 
-      // ✅ apply range filter trên date2 (an toàn)
       ...(Object.keys(date2Range).length
         ? [{ $match: { date2: date2Range } }]
         : []),
 
-      // ✅ nếu muốn bỏ record date2 null để chart khỏi rác
       { $match: { date2: { $ne: null } } },
 
       {
@@ -97,6 +90,7 @@ router.get("/analytics", async (req, res, next) => {
                 totalCases: { $sum: 1 },
                 paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
                 totalRevenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                totalCost: { $sum: { $ifNull: ["$costPrice", 0] } },
                 totalListPrice: { $sum: { $ifNull: ["$price", 0] } },
               },
             },
@@ -106,6 +100,8 @@ router.get("/analytics", async (req, res, next) => {
                 totalCases: 1,
                 paidCases: 1,
                 totalRevenue: 1,
+                totalCost: 1,
+                totalNetRevenue: { $subtract: ["$totalRevenue", "$totalCost"] },
                 totalListPrice: 1,
                 paidRate: {
                   $cond: [
@@ -125,6 +121,7 @@ router.get("/analytics", async (req, res, next) => {
                 totalCases: { $sum: 1 },
                 paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
                 revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                cost: { $sum: { $ifNull: ["$costPrice", 0] } },
                 listPrice: { $sum: { $ifNull: ["$price", 0] } },
               },
             },
@@ -136,6 +133,8 @@ router.get("/analytics", async (req, res, next) => {
                 totalCases: 1,
                 paidCases: 1,
                 revenue: 1,
+                cost: 1,
+                netRevenue: { $subtract: ["$revenue", "$cost"] },
                 listPrice: 1,
                 paidRate: {
                   $cond: [
@@ -146,17 +145,18 @@ router.get("/analytics", async (req, res, next) => {
                 },
               },
             },
-            { $sort: { revenue: -1, paidCases: -1, totalCases: -1 } },
+            { $sort: { netRevenue: -1, paidCases: -1, totalCases: -1 } },
           ],
 
           monthlyBySource: [
             {
               $group: {
                 _id: {
-                  ym: { $dateToString: { format: "%Y-%m", date: "$date2" } }, // ✅ dùng date2
+                  ym: { $dateToString: { format: "%Y-%m", date: "$date2" } },
                   source: sourceExpr,
                 },
                 revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                cost: { $sum: { $ifNull: ["$costPrice", 0] } },
                 cases: { $sum: 1 },
                 paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
               },
@@ -167,6 +167,8 @@ router.get("/analytics", async (req, res, next) => {
                 ym: "$_id.ym",
                 source: "$_id.source",
                 revenue: 1,
+                cost: 1,
+                netRevenue: { $subtract: ["$revenue", "$cost"] },
                 cases: 1,
                 paidCases: 1,
               },
@@ -179,17 +181,29 @@ router.get("/analytics", async (req, res, next) => {
               $group: {
                 _id: sourceExpr,
                 revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                cost: { $sum: { $ifNull: ["$costPrice", 0] } },
                 paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
                 totalCases: { $sum: 1 },
               },
             },
-            { $sort: { revenue: -1 } },
+            {
+              $project: {
+                revenue: 1,
+                cost: 1,
+                netRevenue: { $subtract: ["$revenue", "$cost"] },
+                paidCases: 1,
+                totalCases: 1,
+              }
+            },
+            { $sort: { netRevenue: -1 } },
             { $limit: topN },
             {
               $project: {
                 _id: 0,
                 source: "$_id",
                 revenue: 1,
+                cost: 1,
+                netRevenue: 1,
                 paidCases: 1,
                 totalCases: 1,
               },
@@ -206,10 +220,22 @@ router.get("/analytics", async (req, res, next) => {
     for (const row of monthlyRaw) {
       const key = row.ym;
       if (!map.has(key))
-        map.set(key, { ym: key, totalRevenue: 0, totalCases: 0, paidCases: 0 });
+        map.set(key, { 
+            ym: key, 
+            totalRevenue: 0, 
+            totalCost: 0, 
+            totalNetRevenue: 0, 
+            totalCases: 0, 
+            paidCases: 0 
+        });
       const obj = map.get(key);
-      obj[row.source] = row.revenue;
+      
+      // Gán netRevenue làm field mặc định cho LineChart từng nguồn
+      obj[row.source] = row.netRevenue;
+      
       obj.totalRevenue += row.revenue || 0;
+      obj.totalCost += row.cost || 0;
+      obj.totalNetRevenue += row.netRevenue || 0;
       obj.totalCases += row.cases || 0;
       obj.paidCases += row.paidCases || 0;
     }
@@ -223,14 +249,130 @@ router.get("/analytics", async (req, res, next) => {
           totalCases: 0,
           paidCases: 0,
           totalRevenue: 0,
+          totalCost: 0,
+          totalNetRevenue: 0,
           totalListPrice: 0,
           paidRate: 0,
         },
       bySource: result?.bySource || [],
       topSources: result?.topSources || [],
       monthly,
+      monthlyDetails: monthlyRaw, // TRẢ VỀ THÊM ĐỂ FRONTEND LÀM BẢNG LỌC THEO THÁNG
       sourceKeys: allSources,
     });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get("/", async (req, res, next) => {
+  try {
+    const { serviceType, q = "", from = "", to = "" } = req.query;
+
+    const filter = {};
+    if (serviceType) filter.serviceType = serviceType;
+
+    const fromD = toDateOrNull(from);
+    const toD = toDateOrNull(to);
+    if (fromD || toD) {
+      filter.date = {};
+      if (fromD) filter.date.$gte = fromD;
+      if (toD) {
+        const end = new Date(toD);
+        end.setHours(23, 59, 59, 999);
+        filter.date.$lte = end;
+      }
+    }
+
+    if (q) {
+      const s = String(q);
+      filter.$or = [
+        { caseCode: { $regex: s, $options: "i" } },
+        { patientName: { $regex: s, $options: "i" } },
+        { serviceCode: { $regex: s, $options: "i" } },
+        { serviceName: { $regex: s, $options: "i" } },
+        { source: { $regex: s, $options: "i" } },
+      ];
+    }
+
+    const items = await Case.find(filter).sort({ date: -1, createdAt: -1 }).limit(500).lean();
+    res.json({ items, total: items.length });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post("/", async (req, res, next) => {
+  try {
+    const payload = req.body || {};
+
+    payload.date = payload.date ? new Date(payload.date) : new Date();
+    payload.sentAt = payload.sentAt ? new Date(payload.sentAt) : null;
+    payload.receivedAt = payload.receivedAt ? new Date(payload.receivedAt) : null;
+
+    const info = await computePriceAndAgent({
+      serviceId: payload.serviceId,
+      doctorId: payload.doctorId,
+    });
+    payload.price = info.price;
+    payload.agentLevel = info.agentLevel;
+    payload.agentTierLabel = info.agentTierLabel;
+    payload.serviceCode = info.serviceCode || payload.serviceCode || "";
+    payload.serviceName = info.serviceName || payload.serviceName || "";
+
+    payload.dueDate = await computeDueDate({
+      serviceId: payload.serviceId,
+      receivedAt: payload.receivedAt,
+    });
+
+    const created = await Case.create(payload);
+    res.json(created);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const patch = req.body || {};
+
+    if ("date" in patch) patch.date = patch.date ? new Date(patch.date) : new Date();
+    if ("sentAt" in patch) patch.sentAt = patch.sentAt ? new Date(patch.sentAt) : null;
+    if ("receivedAt" in patch) patch.receivedAt = patch.receivedAt ? new Date(patch.receivedAt) : null;
+
+    const current = await Case.findById(id).lean();
+    if (!current) return res.status(404).json({ message: "Not found" });
+
+    const nextDoc = { ...current, ...patch };
+
+    const changedServiceOrDoctor =
+      ("serviceId" in patch) || ("doctorId" in patch);
+
+    if (changedServiceOrDoctor) {
+      const info = await computePriceAndAgent({
+        serviceId: nextDoc.serviceId,
+        doctorId: nextDoc.doctorId,
+      });
+      patch.price = info.price;
+      patch.agentLevel = info.agentLevel;
+      patch.agentTierLabel = info.agentTierLabel;
+      patch.serviceCode = info.serviceCode || nextDoc.serviceCode || "";
+      patch.serviceName = info.serviceName || nextDoc.serviceName || "";
+    }
+
+    const changedDue =
+      ("receivedAt" in patch) || ("serviceId" in patch);
+
+    if (changedDue) {
+      patch.dueDate = await computeDueDate({
+        serviceId: nextDoc.serviceId,
+        receivedAt: nextDoc.receivedAt,
+      });
+    }
+
+    const updated = await Case.findByIdAndUpdate(id, patch, { new: true }).lean();
+    res.json(updated);
   } catch (e) {
     next(e);
   }
