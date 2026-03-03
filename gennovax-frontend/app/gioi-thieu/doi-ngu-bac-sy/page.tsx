@@ -24,7 +24,7 @@ export default function DoctorsList() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10 sm:mb-12 space-y-3">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
             Đội Ngũ <span className="text-blue-700">Chuyên Gia</span>
           </h1>
           <p className="text-slate-500 max-w-2xl mx-auto text-sm sm:text-base lg:text-lg">

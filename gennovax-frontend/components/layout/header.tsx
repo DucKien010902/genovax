@@ -33,6 +33,7 @@ export const menuData: MenuItem[] = [
         href: "/gioi-thieu/danh-sach-phong-kham",
       },
       { label: "Đội ngũ bác sỹ", href: "/gioi-thieu/doi-ngu-bac-sy" },
+      { label: "Đối tác phát triển", href: "/gioi-thieu/doi-tac-phat-trien" },
     ],
   },
   {
