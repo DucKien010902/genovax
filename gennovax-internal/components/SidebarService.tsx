@@ -7,37 +7,32 @@ function cn(...a: Array<string | false | null | undefined>) {
   return a.filter(Boolean).join(" ");
 }
 
+/* --- Component Icon được làm mới với hiệu ứng Glass --- */
 function Icon({ t, active }: { t: ServiceType; active: boolean }) {
-  const base =
-    "grid h-9 w-9 place-items-center rounded-2xl ring-1 transition duration-200";
-  const styles: Record<
-    ServiceType,
-    { on: string; off: string; glyph: string }
-  > = {
-    NIPT: {
-      glyph: "NIPT",
-      on: "bg-rose-600 text-white ring-rose-700 shadow-sm",
-      off: "bg-rose-50 text-rose-700 ring-rose-200",
-    },
-    ADN: {
-      glyph: "ADN",
-      on: "bg-blue-600 text-white ring-blue-700 shadow-sm",
-      off: "bg-blue-50 text-blue-700 ring-blue-200",
-    },
-    HPV: {
-      glyph: "HPV",
-      on: "bg-emerald-600 text-white ring-emerald-700 shadow-sm",
-      off: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-    },
+  const styles: Record<ServiceType, string> = {
+    NIPT: "from-pink-500 to-rose-600 shadow-rose-500/40",
+    ADN: "from-blue-400 to-indigo-600 shadow-blue-500/40",
+    HPV: "from-emerald-400 to-teal-600 shadow-emerald-500/40",
   };
 
-  const s = styles[t];
   return (
-    <span className={cn(base, active ? s.on : s.off)} aria-hidden="true">
-      <span className="text-[11px] font-extrabold tracking-tight">
-        {s.glyph}
+    <div
+      className={cn(
+        "grid h-10 w-10 place-items-center rounded-2xl transition-all duration-500",
+        "relative z-10 shadow-lg",
+        active ? cn("bg-gradient-to-br scale-110", styles[t]) : "bg-white/10 backdrop-blur-md ring-1 ring-white/20"
+      )}
+    >
+      <span className={cn(
+        "text-[10px] font-black tracking-tighter",
+        active ? "text-white" : "text-white/80"
+      )}>
+        {t}
       </span>
-    </span>
+      {active && (
+        <span className={cn("absolute inset-0 blur-lg -z-10 opacity-60 rounded-full", styles[t].split(' ')[0])} />
+      )}
+    </div>
   );
 }
 
@@ -48,154 +43,101 @@ export default function SidebarService({
   active: ServiceType;
   onChange: (t: ServiceType) => void;
 }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
-  const items = useMemo(
-    () =>
-      [
-        { key: "NIPT", label: "NIPT", badge: "Sàng lọc", desc: "Trước sinh" },
-        { key: "ADN", label: "ADN", badge: "Pháp lý", desc: "Giám định" },
-        { key: "HPV", label: "HPV", badge: "Tế bào", desc: "Xét nghiệm" },
-      ] as const,
-    [],
-  );
-
-  const tone: Record<
-    ServiceType,
-    { hover: string; soft: string; bar: string; focus: string }
-  > = {
-    NIPT: {
-      hover: "hover:bg-rose-50/60",
-      soft: "bg-rose-50 text-rose-700 ring-rose-200",
-      bar: "bg-rose-600",
-      focus: "focus-visible:ring-rose-300",
-    },
-    ADN: {
-      hover: "hover:bg-blue-50/60",
-      soft: "bg-blue-50 text-blue-700 ring-blue-200",
-      bar: "bg-blue-600",
-      focus: "focus-visible:ring-blue-300",
-    },
-    HPV: {
-      hover: "hover:bg-emerald-50/60",
-      soft: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-      bar: "bg-emerald-600",
-      focus: "focus-visible:ring-emerald-300",
-    },
-  };
-
-  const widthCls = collapsed ? "w-[84px]" : "w-[260px]";
+  const items = useMemo(() => [
+    { key: "NIPT", label: "NIPT", badge: "Sàng lọc", desc: "Trước sinh", glow: "group-hover:shadow-rose-500/20" },
+    { key: "ADN", label: "ADN", badge: "Pháp lý", desc: "Giám định", glow: "group-hover:shadow-blue-500/20" },
+    { key: "HPV", label: "HPV", badge: "Tế bào", desc: "Xét nghiệm", glow: "group-hover:shadow-emerald-500/20" },
+  ] as const, []);
 
   return (
     <aside
       className={cn(
-        "shrink-0 border-r border-black/5 bg-white",
+        "shrink-0 transition-all duration-500 ease-in-out relative overflow-hidden",
+        "bg-gradient-to-b from-slate-950 via-blue-950 to-slate-950 text-white",
         "sticky top-0 h-screen",
-        widthCls,
+        collapsed ? "w-[80px]" : "w-[240px]"
       )}
     >
-      {/* Top */}
-      <div className="px-3 pt-3">
-        <div className="flex items-center gap-2">
-          {/* Mini brand dot */}
-          <div
-            className={`${collapsed ? "hidden" : "flex"} grid h-9 w-9 place-items-center rounded-2xl bg-purple-900 text-white text-[11px] font-extrabold`}
-          >
-            GX
-          </div>
+      {/* Background Decor - Tạo các đốm sáng mờ hiện đại */}
+      <div className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-blue-600/10 blur-[100px]" />
+      <div className="absolute bottom-20 -right-20 h-64 w-64 rounded-full bg-pink-600/10 blur-[100px]" />
 
+      {/* Header Section */}
+      <div className="px-4 pt-6 relative z-10">
+        <div className="flex items-center justify-between">
           {!collapsed && (
-            <div className="min-w-0">
-              <div className="text-sm font-bold tracking-tight text-neutral-900">
-                Dịch vụ
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 p-px">
+                <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-slate-950 text-[11px] font-black">
+                  GX
+                </div>
               </div>
-              <div className="text-[11px] text-neutral-500">
-                Chọn để lọc danh sách
+              <div className="min-w-0">
+                <div className="text-sm font-black tracking-widest text-white uppercase">GENNOVAX</div>
+                <div className="text-[10px] text-white/40 font-medium">Healthcare Systems</div>
               </div>
             </div>
           )}
 
           <button
-            type="button"
-            onClick={() => setCollapsed((v) => !v)}
+            onClick={() => setCollapsed(!collapsed)}
             className={cn(
-              "ml-auto inline-flex h-9 w-9 items-center justify-center rounded-2xl",
-              "ring-1 ring-black/10 bg-white hover:bg-neutral-50",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300",
+              "flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 ring-1 ring-white/10 transition-all",
+              collapsed && "mx-auto"
             )}
-            title={collapsed ? "Mở rộng" : "Thu gọn"}
           >
-            <span className="text-sm" aria-hidden="true">
-              {collapsed ? "»" : "«"}
-            </span>
+            <span className="text-xs opacity-60">{collapsed ? "→" : "←"}</span>
           </button>
         </div>
-
-        <div className="mt-3 h-px w-full bg-black/5" />
+        <div className="mt-6 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       </div>
 
-      {/* Items */}
-      <div className="px-2 py-3">
-        <div className="space-y-1.5">
+      {/* Navigation Items */}
+      <nav className="px-3 py-6 relative z-10">
+        <div className="space-y-3">
           {items.map((it) => {
             const is = it.key === active;
-
             return (
               <button
                 key={it.key}
                 onClick={() => onChange(it.key)}
-                title={`${it.label} — ${it.desc}`}
                 className={cn(
-                  "relative w-full rounded-2xl p-2 text-left transition",
-                  "ring-1 shadow-sm",
-                  "focus:outline-none focus-visible:ring-2",
-                  tone[it.key].focus,
-                  collapsed
-                    ? "flex items-center justify-center"
-                    : "flex items-center gap-2.5",
-                  is
-                    ? "bg-blue-900 text-white ring-black/10"
-                    : cn("bg-white ring-black/5", tone[it.key].hover),
+                  "group relative w-full rounded-[24px] p-2 transition-all duration-300",
+                  "flex items-center",
+                  collapsed ? "justify-center" : "gap-4",
+                  is 
+                    ? "bg-white/10 shadow-2xl ring-1 ring-white/20 backdrop-blur-xl" 
+                    : "hover:bg-white/5"
                 )}
               >
-                {/* Active bar */}
+                {/* Active Indicator Glow */}
                 {is && (
-                  <span
-                    className={cn(
-                      "absolute left-0 top-2 bottom-2 w-1.5 rounded-r-full",
-                      tone[it.key].bar,
-                    )}
-                    aria-hidden="true"
-                  />
+                  <div className="absolute -inset-1 rounded-[28px] bg-gradient-to-r from-blue-500/20 to-pink-500/20 blur-md" />
                 )}
 
                 <Icon t={it.key} active={is} />
 
                 {!collapsed && (
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="text-[13px] font-extrabold tracking-tight">
+                  <div className="flex-1 text-left">
+                    <div className="flex items-center justify-between">
+                      <span className={cn(
+                        "text-[13px] font-bold tracking-tight transition-colors",
+                        is ? "text-white" : "text-white/60 group-hover:text-white"
+                      )}>
                         {it.label}
-                      </div>
-
-                      <span
-                        className={cn(
-                          "rounded-full px-2 py-0.5 text-[10px] font-bold ring-1",
-                          is
-                            ? "bg-white/10 text-white ring-white/10"
-                            : tone[it.key].soft,
-                        )}
-                      >
-                        {it.badge}
                       </span>
-                    </div>
-
-                    <div
-                      className={cn(
-                        "mt-0.5 text-[11px]",
-                        is ? "text-white/70" : "text-neutral-500",
+                      {is && (
+                        <span className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-black uppercase text-white/80 ring-1 ring-white/10">
+                          {it.badge}
+                        </span>
                       )}
-                    >
+                    </div>
+                    <div className={cn(
+                      "text-[10px] transition-opacity",
+                      is ? "text-white/50" : "text-white/30"
+                    )}>
                       {it.desc}
                     </div>
                   </div>
@@ -204,16 +146,19 @@ export default function SidebarService({
             );
           })}
         </div>
-      </div>
+      </nav>
 
-      {/* Footer */}
+      {/* Footer / Tip Section */}
       {!collapsed && (
-        <div className="mt-auto px-3 pb-3">
-          <div className="rounded-2xl bg-neutral-50 p-3 ring-1 ring-black/5">
-            <div className="text-[11px] font-bold text-neutral-700">Mẹo</div>
-            <div className="mt-1 text-[11px] text-neutral-600">
-              Đổi dịch vụ để lọc danh sách và tạo ca đúng loại.
+        <div className="mt-auto px-4 pb-8 relative z-10">
+          <div className="rounded-[24px] bg-gradient-to-br from-white/5 to-white/[0.02] p-4 ring-1 ring-white/10 backdrop-blur-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-blue-400">✦</span>
+              <span className="text-[11px] font-black text-white/80 uppercase tracking-tighter">Pro Tip</span>
             </div>
+            <p className="text-[10px] leading-relaxed text-white/40">
+              Chuyển đổi dịch vụ để cập nhật quy trình xét nghiệm riêng biệt.
+            </p>
           </div>
         </div>
       )}

@@ -59,6 +59,7 @@ export type CaseRecord = {
   agentTierLabel: string;
 
   collectedAmount: number;
+  costPrice?: number;
 
   transferStatus: string;
   receiveStatus: string;

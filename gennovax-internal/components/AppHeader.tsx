@@ -71,10 +71,11 @@ export default function AppHeader() {
       {/* ✅ Background image + soft blue overlay */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {/* ảnh nền */}
+        {/* ảnh nền */}
         <img
-          src="https://img.powerpoint.com.vn/uploads/2024/08/19/background-thuyet-trinh-chu-de-y-te-powerpoint_040637978.jpg"
+          src="https://media.istockphoto.com/id/858983438/vi/anh/n%E1%BB%81n-m%C3%A0u-xanh-d%C6%B0%C6%A1ng-v%C3%A0-h%E1%BB%93ng-nh%E1%BA%A1t.jpg?s=612x612&w=0&k=20&c=MZH_J9CiHVXFpAp9McAFZLqyxH8GhkuSnPAvE0AXCF4="
           alt="Header background"
-          className="object-cover"
+          className="h-full w-full object-cover" // Thay đổi ở đây
         />
         {/* lớp phủ xanh dịu */}
         <div className="absolute inset-0 bg-gradient-to-b from-sky-100/80 via-white/70 to-white/80" />
@@ -213,7 +214,7 @@ export default function AppHeader() {
                                 router.push(it.href);
                               }}
                               className={cn(
-                                "group relative w-full overflow-hidden rounded-2xl px-4 py-3 text-left transition",
+                                "group relative w-full overflow-hidden rounded-2xl px-4 py-3 text-left transition cursor-pointer",
                                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:ring-offset-2",
                                 active
                                   ? "bg-gradient-to-r from-indigo-50 to-fuchsia-50 ring-1 ring-indigo-200"
@@ -351,7 +352,7 @@ export default function AppHeader() {
                     <div className="h-px bg-black/5" />
 
                     <button
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-neutral-50/70"
+                      className="w-full px-4 py-2 text-left text-sm text-black-600 hover:bg-neutral-100/80 hover:text-black-900 transition-colors"
                       onClick={() => {
                         setOpenUser(false);
                         router.push("/profile");
@@ -361,7 +362,7 @@ export default function AppHeader() {
                     </button>
 
                     <button
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-neutral-50/70"
+                      className="w-full px-4 py-2 text-left text-sm text-black-600 hover:bg-neutral-100/80 hover:text-black-900 transition-colors"
                       onClick={() => {
                         setOpenUser(false);
                         router.push("/settings");

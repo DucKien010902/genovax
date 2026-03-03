@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import type { CaseDraft, OptionsMap, ServiceItem } from "@/lib/types";
 import SingleDatePicker from "./DatePicker";
+import { useAuth } from "@/lib/auth";
 
 /** ✅ FE map nguồn -> cấp đại lý (không đụng DB) */
 const SOURCE_TO_AGENT: Record<
@@ -250,6 +251,8 @@ export default function CaseDrawer({
   onClose: () => void;
   onSave: (data: CaseDraft) => Promise<void>;
 }) {
+  const { user, token, logout } = useAuth();
+  const isAdmin = user?.role === "admin";
   const [form, setForm] = useState<CaseDraft | null>(data);
 
   useEffect(() => setForm(data), [data]);
@@ -652,44 +655,35 @@ export default function CaseDrawer({
                     </Field>
                   </div>
 
-                  <Field label="Tiền thu">
+                  <Field label="Tài chính">
                     <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3">
-                      {/* Header nhỏ: Auto */}
                       <div className="mb-2 flex items-center justify-between gap-2">
-                        <div>
-                          <div className="text-[11px] font-semibold text-emerald-700">
-                            Tự động theo nguồn + dịch vụ
-                          </div>
+                        <div className="text-[11px] font-semibold text-emerald-700">
+                          Thông tin doanh thu {isAdmin && "& Giá vốn"}
                         </div>
-
                         <span className="rounded-full bg-white/70 px-2 py-1 text-[11px] font-bold text-emerald-800 ring-1 ring-black/5">
                           {collectedAmountManual ? "chỉnh tay" : "auto"}
                         </span>
                       </div>
 
-                      {/* 2 cột cùng style */}
                       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                        {/* Card: Tiền thu */}
+                        {/* --- CỘT 1: TIỀN THU (DOANH THU) --- */}
                         <div className="rounded-xl bg-white/70 p-3 ring-1 ring-black/5">
                           <div className="mb-2 flex items-center justify-between">
                             <div className="text-[11px] font-semibold text-neutral-500">
-                              Tiền thu (có thể chỉnh)
+                              Tiền thu (Doanh thu)
                             </div>
-
                             <button
                               type="button"
-                              className="rounded-lg bg-white px-2 py-1 text-[11px] font-bold ring-1 ring-black/10 hover:bg-neutral-50 disabled:opacity-60"
+                              className="rounded-lg bg-white px-2 py-1 text-[11px] font-bold ring-1 ring-black/10 hover:bg-neutral-50"
                               onClick={() => {
                                 set({ collectedAmount: suggestedPrice });
                                 setCollectedAmountManual(false);
                               }}
-                              disabled={isUploadingImage}
-                              title="Đưa tiền thu về giá auto"
                             >
                               Reset
                             </button>
                           </div>
-
                           <Input
                             value={String(form.collectedAmount ?? 0)}
                             onChange={(v) => {
@@ -698,28 +692,42 @@ export default function CaseDrawer({
                               set({ collectedAmount: n });
                               setCollectedAmountManual(true);
                             }}
-                            placeholder="Nhập số tiền..."
                             tone="emerald"
                           />
-                        </div>
-
-                        {/* Card: Hiển thị */}
-                        <div className="rounded-xl bg-white/70 p-3 ring-1 ring-black/5">
-                          <div className="text-[11px] font-semibold text-neutral-500">
-                            Hiển thị
-                          </div>
-                          <div className="mt-1 text-[14px] font-bold text-emerald-700">
+                          <div className="mt-1 text-[13px] font-bold text-emerald-700">
                             {fmtMoney(form.collectedAmount ?? 0)}
                           </div>
-
-                          <div className="mt-2 text-[11px] text-neutral-500">
-                            (
-                            {collectedAmountManual
-                              ? "đã override"
-                              : "đang theo auto"}
-                            )
-                          </div>
                         </div>
+
+                        {/* --- CỘT 2: GIÁ VỐN (CHỈ ADMIN THẤY) --- */}
+                        {isAdmin ? (
+                          <div className="rounded-xl bg-rose-50/50 p-3 ring-1 ring-rose-200/50">
+                            <div className="mb-2 text-[11px] font-semibold text-rose-700">
+                              Giá xuất vốn (Giá Cost)
+                            </div>
+                            <Input
+                              value={String((form as any).costPrice ?? 0)}
+                              onChange={(v) => {
+                                const n =
+                                  Number(String(v).replace(/[^\d]/g, "")) || 0;
+                                set({ costPrice: n });
+                              }}
+                              placeholder="Nhập giá vốn..."
+                              tone="rose"
+                            />
+                            <div className="mt-1 text-[13px] font-bold text-rose-700">
+                              {fmtMoney((form as any).costPrice ?? 0)}
+                            </div>
+                          </div>
+                        ) : (
+                          /* Nếu không phải admin thì hiện card trống hoặc card thông tin khác */
+                          <div className="rounded-xl bg-white/40 p-3 ring-1 ring-black/5 flex items-center justify-center border-dashed border">
+                            <span className="text-[10px] text-neutral-400 italic text-center">
+                              Thông tin nội bộ <br /> không hiển thị cho nhân
+                              viên
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </Field>
