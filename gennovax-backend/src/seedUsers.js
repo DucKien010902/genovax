@@ -1,99 +1,271 @@
 import dotenv from "dotenv";
+
+import mongoose from "mongoose";
+
 import { connectDB } from "./db.js";
-import Service from "./models/Service.model.js";
+
+import Case from "./models/Case.model.js"; // Đường dẫn tới file model Case của bạn
+
+
 
 dotenv.config();
 
-/**
- * Map: serviceCode -> GX price (cột "Giá GX")
- * Lưu ý: serviceCode phải đúng với dữ liệu đang có trong DB.
- */
-const GX_PRICE_BY_CODE = {
-  // ===== ADN =====
-  "ADN TN": 700000,
-  "ADN TN 4H": 1400000,
-  "ADN PL": 800000,
-  "ADN PL 4H": 1600000,
-  "ADN F": 1500000,
-  "ADN F 4H": 1800000,
-  "ADN F3": 1200000,
-  "ADN F3 4H": 1600000,
-  "ADN Y": 1100000,
-  "ADN X": 1300000,
-  "ADN TT": 1200000,
-  "KXL THUONG": 14500000,
-  "KXL NHANH": 16000000,
-  "KXL BO THU3": 3000000,
 
-  // ===== NIPT =====
-  "N3": 1150000,      // Geni Eco
-  "N4": 1400000,      // Geni 4
-  "N8": 1800000,      // Geni 8
-  "N8+GL": 2200000,   // Geni 8 + 21 Bệnh Gen Lặn
-  "N23": 2500000,     // Geni 23
-  "N23+GL": 3200000,  // Geni 23 + 21 bệnh Gen lặn
-  "NGT": 2500000,     // Geni Twins
-  "NGT+GL": 3200000,  // Geni Twins + 21 bệnh Gen lặn
-  "NPL": 4000000,     // Geni Diamond
-  "NPL+GL": 4500000,  // Geni Diamond + 21 bệnh Gen lặn
-  "GL21": 2000000,    // 21 bệnh Gen lặn
 
-  // ===== HPV =====
-  "HPV40": 450000,
-  "HPV23": 280000,
+async function migrateData() {
 
-  // ===== TA (nếu trong DB có serviceCode "TA") =====
+  try {
 
-  // ===== STD: ảnh không có giá => không set =====
-};
+    // 1. Kết nối DB
 
-function hasCtvPrice(pricesByLevel = []) {
-  return pricesByLevel.some((p) => p?.level === "ctv");
-}
+    await connectDB(process.env.MONGO_URI);
 
-async function run() {
-  await connectDB(process.env.MONGO_URI);
+    console.log("Đang kết nối Database. Bắt đầu chuẩn hóa dữ liệu...");
 
-  const services = await Service.find({}, { serviceCode: 1, pricesByLevel: 1 }).lean();
 
-  let updated = 0;
-  let skippedNoGX = 0;
-  let skippedHasCTV = 0;
 
-  for (const s of services) {
-    const code = s.serviceCode;
-    const gx = GX_PRICE_BY_CODE[code];
+    // 2. Truy cập trực tiếp vào collection 'cases' (hoặc 'customers' tuỳ database của bạn)
 
-    if (!gx) {
-      skippedNoGX++;
-      console.log(`⚠️  Skip (không có GX mapping): ${code}`);
-      continue;
+    // Dùng cách này để lấy được cả những trường tiếng Việt không có trong Schema
+
+    const collection = mongoose.connection.collection("cases"); 
+
+    
+
+    // Lấy toàn bộ dữ liệu hiện có
+
+    const allCases = await collection.find({}).toArray();
+
+    console.log(`Tìm thấy ${allCases.length} ca. Bắt đầu xử lý...`);
+
+
+
+    const bulkOps = []; // Dùng bulkWrite để update hàng loạt cực nhanh
+
+
+
+    for (const doc of allCases) {
+
+      // --- CÁC HÀM HỖ TRỢ ÉP KIỂU (HELPER FUNCTIONS) ---
+
+      
+
+      // Hàm kiểm tra Boolean (có chữ X, Có, True, 1 -> trả về true)
+
+      const isTrue = (val) => {
+
+        if (!val) return false;
+
+        const str = String(val).trim().toLowerCase();
+
+        return ["x", "có", "co", "true", "1"].includes(str);
+
+      };
+
+
+
+      // Hàm ép kiểu Số (nếu lỗi thì về 0)
+
+      const parseNum = (val) => {
+
+        const num = Number(val);
+
+        return isNaN(num) ? 0 : num;
+
+      };
+
+
+
+      // Hàm ép kiểu Ngày tháng (nếu lỗi trả về null)
+
+      const parseDate = (val) => {
+
+        if (!val) return null;
+
+        const d = new Date(val);
+
+        return isNaN(d.getTime()) ? null : d;
+
+      };
+
+
+
+      // Xử lý logic Enum cho serviceType (NIPT, ADN, CELL)
+
+      let sType = "NIPT"; // Mặc định
+
+      const rawService = String(doc["Dịch vụ"] || "").toUpperCase();
+
+      if (rawService.includes("ADN")) sType = "ADN";
+
+      else if (rawService.includes("CELL")) sType = "CELL";
+
+
+
+      // --- TẠO LỆNH UPDATE CHO TỪNG DOCUMENT ---
+
+      const updateDoc = {
+
+        $set: {
+
+          stt: parseNum(doc["STT"]),
+
+          date: parseDate(doc["Ngày"]) || new Date(),
+
+          
+
+          invoiceRequested: isTrue(doc["Xuất Hóa đơn"]),
+
+          caseCode: String(doc["Mã ca"] || ""),
+
+          patientName: String(doc["Họ và tên"] || ""),
+
+          
+
+          lab: String(doc["Lab"] || ""),
+
+          serviceType: String(doc["Dịch vụ "] || ""),
+
+          serviceName: String(doc["Mã hàng"] || ""),
+
+          serviceCode: String(doc["Mã hàng"] || ""),
+
+          detailNote: String(doc["Thông tin chi tiết thêm"] || ""),
+
+          
+
+          source: String(doc["Nguồn"] || ""),
+
+          salesOwner: String(doc["NVKD phụ trách"] || ""),
+
+          sampleCollector: String(doc["Thu mẫu"] || ""),
+
+          
+
+          sentAt: parseDate(doc["Ngày gửi mẫu"]),
+
+          receivedAt: parseDate(doc["Ngày nhận mẫu"] || doc["Tiếp nhận mẫu"]), // Tùy bạn đang dùng cột nào cho Ngày nhận
+
+          dueDate: parseDate(doc["Ngày trả kết quả"]),
+
+          
+
+          agentLevel: String(doc["Cấp đại lý"] || ""),
+
+          price: 0,
+
+          collectedAmount: parseNum(doc["Tiền thu"]),
+
+          costPrice: 0,
+
+          
+
+          paid: isTrue(doc["Đã thanh toán"]),
+
+          transferStatus: String(doc["Mẫu chuyển lab"] || ""),
+
+          receiveStatus: String(doc["Tiếp nhận mẫu"] || ""),
+
+          processStatus: String(doc["Xử lý mẫu"] || ""),
+
+          feedbackStatus: String(doc["Phản hồi"] || ""),
+
+          
+
+          glReturned: isTrue(doc["GL trả"]),
+
+          gxReceived: isTrue(doc["GX nhận"]),
+
+          softFileDone: isTrue(doc["Trả file mềm"]),
+
+          hardFileDone: isTrue(doc["Trả file cứng"]),
+
+          
+
+          invoiceInfo: String(doc["Thông tin xuất hóa đơn"] || ""),
+
+          invoiceName: "",
+
+          invoiceTaxCode: "",
+
+          invoiceAddress: ""
+
+        },
+
+        // Xóa sạch các cột Tiếng Việt cũ
+
+        $unset: {
+
+          "STT": "", "Ngày": "", "Xuất Hóa đơn": "", "Mã ca": "", "Họ và tên": "",
+
+          "Lab": "", "Dịch vụ ": "", "Mã hàng": "", "Thông tin chi tiết thêm": "",
+
+          "Nguồn": "", "NVKD phụ trách": "", "Thu mẫu": "", "Ngày gửi mẫu": "",
+
+          "Đã thanh toán": "", "Chưa thanh toán": "", "Người thu tiền": "",
+
+          "Ngày trả kết quả": "", "Cấp đại lý": "", "Tiền thu": "",
+
+          "Mẫu chuyển lab": "", "Tiếp nhận mẫu": "", "Xử lý mẫu": "",
+
+          "Phản hồi": "", "GL trả": "", "GX nhận": "", "Trả file mềm": "",
+
+          "Trả file cứng": "", "Thông tin xuất hóa đơn": "",
+
+        }
+
+      };
+
+
+
+      // Đưa lệnh update vào mảng thực thi hàng loạt
+
+      bulkOps.push({
+
+        updateOne: {
+
+          filter: { _id: doc._id },
+
+          update: updateDoc
+
+        }
+
+      });
+
     }
 
-    if (hasCtvPrice(s.pricesByLevel)) {
-      skippedHasCTV++;
-      console.log(`↩️  Skip (đã có ctv): ${code}`);
-      continue;
+
+
+    // 3. Thực thi lưu vào Database
+
+    if (bulkOps.length > 0) {
+
+      console.log("Đang tiến hành ghi vào Database...");
+
+      const result = await collection.bulkWrite(bulkOps);
+
+      console.log(`✅ Hoàn tất! Đã chuẩn hóa thành công ${result.modifiedCount} ca.`);
+
+    } else {
+
+      console.log("⚠️ Không có dữ liệu để xử lý.");
+
     }
 
-    const next = [...(s.pricesByLevel || []), { level: "ctv", price: gx }];
 
-    await Service.updateOne(
-      { serviceCode: code },
-      { $set: { pricesByLevel: next } }
-    );
 
-    updated++;
-    console.log(`✅ Added ctv=${gx.toLocaleString("vi-VN")} for ${code}`);
+    process.exit(0);
+
+  } catch (error) {
+
+    console.error("❌ Lỗi khi chạy script:", error);
+
+    process.exit(1);
+
   }
 
-  console.log("---- DONE ----");
-  console.log({ updated, skippedHasCTV, skippedNoGX });
-
-  process.exit(0);
 }
 
-run().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+
+
+migrateData();

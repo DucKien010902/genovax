@@ -47,7 +47,11 @@ const CaseSchema = new mongoose.Schema(
     softFileDone: { type: Boolean, default: false },
     hardFileDone: { type: Boolean, default: false },
 
-    invoiceInfo: { type: String, default: "" },
+
+invoiceInfo: { type: String, default: "" },
+invoiceName: { type: String, default: "" },
+invoiceTaxCode: { type: String, default: "" },
+invoiceAddress: { type: String, default: "" },
 
     createdBy: { type: String, default: "" },
     updatedBy: { type: String, default: "" },
