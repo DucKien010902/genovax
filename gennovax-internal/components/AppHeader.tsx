@@ -41,7 +41,7 @@ export default function AppHeader() {
   // ✅ nếu chưa login thì không render header
   if (!token || !user) return null;
 
-  const isAdmin = user.role === "admin";
+  const isAdmin = user.role === "admin" || user.role ==="superadmin";
 
   const adminItems = [
     {
@@ -64,6 +64,11 @@ export default function AppHeader() {
       desc: "Danh mục lựa chọn (meta)",
       href: "/admin/options",
     },
+    {
+      label: "Thêm xóa nhân viên",
+      desc: "Danh mục quản lý",
+      href: "/admin/users",
+    },
   ];
 
   return (
@@ -84,9 +89,11 @@ export default function AppHeader() {
       </div>
 
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
-        <div className="relative flex h-24 items-center justify-between gap-3">
+        <div className="relative flex h-20 lg:h-24 items-center justify-between gap-3">
           {/* Left */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => {
+                  router.push("/");
+                }}>
             <div className="h-12 w-12 rounded-2xl shadow-sm overflow-hidden ring-1 ring-black/10 bg-white/70">
               <Image
                 src="/icon.png"
@@ -352,7 +359,7 @@ export default function AppHeader() {
                     <div className="h-px bg-black/5" />
 
                     <button
-                      className="w-full px-4 py-2 text-left text-sm text-black-600 hover:bg-neutral-100/80 hover:text-black-900 transition-colors"
+                      className="w-full px-4 py-2 text-left text-sm text-black-800 hover:bg-neutral-100/80 hover:text-black-900 transition-colors"
                       onClick={() => {
                         setOpenUser(false);
                         router.push("/profile");
@@ -362,7 +369,7 @@ export default function AppHeader() {
                     </button>
 
                     <button
-                      className="w-full px-4 py-2 text-left text-sm text-black-600 hover:bg-neutral-100/80 hover:text-black-900 transition-colors"
+                      className="w-full px-4 py-2 text-left text-sm text-black-800 hover:bg-neutral-100/80 hover:text-black-900 transition-colors"
                       onClick={() => {
                         setOpenUser(false);
                         router.push("/settings");

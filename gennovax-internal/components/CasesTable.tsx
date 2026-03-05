@@ -1,6 +1,7 @@
 "use client";
 
 import { CaseRecord } from "@/lib/types";
+import { useAuth } from "@/lib/auth";
 
 function Pill({
   text,
@@ -39,21 +40,41 @@ function Check({ ok }: { ok: boolean }) {
   );
 }
 
-function SttBadge({ stt, dueDate }: { stt: number; dueDate: string | null }) {
+// ✅ Component chấm tròn trạng thái (xanh/đỏ)
+function Dot({ ok, title }: { ok: boolean; title?: string }) {
+  return (
+    <span
+      title={title}
+      className={`inline-block h-3 w-3 rounded-full shadow-sm ring-1 ring-inset ${
+        ok
+          ? "bg-emerald-500 ring-emerald-600/50"
+          : "bg-rose-500 ring-rose-600/50"
+      }`}
+    />
+  );
+}
+
+function SttBadge({ stt, dueDate,processStatus }: { stt: number; dueDate: string | null; processStatus: string| null }) {
   const now = Date.now();
 
   let cls = "bg-slate-100 text-slate-700 ring-slate-200";
-  if (dueDate) {
+
+  // ✅ 2. Nếu đã có kết quả -> Ép luôn thành màu trắng
+  if (processStatus === "Đã có KQ") {
+    cls = "bg-white text-neutral-400 ring-black/10";
+  } 
+  // ✅ 3. Nếu chưa có KQ thì mới tính toán trễ hạn
+  else if (dueDate) {
     const t = new Date(dueDate).getTime();
     const diff = t - now;
 
     if (Number.isFinite(t)) {
-      if (diff < 0) cls = "bg-violet-600 text-white ring-violet-700";
+      if (diff < 0) cls = "bg-red-600 text-white ring-violet-700";
       else if (diff < 6 * 60 * 60 * 1000)
-        cls = "bg-rose-600 text-white ring-rose-700";
+        cls = "bg-yellow-600 text-white ring-rose-700";
       else if (diff < 24 * 60 * 60 * 1000)
-        cls = "bg-amber-500 text-white ring-amber-600";
-      else cls = "bg-emerald-600 text-white ring-emerald-700";
+        cls = "bg-blue-500 text-white ring-amber-600";
+      else cls = "bg-green-600 text-white ring-emerald-700";
     }
   }
 
@@ -71,12 +92,11 @@ function SttBadge({ stt, dueDate }: { stt: number; dueDate: string | null }) {
   );
 }
 
-// ✅ cột co tối thiểu: dùng table-fixed + colgroup set width theo nội dung cần
-// ✅ ô dài: cho xuống dòng tối đa 2 dòng (line-clamp-2), KHÔNG dùng truncate/ellipsis
+// ✅ Đổi align-top thành align-middle ở thBase và tdBase
 const thBase =
-  "px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap border-r border-black/5";
+  "px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap border-r border-black/5 align-middle";
 const tdBase =
-  "px-3 py-2 text-left text-[12px] leading-5 border-r border-black/5 align-top";
+  "px-3 py-2 text-left text-[12px] leading-5 border-r border-black/5 align-middle";
 
 const wrap2 = "line-clamp-2 break-words whitespace-normal";
 
@@ -87,25 +107,36 @@ export default function CasesTable({
 }: {
   rows: CaseRecord[];
   loading?: boolean;
+  isSuperAdmin?: boolean;
   onRowClick: (r: CaseRecord) => void;
 }) {
+  const { user, token, logout } = useAuth();
+  const isSuperAdmin = user?.role === "superadmin";
+  const colCount = isSuperAdmin ? 14 : 12; // Để render trạng thái empty/loading
+
   return (
     <div className="rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
-      <div className="max-h-[72vh] overflow-auto">
-        {/* ✅ table-fixed giúp cột không phình vô hạn; width được điều bởi colgroup */}
-        <table className="w-full min-w-[980px] table-fixed text-neutral-900">
-          {/* ✅ set độ rộng tối thiểu đúng “cần thôi” */}
+      <div className="min-h-[36vh]  max-h-[72vh] overflow-auto">
+        <table
+          className={`w-full table-fixed text-neutral-900 ${
+            isSuperAdmin ? "min-w-[1120px]" : "min-w-[980px]"
+          }`}
+        >
           <colgroup>
             <col className="w-[56px]" /> {/* STT */}
             <col className="w-[80px]" /> {/* Ngày */}
-            <col className="w-[120px]" /> {/* Trạng thái */}
-            <col className="w-[120px]" /> {/* Mã ca */}
-            <col className="w-[140px]" /> {/* Họ và tên (wrap 2 dòng) */}
-            <col className="w-[140px]" /> {/* Nguồn (wrap 2 dòng) */}
-            <col className="w-[80px]" /> {/* NVKD (wrap 2 dòng) */}
+            <col className="w-[110px]" /> {/* Trạng thái */}
+            <col className="w-[110px]" /> {/* Mã ca */}
+
+            {/* ✅ 2 Cột của Admin */}
+            {isSuperAdmin && <col className="w-[70px]" />} {/* Xuất HĐ */}
+            {isSuperAdmin && <col className="w-[90px]" />} {/* Giá Cost */}
+
+            <col className="w-[140px]" /> {/* Họ và tên */}
+            <col className="w-[140px]" /> {/* Nguồn */}
+            <col className="w-[80px]" /> {/* NVKD */}
             <col className="w-[90px]" /> {/* Dịch vụ */}
-            <col className="w-[160px]" />{" "}
-            {/* Tên dịch vụ (wrap 2 dòng + code dòng nhỏ) */}
+            <col className="w-[160px]" /> {/* Tên dịch vụ */}
             <col className="w-[64px]" /> {/* Đã TT */}
             <col className="w-[110px]" /> {/* Tiền thu */}
             <col className="w-[92px]" /> {/* Chi tiết */}
@@ -118,21 +149,25 @@ export default function CasesTable({
               >
                 STT
               </th>
-
               <th className={`${thBase} bg-neutral-50`}>Ngày</th>
               <th className={`${thBase} bg-white`}>Trạng thái</th>
               <th className={`${thBase} bg-neutral-50`}>Mã ca</th>
-              <th className={`${thBase} bg-white`}>Họ và tên</th>
 
+              {/* ✅ Tiêu đề 2 Cột Admin */}
+              {isSuperAdmin && (
+                <th className={`${thBase} bg-white text-center`}>Xuất HĐ</th>
+              )}
+              {isSuperAdmin && (
+                <th className={`${thBase} bg-neutral-50 text-center`}>Nhập Cost</th>
+              )}
+
+              <th className={`${thBase} bg-white`}>Họ và tên</th>
               <th className={`${thBase} bg-white`}>Nguồn</th>
               <th className={`${thBase} bg-neutral-50`}>NVKD</th>
-
               <th className={`${thBase} bg-white`}>Dịch vụ</th>
               <th className={`${thBase} bg-neutral-50`}>Tên dịch vụ</th>
-
               <th className={`${thBase} bg-white`}>Đã TT</th>
               <th className={`${thBase} bg-neutral-50 text-right`}>Tiền thu</th>
-
               <th className={`${thBase} bg-white border-r-0 text-right`}>
                 Chi tiết
               </th>
@@ -142,13 +177,13 @@ export default function CasesTable({
           <tbody className="divide-y">
             {loading ? (
               <tr>
-                <td className="px-4 py-6 text-neutral-500" colSpan={12}>
+                <td className="px-4 py-6 text-neutral-500 text-center align-middle" colSpan={colCount}>
                   Đang tải…
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
-                <td className="px-4 py-6 text-neutral-500" colSpan={12}>
+                <td className="px-4 py-6 text-neutral-500 text-center align-middle" colSpan={colCount}>
                   Chưa có dữ liệu.
                 </td>
               </tr>
@@ -159,12 +194,12 @@ export default function CasesTable({
                   onClick={() => onRowClick(r)}
                   className="cursor-pointer odd:bg-white even:bg-neutral-50/40 hover:bg-sky-50"
                 >
-                  <td className="px-3 py-2 sticky left-0 z-20 bg-white border-r border-black/5">
-                    <SttBadge stt={r.stt || idx + 1} dueDate={r.dueDate} />
+                  <td className="px-3 py-2 sticky left-0 z-20 bg-white border-r border-black/5 align-middle">
+                    <SttBadge stt={r.stt || idx + 1} dueDate={r.dueDate} processStatus={r.processStatus} />
                   </td>
 
                   <td className={`${tdBase} text-sky-700 font-medium`}>
-                    {r.date ? new Date(r.date).toLocaleDateString() : "—"}
+                    {r.receivedAt ? new Date(r.receivedAt).toLocaleDateString() : "—"}
                   </td>
 
                   <td className={tdBase}>
@@ -177,7 +212,28 @@ export default function CasesTable({
                     {r.caseCode || "—"}
                   </td>
 
-                  {/* ✅ xuống dòng tối đa 2 dòng */}
+                  {/* ✅ Nội dung 2 Cột Admin */}
+                  {isSuperAdmin && (
+                    <td className={`${tdBase} text-center`}>
+                      <div className="flex h-full items-center justify-center">
+                        <Dot 
+                          ok={!!r.invoiceRequested} 
+                          title={r.invoiceRequested ? "Đã yêu cầu xuất HĐ" : "Chưa yêu cầu"} 
+                        />
+                      </div>
+                    </td>
+                  )}
+                  {isSuperAdmin && (
+                    <td className={`${tdBase} text-center`}>
+                      <div className="flex h-full items-center justify-center">
+                        <Dot 
+                          ok={(r.costPrice ?? 0) > 0} 
+                          title={(r.costPrice ?? 0) > 0 ? "Đã nhập giá Cost" : "Chưa nhập giá Cost"} 
+                        />
+                      </div>
+                    </td>
+                  )}
+
                   <td className={tdBase}>
                     <div className={`${wrap2} font-semibold`}>
                       {r.patientName || "—"}
@@ -210,7 +266,6 @@ export default function CasesTable({
                   </td>
 
                   <td className={tdBase}>
-                    {/* ✅ tên: 2 dòng; code: 1 dòng nhỏ dưới */}
                     <div className={`${wrap2} font-semibold text-violet-900`}>
                       {r.serviceName || "—"}
                     </div>
@@ -225,11 +280,11 @@ export default function CasesTable({
                     </div>
                   </td>
 
-                  <td className="px-3 py-2 text-right text-[12px] font-extrabold tabular-nums text-amber-900 border-r border-black/5 whitespace-nowrap">
+                  <td className="px-3 py-2 text-right text-[12px] font-extrabold tabular-nums text-amber-900 border-r border-black/5 whitespace-nowrap align-middle">
                     {(r.collectedAmount ?? 0).toLocaleString()}
                   </td>
 
-                  <td className="px-3 py-2 border-r-0 text-right">
+                  <td className="px-3 py-2 border-r-0 text-right align-middle">
                     <button
                       className="rounded-lg bg-sky-600 px-2.5 py-1 text-[11px] font-bold text-white hover:opacity-95 whitespace-nowrap"
                       onClick={(e) => {

@@ -1,8 +1,9 @@
 "use client";
 
+import React, { useState, useRef, useEffect } from "react";
+import * as XLSX from "xlsx";
 import { ServiceType } from "@/lib/types";
-import DateRangePicker from "@/components/DatePicker"; // ✅ sửa path nếu bạn đặt chỗ khác
-import DatePicker from "@/components/DatePicker";
+import { api } from "@/lib/api"; // ✅ Sửa lại đường dẫn import API của bạn nếu cần
 import SingleDatePicker from "@/components/DatePicker";
 
 const serviceMeta: Record<
@@ -40,8 +41,103 @@ export default function CasesHeader(props: {
 }) {
   const meta = serviceMeta[props.serviceType];
 
+  // --- EXCEL EXPORT STATE ---
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [exportMonth, setExportMonth] = useState(
+    new Date().toISOString().slice(0, 7) // Mặc định là tháng hiện tại (YYYY-MM)
+  );
+  const [isExporting, setIsExporting] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Click ra ngoài để đóng menu export
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowExportMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleExport = async (type: "all" | "month") => {
+    setIsExporting(true);
+    try {
+      let fetchFrom = undefined;
+      let fetchTo = undefined;
+
+      // Nếu xuất theo tháng thì tính ngày đầu và cuối của tháng đó
+      if (type === "month" && exportMonth) {
+        const [year, month] = exportMonth.split("-");
+        // Ngày đầu tháng (00:00:00)
+        fetchFrom = new Date(Number(year), Number(month) - 1, 1).toISOString();
+        // Ngày cuối tháng (23:59:59)
+        fetchTo = new Date(Number(year), Number(month), 0, 23, 59, 59, 999).toISOString();
+      }
+
+      // Gọi API lấy dữ liệu (limit 10000 để đảm bảo lấy hết thay vì chỉ 1 trang)
+      const res = await api.cases({
+        serviceType: "",
+        from: fetchFrom,
+        to: fetchTo,
+        limit: 10000, 
+      });
+
+      const data = res.items;
+
+      if (!data || data.length === 0) {
+        alert("Không có dữ liệu nào trong khoảng thời gian này để xuất!");
+        return;
+      }
+
+      // MAP DATA SANG TÊN CỘT TIẾNG VIỆT
+      const excelData = data.map((item, index) => ({
+        "STT": item.stt || index + 1,
+        "Ngày tạo": item.date ? new Date(item.date).toLocaleDateString("vi-VN") : "",
+        "Mã ca": item.caseCode || "",
+        "Tên bệnh nhân": item.patientName || "",
+        "Nhóm dịch vụ": item.serviceType || "",
+        "Tên dịch vụ": item.serviceName || "",
+        "Mã dịch vụ": item.serviceCode || "",
+        "Phòng Lab": item.lab || "",
+        "Nguồn khách": item.source || "",
+        "NVKD phụ trách": item.salesOwner || "",
+        "Người thu mẫu": item.sampleCollector || "",
+        "Giá thu (VNĐ)": item.collectedAmount || 0,
+        "Giá vốn/Cost (VNĐ)": item.costPrice || 0,
+        "Đã thanh toán": item.paid ? "Đã thanh toán" : "Chưa thanh toán",
+        "Trạng thái chuyển Lab": item.transferStatus || "",
+        "Trạng thái tiếp nhận": item.receiveStatus || "",
+        "Trạng thái xử lý": item.processStatus || "",
+        "Trạng thái phản hồi": item.feedbackStatus || "",
+        "Ngày nhận mẫu": item.receivedAt ? new Date(item.receivedAt).toLocaleString("vi-VN") : "",
+        "Hẹn trả KQ": item.dueDate ? new Date(item.dueDate).toLocaleString("vi-VN") : "",
+        "Yêu cầu xuất HĐ": item.invoiceRequested ? "Có" : "Không",
+        "Tên công ty (HĐ)": item.invoiceName || "",
+        "Mã số thuế (HĐ)": item.invoiceTaxCode || "",
+        "Địa chỉ (HĐ)": item.invoiceAddress || "",
+        "Ghi chú chi tiết": item.detailNote || "",
+      }));
+
+      // TẠO FILE EXCEL VÀ TẢI XUỐNG
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachCa");
+      
+      const fileName = `TongHop_TatCaDichVu_${type === "month" ? exportMonth : "TatCa"}_${new Date().getTime()}.xlsx`;
+      XLSX.writeFile(workbook, fileName);
+
+    } catch (error) {
+      console.error("Lỗi xuất Excel:", error);
+      alert("Có lỗi xảy ra khi xuất file Excel. Vui lòng thử lại!");
+    } finally {
+      setIsExporting(false);
+      setShowExportMenu(false);
+    }
+  };
+
   return (
-    <div className="border-b bg-white/80 backdrop-blur">
+    <div className="border-b bg-white/80 backdrop-blur z-100">
       <div className="px-5 py-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-3">
@@ -70,12 +166,12 @@ export default function CasesHeader(props: {
                     if (!props.loading) props.onApply();
                   }
                 }}
-                placeholder="Tìm theo mã ca / tên / mã hàng / nguồn thu..."
-                className="w-full sm:w-[320px] rounded-2xl border border-black/10 bg-white px-4 py-2 text-[12px] text-black shadow-sm outline-none focus:ring-2 focus:ring-neutral-300 placeholder:text-black-900 antialiased"
+                placeholder="Tìm mã ca / tên / nguồn..."
+                className="w-full sm:w-[240px] md:w-[360px] rounded-2xl border border-black/10 bg-white px-4 py-2 text-[13px] text-black shadow-sm outline-none focus:ring-2 focus:ring-neutral-300 placeholder:text-neutral-500 antialiased"
               />
             </div>
 
-            {/* ✅ DateRangePicker thay cho 2 input date */}
+            {/* Date Pickers */}
             <div className="flex items-center gap-2">
               <SingleDatePicker
                 value={props.from}
@@ -84,7 +180,7 @@ export default function CasesHeader(props: {
                 disabled={!!props.loading}
                 popoverWidth="lg"
                 months={1}
-                buttonClassName="w-[160px]"
+                buttonClassName="w-[120px]"
               />
               <span className="text-xs text-neutral-500">→</span>
               <SingleDatePicker
@@ -94,17 +190,17 @@ export default function CasesHeader(props: {
                 disabled={!!props.loading}
                 popoverWidth="lg"
                 months={1}
-                buttonClassName="w-[160px]"
+                buttonClassName="w-[120px]"
               />
             </div>
 
-            {/* Actions */}
+            {/* Nút Lọc */}
             <button
               onClick={props.onApply}
               className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
               disabled={props.loading}
             >
-              {props.loading ? "Đang lọc..." : "Lọc"}
+              {props.loading ? "..." : "Lọc"}
             </button>
 
             <button
@@ -113,6 +209,57 @@ export default function CasesHeader(props: {
             >
               + Thêm ca
             </button>
+            {/* ✅ Nút Xuất Excel + Dropdown */}
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setShowExportMenu(!showExportMenu)}
+                disabled={isExporting}
+                className="rounded-2xl border border-emerald-600 bg-emerald-50 text-emerald-700 px-4 py-2 text-sm font-semibold shadow-sm hover:bg-emerald-100 disabled:opacity-60 flex items-center gap-1 transition-colors"
+              >
+                {isExporting ? "Đang xử lý..." : "Xuất Excel"}
+              </button>
+
+              {/* Menu Dropdown */}
+              {showExportMenu && !isExporting && (
+                <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/10 z-50">
+                  <div className="text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">
+                    Tùy chọn xuất
+                  </div>
+                  
+                  {/* Xuất Tất cả */}
+                  <button
+                    onClick={() => handleExport("all")}
+                    className="w-full text-left rounded-xl px-3 py-2 text-sm font-semibold text-neutral-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                  >
+                    Xuất toàn bộ dữ liệu
+                  </button>
+
+                  <div className="my-2 border-t border-black/5"></div>
+
+                  {/* Xuất theo tháng */}
+                  <div className="px-3">
+                    <label className="block text-[11px] font-semibold text-neutral-500 mb-1">
+                      Hoặc chọn tháng:
+                    </label>
+                    <input 
+                      type="month" 
+                      value={exportMonth}
+                      onChange={(e) => setExportMonth(e.target.value)}
+                      className="w-full rounded-xl border border-black/10 bg-neutral-50 px-3 py-1.5 text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-emerald-200 mb-2"
+                    />
+                    <button
+                      onClick={() => handleExport("month")}
+                      disabled={!exportMonth}
+                      className="w-full rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                    >
+                      Xuất theo tháng này
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Nút Thêm Ca */}
           </div>
         </div>
       </div>

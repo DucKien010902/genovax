@@ -155,10 +155,10 @@ export default function AdminDoctorsPage() {
                 )}
               </div>
 
-              <div className="mt-1 text-sm text-neutral-600">
+              {/* <div className="mt-1 text-sm text-neutral-600">
                 CRUD Doctor (admin mới được sửa/xóa/thêm) • Giao diện đồng bộ &
                 hiện đại
-              </div>
+              </div> */}
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -220,14 +220,14 @@ export default function AdminDoctorsPage() {
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field
-                  label="Agent level"
+                  label="Cấp đại lý"
                   value={form.agentLevel || ""}
                   onChange={(v) => setForm((p) => ({ ...p, agentLevel: v }))}
                   placeholder="cap1/cap2/cap3..."
                   rightHint="level"
                 />
                 <Field
-                  label="Tier label"
+                  label="Biệt danh (Không bắt buộc)"
                   value={form.agentTierLabel || ""}
                   onChange={(v) =>
                     setForm((p) => ({ ...p, agentTierLabel: v }))

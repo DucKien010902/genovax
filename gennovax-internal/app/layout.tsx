@@ -11,7 +11,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Manage-GX",
+  title: "Trang quản trị GennovaX",
   description: "Gennovax-managerment",
 };
 

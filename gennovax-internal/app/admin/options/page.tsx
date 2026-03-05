@@ -10,7 +10,8 @@ type OptionItem = {
   isActive?: boolean;
   order?: number;
 };
-type OptionDoc = { _id: string; key: string; items: OptionItem[] };
+// ✅ Đã thêm thuộc tính name vào Type
+type OptionDoc = { _id: string; key: string; name?: string; items: OptionItem[] };
 
 function cn(...a: Array<string | false | null | undefined>) {
   return a.filter(Boolean).join(" ");
@@ -59,7 +60,18 @@ export default function AdminOptionsPage() {
     load();
   }, []);
 
+  // Form State tạo Key mới
   const [newKey, setNewKey] = useState("");
+  const [newName, setNewName] = useState("");
+
+  // State cập nhật tên Key
+  const [editName, setEditName] = useState("");
+  
+  // Đồng bộ tên của Key đang chọn vào input sửa
+  useEffect(() => {
+    if (active) setEditName(active.name || active.key);
+  }, [active]);
+
   const [newItem, setNewItem] = useState<OptionItem>({
     label: "",
     value: "",
@@ -67,25 +79,40 @@ export default function AdminOptionsPage() {
     isActive: true,
   });
 
+  // ✅ Hàm tạo Key mới chuẩn xác
   const addKey = async () => {
     setErr(null);
     try {
       if (!isAdmin) throw new Error("Chỉ admin được phép.");
       const k = newKey.trim();
-      if (!k) throw new Error("key required");
+      const n = newName.trim();
+      if (!k || !n) throw new Error("Cần nhập cả Key và Tên hiển thị");
 
-      await api.optionsAdminAddItem(k, {
-        label: "New item",
-        value: "new_value",
-        order: 0,
-        isActive: true,
-      });
+      await api.optionsAdminCreateKey({ key: k, name: n });
 
       setNewKey("");
+      setNewName("");
       await load();
       setActiveKey(k);
     } catch (e: any) {
-      setErr(e?.message || "Create key failed");
+      setErr(e?.message || "Tạo danh mục thất bại");
+    }
+  };
+
+  // ✅ Hàm sửa tên Key
+  const updateKeyName = async () => {
+    setErr(null);
+    try {
+      if (!isAdmin) throw new Error("Chỉ admin được phép.");
+      if (!activeKey) return;
+      const n = editName.trim();
+      if (!n) throw new Error("Tên không được để trống");
+
+      await api.optionsAdminUpdateKey(activeKey, n);
+      alert("Đã cập nhật tên thành công!");
+      await load();
+    } catch (e: any) {
+      setErr(e?.message || "Cập nhật tên thất bại");
     }
   };
 
@@ -93,9 +120,9 @@ export default function AdminOptionsPage() {
     setErr(null);
     try {
       if (!isAdmin) throw new Error("Chỉ admin được phép.");
-      if (!activeKey) throw new Error("Chọn key trước");
+      if (!activeKey) throw new Error("Chọn danh mục trước");
       if (!newItem.label.trim() || !newItem.value.trim())
-        throw new Error("label/value required");
+        throw new Error("Cần nhập Nhãn và Giá trị (value)");
 
       await api.optionsAdminAddItem(activeKey, {
         label: newItem.label.trim(),
@@ -107,7 +134,7 @@ export default function AdminOptionsPage() {
       setNewItem({ label: "", value: "", order: 0, isActive: true });
       await load();
     } catch (e: any) {
-      setErr(e?.message || "Add item failed");
+      setErr(e?.message || "Thêm item thất bại");
     }
   };
 
@@ -138,6 +165,9 @@ export default function AdminOptionsPage() {
     try {
       if (!isAdmin) throw new Error("Chỉ admin được phép.");
       if (!activeKey) return;
+      const ok = window.confirm(`Bạn có chắc muốn xóa toàn bộ danh mục "${active?.name}" không?`);
+      if (!ok) return;
+
       await api.optionsAdminDeleteKey(activeKey);
       setActiveKey("");
       await load();
@@ -169,9 +199,9 @@ export default function AdminOptionsPage() {
                   </span>
                 )}
               </div>
-              <div className="mt-1 text-sm text-neutral-600">
-                CRUD Option keys & items • Danh mục lựa chọn (meta)
-              </div>
+              {/* <div className="mt-1 text-sm text-neutral-600">
+                CRUD Option keys & items • Quản lý các danh mục dropdown thả xuống
+              </div> */}
             </div>
 
             <div className="flex items-center gap-2">
@@ -179,7 +209,7 @@ export default function AdminOptionsPage() {
                 onClick={load}
                 className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
               >
-                Reload
+                Tải lại
               </button>
             </div>
           </div>
@@ -192,13 +222,13 @@ export default function AdminOptionsPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Keys */}
+          {/* CỘT TRÁI: DANH SÁCH KEYS */}
           <div className="rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm font-bold text-neutral-900">Keys</div>
+                <div className="text-sm font-bold text-neutral-900">Các Danh Mục</div>
                 <div className="mt-1 text-xs text-neutral-500">
-                  {loading ? "Đang tải…" : `${docs.length} keys`}
+                  {loading ? "Đang tải…" : `${docs.length} danh mục`}
                 </div>
               </div>
               <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-700 ring-1 ring-black/5">
@@ -206,38 +236,43 @@ export default function AdminOptionsPage() {
               </span>
             </div>
 
-            {/* Add key */}
+            {/* Tạo danh mục mới */}
             <div className="mt-4 rounded-3xl border border-black/10 bg-neutral-50 p-3">
-              <div className="text-sm font-bold text-neutral-900">
-                Tạo key mới
+              <div className="text-sm font-bold text-neutral-900 mb-2">
+                Tạo danh mục mới
               </div>
-              <div className="mt-2 flex gap-2">
+              <div className="flex flex-col gap-2">
                 <input
                   value={newKey}
                   onChange={(e) => setNewKey(e.target.value)}
-                  placeholder="vd: labs, sources..."
+                  placeholder="Mã Key (vd: labs, sources)"
                   className="w-full rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
                 />
-                <button
-                  onClick={addKey}
-                  className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
-                  title="Tạo key"
-                >
-                  +
-                </button>
-              </div>
-              <div className="mt-2 text-xs text-neutral-500">
-                Tip: key dùng cho dropdown / meta trên form.
+                <div className="flex gap-2">
+                  <input
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="Tên hiển thị (vd: Nguồn khách)"
+                    className="w-full rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
+                  />
+                  <button
+                    onClick={addKey}
+                    className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
+                    title="Tạo"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Key list */}
+            {/* List danh mục */}
             <div className="mt-4 space-y-2">
               {loading ? (
                 <div className="text-sm text-neutral-600">Đang tải...</div>
               ) : docs.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-black/10 bg-neutral-50 p-5 text-sm text-neutral-600">
-                  Chưa có key
+                  Chưa có dữ liệu
                 </div>
               ) : (
                 docs.map((d) => {
@@ -248,29 +283,31 @@ export default function AdminOptionsPage() {
                       onClick={() => setActiveKey(d.key)}
                       className={cn(
                         "w-full rounded-3xl px-4 py-3 text-left transition",
-                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:ring-offset-2",
+                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60",
                         keyTone(is),
                       )}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <div className="truncate text-sm font-bold text-neutral-900">
-                            {d.key}
+                          {/* ✅ ƯU TIÊN HIỂN THỊ TÊN */}
+                          <div className="truncate text-[15px] font-bold text-neutral-900">
+                            {d.name || d.key}
                           </div>
-                          <div className="mt-1 text-xs text-neutral-500">
-                            {d.items?.length || 0} items
+                          {/* ✅ MÃ KEY CHỮ NHỎ */}
+                          <div className="mt-1 text-[11px] text-neutral-500 font-mono">
+                            Mã: {d.key} • {d.items?.length || 0} items
                           </div>
                         </div>
 
                         <span
                           className={cn(
-                            "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1",
+                            "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ring-1",
                             is
                               ? "bg-indigo-100 text-indigo-700 ring-indigo-200"
                               : "bg-neutral-100 text-neutral-600 ring-black/5",
                           )}
                         >
-                          {is ? "Selected" : "Pick"}
+                          {is ? "Đang mở" : "Mở"}
                         </span>
                       </div>
                     </button>
@@ -285,59 +322,60 @@ export default function AdminOptionsPage() {
                 disabled={!activeKey}
                 className="w-full rounded-2xl bg-rose-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-rose-500 disabled:opacity-50"
               >
-                Xóa key đang chọn
+                Xóa toàn bộ danh mục này
               </button>
             </div>
           </div>
 
-          {/* Items */}
+          {/* CỘT PHẢI: ITEMS & SỬA TÊN DANH MỤC */}
           <div className="lg:col-span-2 rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
               <div>
-                <div className="text-sm font-bold text-neutral-900">
-                  Items{" "}
-                  <span className="text-indigo-700">
-                    {activeKey ? `• ${activeKey}` : "• —"}
-                  </span>
+                <div className="text-lg font-extrabold text-neutral-900">
+                  Cấu hình Item
                 </div>
                 <div className="mt-1 text-xs text-neutral-500">
                   {active?.items?.length ?? 0} items • sort theo order tăng dần
                 </div>
               </div>
 
-              {activeKey ? (
-                <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-200">
-                  Editing key
-                </span>
-              ) : (
-                <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 ring-1 ring-black/5">
-                  Chọn key
-                </span>
+              {/* Khu vực sửa tên Danh mục */}
+              {activeKey && (
+                <div className="flex items-center gap-2 rounded-2xl border border-indigo-100 bg-indigo-50 p-2 shadow-sm">
+                  <span className="text-[11px] font-bold text-indigo-700 ml-2">Đổi tên:</span>
+                  <input
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-[180px] rounded-xl border border-black/10 bg-white px-3 py-1.5 text-sm shadow-sm outline-none focus:ring-2 focus:ring-indigo-300"
+                  />
+                  <button
+                    onClick={updateKeyName}
+                    className="rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-indigo-700 shadow-sm"
+                  >
+                    Lưu
+                  </button>
+                </div>
               )}
             </div>
 
-            {/* Add item */}
-            <div className="mt-4 rounded-3xl border border-black/10 bg-neutral-50 p-4">
+            {/* Add item form */}
+            <div className="mt-2 rounded-3xl border border-black/10 bg-neutral-50 p-4">
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <div className="text-sm font-bold text-neutral-900">
-                    Thêm item
-                  </div>
-                  <div className="text-xs text-neutral-500">
-                    label hiển thị • value lưu DB • order để sắp xếp
+                    Thêm lựa chọn con
                   </div>
                 </div>
-
-                <label className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 ring-1 ring-black/10 shadow-sm">
+                <label className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 ring-1 ring-black/10 shadow-sm cursor-pointer">
                   <input
                     type="checkbox"
                     checked={newItem.isActive !== false}
                     onChange={(e) =>
                       setNewItem((p) => ({ ...p, isActive: e.target.checked }))
                     }
-                    className="h-4 w-4 accent-indigo-600"
+                    className="h-4 w-4 accent-indigo-600 cursor-pointer"
                   />
-                  isActive
+                  Cho phép hiển thị
                 </label>
               </div>
 
@@ -347,7 +385,7 @@ export default function AdminOptionsPage() {
                   onChange={(e) =>
                     setNewItem((p) => ({ ...p, label: e.target.value }))
                   }
-                  placeholder="label"
+                  placeholder="Nhãn (vd: Tỉnh Bắc Ninh)"
                   className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
                 />
                 <input
@@ -355,8 +393,8 @@ export default function AdminOptionsPage() {
                   onChange={(e) =>
                     setNewItem((p) => ({ ...p, value: e.target.value }))
                   }
-                  placeholder="value"
-                  className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
+                  placeholder="Giá trị lưu DB (vd: bacninh)"
+                  className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200 font-mono"
                 />
                 <input
                   value={String(newItem.order || 0)}
@@ -366,7 +404,7 @@ export default function AdminOptionsPage() {
                       order: Number(e.target.value || 0),
                     }))
                   }
-                  placeholder="order"
+                  placeholder="Thứ tự (0,1,2...)"
                   inputMode="numeric"
                   className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
                 />
@@ -376,22 +414,22 @@ export default function AdminOptionsPage() {
                   disabled={!activeKey}
                   className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 disabled:opacity-50 active:scale-[0.99]"
                 >
-                  Add
+                  + Thêm
                 </button>
               </div>
             </div>
 
-            {/* Items list */}
+            {/* Items list rendering... (Giữ y hệt cấu trúc gốc của bạn) */}
             <div className="mt-4 space-y-3">
               {loading ? (
                 <SkeletonList />
               ) : !activeKey ? (
-                <div className="rounded-2xl border border-dashed border-black/10 bg-neutral-50 p-6 text-sm text-neutral-600">
-                  Hãy chọn 1 key ở bên trái để xem items.
+                <div className="rounded-2xl border border-dashed border-black/10 bg-neutral-50 p-6 text-sm text-neutral-600 text-center">
+                  Hãy chọn 1 danh mục ở cột bên trái để quản lý lựa chọn.
                 </div>
               ) : (active?.items || []).length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-black/10 bg-neutral-50 p-6 text-sm text-neutral-600">
-                  Key này chưa có item.
+                <div className="rounded-2xl border border-dashed border-black/10 bg-neutral-50 p-6 text-sm text-neutral-600 text-center">
+                  Danh mục này chưa có lựa chọn nào. Hãy thêm ở form trên.
                 </div>
               ) : (
                 (active?.items || [])
@@ -410,27 +448,20 @@ export default function AdminOptionsPage() {
                               <div className="truncate text-base font-bold text-neutral-900">
                                 {it.label}
                               </div>
-
-                              <span className="inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-semibold text-neutral-700 ring-1 ring-black/5">
+                              <span className="inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-semibold text-neutral-700 ring-1 ring-black/5 font-mono">
                                 {it.value}
                               </span>
-
                               <span
                                 className={cn(
                                   "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1",
                                   activePill(on),
                                 )}
                               >
-                                {on ? "Active" : "Inactive"}
+                                {on ? "Đang bật" : "Đã tắt"}
                               </span>
-
                               <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 ring-1 ring-indigo-200">
-                                order {it.order ?? 0}
+                                Thứ tự {it.order ?? 0}
                               </span>
-                            </div>
-
-                            <div className="mt-2 text-xs text-neutral-500">
-                              Tip: Toggle để bật/tắt hiển thị item.
                             </div>
                           </div>
 
@@ -443,13 +474,17 @@ export default function AdminOptionsPage() {
                               }
                               className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-xs font-bold text-neutral-900 shadow-sm hover:bg-neutral-50"
                             >
-                              Toggle
+                              Bật/Tắt
                             </button>
                             <button
-                              onClick={() => delItem(it.value)}
+                              onClick={() => {
+                                if (window.confirm(`Xóa lựa chọn "${it.label}"?`)) {
+                                  delItem(it.value);
+                                }
+                              }}
                               className="rounded-2xl bg-rose-600 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-rose-500 active:scale-[0.99]"
                             >
-                              Xoá
+                              Xóa
                             </button>
                           </div>
                         </div>
@@ -458,10 +493,6 @@ export default function AdminOptionsPage() {
                   })
               )}
             </div>
-
-            {/* Nếu muốn list cuộn trong card khi dài:
-                bọc đoạn list bằng <div className="mt-4 max-h-[70vh] overflow-auto pr-1 space-y-3"> ... </div>
-            */}
           </div>
         </div>
       </div>
@@ -469,22 +500,13 @@ export default function AdminOptionsPage() {
   );
 }
 
-/* -------- UI bits -------- */
-
 function SkeletonList() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div
-          key={i}
-          className="rounded-3xl border border-black/10 bg-white p-4"
-        >
+        <div key={i} className="rounded-3xl border border-black/10 bg-white p-4">
           <div className="h-4 w-2/3 rounded bg-neutral-100" />
           <div className="mt-3 h-3 w-1/3 rounded bg-neutral-100" />
-          <div className="mt-3 flex gap-2">
-            <div className="h-7 w-24 rounded-full bg-neutral-100" />
-            <div className="h-7 w-28 rounded-full bg-neutral-100" />
-          </div>
         </div>
       ))}
     </div>

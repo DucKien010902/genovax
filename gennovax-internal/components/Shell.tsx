@@ -47,7 +47,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       <AppHeader />
 
       {/* layout bên dưới header (ví dụ) */}
-      <div className="h-[calc(100%-64px)]">{children}</div>
+      <div className="h-[calc(100%-96px)]">{children}</div>
     </div>
   );
 }

@@ -19,6 +19,7 @@ export type DoctorItem = {
   _id: string;
   fullName: string;
   agentLevel: string; // cap1/cap2/cap3
+  salesOwner?: string; // ✅ Thêm vào đây
   agentTierLabel?: string;
 };
 
@@ -71,7 +72,11 @@ export type CaseRecord = {
   softFileDone: boolean;
   hardFileDone: boolean;
 
-  invoiceInfo: string;
+  // ✅ CẬP NHẬT THÔNG TIN HÓA ĐƠN
+  invoiceInfo?: string; // Vẫn có thể giữ lại nếu DB cũ còn dữ liệu, nên để optional
+  invoiceName?: string; // Tên đơn vị / công ty
+  invoiceTaxCode?: string; // Mã số thuế
+  invoiceAddress?: string; // Địa chỉ xuất HĐ
 
   createdBy: string;
   updatedBy: string;

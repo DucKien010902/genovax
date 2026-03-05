@@ -52,9 +52,9 @@ export default function AdminServicesPage() {
   });
 
   const pageTitle = useMemo(() => {
-    if (serviceType === "NIPT") return "Quản lý Services • NIPT";
-    if (serviceType === "HPV") return "Quản lý Services • HPV";
-    return "Quản lý Services • ADN";
+    if (serviceType === "NIPT") return "Quản lý dịch vụ và bảng giá • NIPT";
+    if (serviceType === "HPV") return "Quản lý dịch vụ và bảng giá • HPV";
+    return "Quản lý dịch vụ và bảng giá • ADN";
   }, [serviceType]);
 
   const load = async () => {
@@ -199,10 +199,7 @@ export default function AdminServicesPage() {
                 )}
               </div>
 
-              <div className="mt-1 text-sm text-neutral-600">
-                CRUD Service + bảng giá theo level • Giao diện hiện đại & dễ
-                dùng
-              </div>
+              
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -247,7 +244,7 @@ export default function AdminServicesPage() {
             </div>
 
             <div className="mt-4 space-y-4">
-              <Row label="serviceType">
+              <Row label="Loại dịch vụ">
                 <select
                   value={form.serviceType || serviceType}
                   onChange={(e) =>
@@ -265,19 +262,19 @@ export default function AdminServicesPage() {
               </Row>
 
               <Field
-                label="serviceCode"
+                label="Mã dịch vụ"
                 placeholder="VD: ADN001"
                 value={form.serviceCode || ""}
                 onChange={(v) => setForm((p) => ({ ...p, serviceCode: v }))}
               />
               <Field
-                label="name"
+                label="Tên dịch vụ"
                 placeholder="Tên dịch vụ"
                 value={form.name || ""}
                 onChange={(v) => setForm((p) => ({ ...p, name: v }))}
               />
               <Field
-                label="turnaroundHours"
+                label="Thời gian trả mẫu"
                 placeholder="48"
                 value={String(form.turnaroundHours ?? 48)}
                 onChange={(v) =>

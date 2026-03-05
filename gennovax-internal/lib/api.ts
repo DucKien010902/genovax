@@ -18,7 +18,7 @@ async function j<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export type Role = "admin" | "staff";
+export type Role = "admin" | "staff" | "superadmin";
 export type LoginResponse = {
   token: string;
   user: { id: string; name: string; email: string; role: Role };
@@ -57,10 +57,11 @@ export const api = {
     ),
 
   cases: (params: {
-    serviceType: ServiceType;
+    serviceType: ServiceType | "";
     q?: string;
     from?: string;
     to?: string;
+    limit?: number;
   }) => {
     const qs = new URLSearchParams(
       Object.entries(params).reduce(
@@ -102,6 +103,40 @@ export const api = {
     fetch(`${API_BASE}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then((r) => j<LoginResponse["user"]>(r)),
+
+  // --- Profile ---
+  updateProfile: (payload: { name?: string; oldPassword?: string; newPassword?: string }) =>
+    authFetch(`${API_BASE}/auth/profile`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).then(async (r) => {
+      if (!r.ok) {
+        const err = await r.json().catch(() => ({}));
+        throw new Error(err.message || "Lỗi cập nhật");
+      }
+      return r.json();
+    }),
+
+  // --- Users Admin ---
+  usersList: () => authFetch(`${API_BASE}/users`).then(r => j<{items: any[]}>(r)),
+  userCreate: (payload: any) =>
+    authFetch(`${API_BASE}/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).then(async (r) => {
+      if (!r.ok) throw new Error((await r.json().catch(()=>({}))).message || "Lỗi tạo User");
+      return r.json();
+    }),
+  userUpdate: (id: string, patch: any) =>
+    authFetch(`${API_BASE}/users/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    }).then(r => j<any>(r)),
+  userDelete: (id: string) =>
+    authFetch(`${API_BASE}/users/${id}`, { method: "DELETE" }).then(r => j<{ok: true}>(r)),
   // --- Doctors CRUD ---
   doctorCreate: (payload: any) =>
     authFetch(`${API_BASE}/doctors`, {
@@ -169,6 +204,20 @@ export const api = {
         body: JSON.stringify(patch),
       },
     ).then((r) => j<any>(r)),
+
+  optionsAdminCreateKey: (payload: { key: string; name: string }) =>
+    authFetch(`${API_BASE}/meta/options-admin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).then((r) => j<any>(r)),
+
+  optionsAdminUpdateKey: (key: string, name: string) =>
+    authFetch(`${API_BASE}/meta/options-admin/${encodeURIComponent(key)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    }).then((r) => j<any>(r)),
 
   optionsAdminDeleteItem: (key: string, value: string) =>
     authFetch(

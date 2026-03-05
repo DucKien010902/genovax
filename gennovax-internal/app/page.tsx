@@ -14,6 +14,7 @@ import type {
   DoctorItem,
   ServiceType,
 } from "@/lib/types";
+import CasesHeaderMobile from "@/components/CasesHeaderMobile";
 
 export default function CasesPage() {
   const [serviceType, setServiceType] = useState<ServiceType>("NIPT");
@@ -98,7 +99,11 @@ export default function CasesPage() {
       softFileDone: false,
       hardFileDone: false,
 
-      invoiceInfo: "",
+      invoiceInfo: "", // (Có thể giữ lại hoặc xóa tùy bạn)
+      invoiceName: "",
+      invoiceTaxCode: "",
+      invoiceAddress: "",
+
       receivedAt: null,
       createdBy: "",
       updatedBy: "",
@@ -125,9 +130,9 @@ export default function CasesPage() {
     if (!d.serviceType) errs.push("Thiếu loại dịch vụ (serviceType).");
     if (!d.patientName?.trim()) errs.push("Thiếu họ và tên khách hàng.");
     if (!d.source?.trim()) errs.push("Thiếu nguồn.");
-    if (!d.lab?.trim()) errs.push("Thiếu Lab.");
+    // if (!d.lab?.trim()) errs.push("Thiếu Lab.");
     if (!d.salesOwner?.trim()) errs.push("Thiếu NVKD phụ trách.");
-    if (!d.sampleCollector?.trim()) errs.push("Thiếu người thu mẫu.");
+    // if (!d.sampleCollector?.trim()) errs.push("Thiếu người thu mẫu.");
 
     // ✅ dịch vụ + giá
     if (!d.serviceCode?.trim()) errs.push("Chưa chọn dịch vụ (mã).");
@@ -139,14 +144,17 @@ export default function CasesPage() {
     if (!d.transferStatus?.trim()) errs.push("Thiếu trạng thái chuyển lab.");
     if (!d.receiveStatus?.trim()) errs.push("Thiếu trạng thái tiếp nhận.");
     if (!d.processStatus?.trim()) errs.push("Thiếu trạng thái xử lý.");
-    if (!d.feedbackStatus?.trim()) errs.push("Thiếu trạng thái phản hồi.");
+    // if (!d.feedbackStatus?.trim()) errs.push("Thiếu trạng thái phản hồi.");
 
     // ✅ ngày nhận (nếu bạn coi là bắt buộc)
     if (!d.receivedAt) errs.push("Chưa chọn ngày nhận mẫu.");
 
     // ✅ nếu tick xuất hóa đơn thì bắt buộc invoiceInfo
-    if (d.invoiceRequested && !d.invoiceInfo?.trim())
-      errs.push("Đã chọn xuất hóa đơn nhưng thiếu thông tin hóa đơn.");
+    if (d.invoiceRequested) {
+      if (!d.invoiceName?.trim()) errs.push("Xuất Hóa đơn: Thiếu Tên đơn vị.");
+      if (!d.invoiceTaxCode?.trim()) errs.push("Xuất Hóa đơn: Thiếu Mã số thuế.");
+      if (!d.invoiceAddress?.trim()) errs.push("Xuất Hóa đơn: Thiếu Địa chỉ.");
+    }
 
     // ✅ nếu muốn bắt caseCode bắt buộc thì bật dòng này
     // if (!d.caseCode?.trim()) errs.push("Thiếu mã ca.");
@@ -181,12 +189,12 @@ export default function CasesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-50 via-neutral-50 to-neutral-100">
       <div className="flex">
-        <div className="sticky top-0 h-screen">
+        <div className="sticky top-0 h-screen hidden lg:flex">
           <SidebarService active={serviceType} onChange={setServiceType} />
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="sticky top-0 z-20">
+          <div className="hidden lg:block">
             <CasesHeader
               serviceType={serviceType}
               q={q}
@@ -194,6 +202,23 @@ export default function CasesPage() {
               from={from}
               setFrom={setFrom}
               to={to}
+              setTo={setTo}
+              loading={loading}
+              onAdd={onAdd}
+              onApply={onApplyFilters}
+            />
+          </div>
+
+          {/* MOBILE & TABLET HEADER (Hiện trên mọi màn hình bị ẩn Sidebar) */}
+          <div className="block lg:hidden">
+            <CasesHeaderMobile
+              serviceType={serviceType}
+              setServiceType={setServiceType}
+              q={q}
+              setQ={setQ}
+              from={from} // ✅ Truyền thêm from
+              setFrom={setFrom}
+              to={to}     // ✅ Truyền thêm to
               setTo={setTo}
               loading={loading}
               onAdd={onAdd}
@@ -212,7 +237,7 @@ export default function CasesPage() {
         data={editing}
         options={options}
         services={services}
-        // doctors={doctors}
+        doctors={doctors}
         onClose={onCloseDrawer}
         onSave={onSave}
       />
