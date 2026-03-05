@@ -49,4 +49,34 @@ router.get("/me", async (req, res) => {
   }
 });
 
+// PUT /api/auth/profile - Cập nhật hồ sơ & Mật khẩu
+router.put("/profile", async (req, res) => {
+  try {
+    const auth = req.headers.authorization || "";
+    const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+    if (!token) return res.status(401).send("No token");
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(payload.sub);
+    if (!user) return res.status(404).send("User not found");
+
+    const { name, oldPassword, newPassword } = req.body;
+
+    // Cập nhật tên
+    if (name) user.name = name;
+
+    // Đổi mật khẩu
+    if (oldPassword && newPassword) {
+      const isMatch = await bcrypt.compare(oldPassword, user.passwordHash);
+      if (!isMatch) return res.status(400).json({ message: "Mật khẩu cũ không chính xác!" });
+      
+      user.passwordHash = await bcrypt.hash(newPassword, 10);
+    }
+
+    await user.save();
+    res.json({ id: user._id, name: user.name, email: user.email, role: user.role });
+  } catch (e) {
+    res.status(500).json({ message: e.message || "Lỗi server" });
+  }
+});
 export default router;

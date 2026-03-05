@@ -9,9 +9,11 @@ import doctorsRoutes from "./routes/doctors.routes.js";
 import servicesRoutes from "./routes/services.routes.js";
 import metaRoutes from "./routes/meta.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/users.routes.js";
 
 import { requireAuth } from "./middlewares/auth.middleware.js";
 import { browserGate } from "./middlewares/browserGate.middleware.js";
+import { startAutoBackup } from "./services/backup.service.js";
 
 dotenv.config();
 
@@ -35,7 +37,7 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
-
+startAutoBackup();
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
@@ -43,7 +45,7 @@ app.get("/health", (req, res) => res.json({ ok: true }));
 
 // ✅ public routes
 app.use("/api/auth", authRoutes);
-
+app.use("/api/users", authRoutes);
 // ✅ protected routes: chống request không phải browser (mutation) + yêu cầu token
 app.use("/api/cases", browserGate(ALLOWED_ORIGINS), requireAuth, casesRoutes);
 app.use("/api/doctors", browserGate(ALLOWED_ORIGINS), requireAuth, doctorsRoutes);

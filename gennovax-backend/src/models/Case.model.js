@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const CaseSchema = new mongoose.Schema(
   {
-    serviceType: { type: String, enum: ["NIPT", "ADN", "CELL"], required: true },
+    serviceType: { type: String, enum: ["NIPT", "ADN", "HPV"], required: true },
 
     // sheet-like
     stt: { type: Number, default: 0 },

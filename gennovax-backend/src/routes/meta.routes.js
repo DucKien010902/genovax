@@ -108,7 +108,40 @@ router.patch("/options-admin/:key/items/:value", requireRole("admin"), async (re
     next(e);
   }
 });
+// POST /api/meta/options-admin (Tạo mới 1 danh mục hoàn toàn)
+router.post("/options-admin", requireRole("admin"), async (req, res, next) => {
+  try {
+    const { key, name } = req.body;
+    if (!key || !name) return res.status(400).json({ message: "Cần nhập đủ key và name" });
 
+    const existing = await Option.findOne({ key });
+    if (existing) return res.status(400).json({ message: "Key này đã tồn tại!" });
+
+    const doc = await Option.create({ key, name, items: [] });
+    res.json(doc);
+  } catch (e) {
+    next(e);
+  }
+});
+
+// PATCH /api/meta/options-admin/:key (Chỉ để sửa tên/name của danh mục)
+router.patch("/options-admin/:key", requireRole("admin"), async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ message: "Cần nhập tên mới" });
+
+    const doc = await Option.findOneAndUpdate(
+      { key: req.params.key },
+      { name },
+      { new: true }
+    ).lean();
+
+    if (!doc) return res.status(404).json({ message: "Không tìm thấy danh mục" });
+    res.json(doc);
+  } catch (e) {
+    next(e);
+  }
+});
 // DELETE /api/meta/options-admin/:key/items/:value
 router.delete("/options-admin/:key/items/:value", requireRole("admin"), async (req, res, next) => {
   try {

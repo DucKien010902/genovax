@@ -13,6 +13,7 @@ const OptionItemSchema = new mongoose.Schema(
 const OptionSchema = new mongoose.Schema(
   {
     key: { type: String, required: true, unique: true },
+    name: { type: String, required: true, },
     items: { type: [OptionItemSchema], default: [] },
   },
   { timestamps: true }

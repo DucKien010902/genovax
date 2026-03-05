@@ -7,6 +7,7 @@ const DoctorSchema = new mongoose.Schema(
     address: String,
     agentLevel: { type: String, default: "cap3" },
     agentTierLabel: { type: String, default: "" }, // label hiển thị
+salesOwner: { type: String, default: "" },
     note: String,
     isActive: { type: Boolean, default: true },
   },

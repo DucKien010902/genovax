@@ -3,19 +3,24 @@ import Case from "../models/Case.model.js";
 import { computePriceAndAgent } from "../services/pricing.service.js";
 import { computeDueDate } from "../services/dueDate.service.js";
 
+// Import connection Atlas (Bạn thay đổi đường dẫn này trỏ tới file cấu hình DB của bạn nhé)
+// import { atlasConnection } from "../db.js"; 
+
+// Tạo Model Case dành riêng cho Atlas, TÁI SỬ DỤNG cấu trúc Schema gốc
+// const CaseAtlas = atlasConnection.model("Case", Case.schema);
+
 const router = Router();
 
-// function toDateOrNull(v) {
-//   if (!v) return null;
-//   const d = new Date(v);
-//   return isNaN(d.getTime()) ? null : d;
-// }
 function toDateOrNull(x) {
   if (!x) return null;
   const d = new Date(String(x));
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
+// ==============================
+// GET /api/cases/analytics
+// (Chỉ cần đọc từ DB Local cho nhanh)
+// ==============================
 router.get("/analytics", async (req, res, next) => {
   try {
     const { serviceType, from = "", to = "", top = "10" } = req.query;
@@ -26,12 +31,15 @@ router.get("/analytics", async (req, res, next) => {
     const fromD = toDateOrNull(from);
     const toD = toDateOrNull(to);
 
-    const date2Range = {};
-    if (fromD) date2Range.$gte = fromD;
-    if (toD) {
-      const end = new Date(toD);
-      end.setHours(23, 59, 59, 999);
-      date2Range.$lte = end;
+    // Dùng trực tiếp field 'date' để lọc, không cần chế ra 'date2'
+    if (fromD || toD) {
+      match.date = {};
+      if (fromD) match.date.$gte = fromD;
+      if (toD) {
+        const end = new Date(toD);
+        end.setHours(23, 59, 59, 999);
+        match.date.$lte = end;
+      }
     }
 
     const sourceExpr = {
@@ -41,46 +49,11 @@ router.get("/analytics", async (req, res, next) => {
       ],
     };
 
-    const topN = Math.max(
-      1,
-      Math.min(50, parseInt(String(top || "10"), 10) || 10)
-    );
+    const topN = Math.max(1, Math.min(50, parseInt(String(top || "10"), 10) || 10));
 
+    // Pipeline nhẹ nhàng hơn, không dùng $switch hay $dateFromString
     const [result] = await Case.aggregate([
       { $match: match },
-
-      {
-        $addFields: {
-          date2: {
-            $switch: {
-              branches: [
-                {
-                  case: { $eq: [{ $type: "$date" }, "date"] },
-                  then: "$date",
-                },
-                {
-                  case: { $eq: [{ $type: "$date" }, "string"] },
-                  then: {
-                    $dateFromString: {
-                      dateString: "$date",
-                      onError: null,
-                      onNull: null,
-                    },
-                  },
-                },
-              ],
-              default: null,
-            },
-          },
-        },
-      },
-
-      ...(Object.keys(date2Range).length
-        ? [{ $match: { date2: date2Range } }]
-        : []),
-
-      { $match: { date2: { $ne: null } } },
-
       {
         $facet: {
           kpis: [
@@ -152,7 +125,7 @@ router.get("/analytics", async (req, res, next) => {
             {
               $group: {
                 _id: {
-                  ym: { $dateToString: { format: "%Y-%m", date: "$date2" } },
+                  ym: { $dateToString: { format: "%Y-%m", date: "$date" } }, // Trỏ thẳng vào date
                   source: sourceExpr,
                 },
                 revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
@@ -173,6 +146,8 @@ router.get("/analytics", async (req, res, next) => {
                 paidCases: 1,
               },
             },
+            // Lọc bỏ những dữ liệu không ép ra được tháng (null) do date bị sai định dạng
+            { $match: { ym: { $ne: null } } },
             { $sort: { ym: 1 } },
           ],
 
@@ -230,9 +205,7 @@ router.get("/analytics", async (req, res, next) => {
         });
       const obj = map.get(key);
       
-      // Gán netRevenue làm field mặc định cho LineChart từng nguồn
       obj[row.source] = row.netRevenue;
-      
       obj.totalRevenue += row.revenue || 0;
       obj.totalCost += row.cost || 0;
       obj.totalNetRevenue += row.netRevenue || 0;
@@ -257,7 +230,7 @@ router.get("/analytics", async (req, res, next) => {
       bySource: result?.bySource || [],
       topSources: result?.topSources || [],
       monthly,
-      monthlyDetails: monthlyRaw, // TRẢ VỀ THÊM ĐỂ FRONTEND LÀM BẢNG LỌC THEO THÁNG
+      monthlyDetails: monthlyRaw, 
       sourceKeys: allSources,
     });
   } catch (e) {
@@ -265,6 +238,11 @@ router.get("/analytics", async (req, res, next) => {
   }
 });
 
+
+// ==============================
+// GET /api/cases
+// (Chỉ cần đọc từ DB Local cho nhanh)
+// ==============================
 router.get("/", async (req, res, next) => {
   try {
     const { serviceType, q = "", from = "", to = "" } = req.query;
@@ -302,134 +280,19 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
-  try {
-    const payload = req.body || {};
 
-    payload.date = payload.date ? new Date(payload.date) : new Date();
-    payload.sentAt = payload.sentAt ? new Date(payload.sentAt) : null;
-    payload.receivedAt = payload.receivedAt ? new Date(payload.receivedAt) : null;
-
-    const info = await computePriceAndAgent({
-      serviceId: payload.serviceId,
-      doctorId: payload.doctorId,
-    });
-    payload.price = info.price;
-    payload.agentLevel = info.agentLevel;
-    payload.agentTierLabel = info.agentTierLabel;
-    payload.serviceCode = info.serviceCode || payload.serviceCode || "";
-    payload.serviceName = info.serviceName || payload.serviceName || "";
-
-    payload.dueDate = await computeDueDate({
-      serviceId: payload.serviceId,
-      receivedAt: payload.receivedAt,
-    });
-
-    const created = await Case.create(payload);
-    res.json(created);
-  } catch (e) {
-    next(e);
-  }
-});
-
-router.patch("/:id", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const patch = req.body || {};
-
-    if ("date" in patch) patch.date = patch.date ? new Date(patch.date) : new Date();
-    if ("sentAt" in patch) patch.sentAt = patch.sentAt ? new Date(patch.sentAt) : null;
-    if ("receivedAt" in patch) patch.receivedAt = patch.receivedAt ? new Date(patch.receivedAt) : null;
-
-    const current = await Case.findById(id).lean();
-    if (!current) return res.status(404).json({ message: "Not found" });
-
-    const nextDoc = { ...current, ...patch };
-
-    const changedServiceOrDoctor =
-      ("serviceId" in patch) || ("doctorId" in patch);
-
-    if (changedServiceOrDoctor) {
-      const info = await computePriceAndAgent({
-        serviceId: nextDoc.serviceId,
-        doctorId: nextDoc.doctorId,
-      });
-      patch.price = info.price;
-      patch.agentLevel = info.agentLevel;
-      patch.agentTierLabel = info.agentTierLabel;
-      patch.serviceCode = info.serviceCode || nextDoc.serviceCode || "";
-      patch.serviceName = info.serviceName || nextDoc.serviceName || "";
-    }
-
-    const changedDue =
-      ("receivedAt" in patch) || ("serviceId" in patch);
-
-    if (changedDue) {
-      patch.dueDate = await computeDueDate({
-        serviceId: nextDoc.serviceId,
-        receivedAt: nextDoc.receivedAt,
-      });
-    }
-
-    const updated = await Case.findByIdAndUpdate(id, patch, { new: true }).lean();
-    res.json(updated);
-  } catch (e) {
-    next(e);
-  }
-});
-
-// GET /api/cases?serviceType=ADN&q=...&from=YYYY-MM-DD&to=YYYY-MM-DD
-router.get("/", async (req, res, next) => {
-  try {
-    const { serviceType, q = "", from = "", to = "" } = req.query;
-
-    const filter = {};
-    if (serviceType) filter.serviceType = serviceType;
-
-    // date range filter (theo field date)
-    const fromD = toDateOrNull(from);
-    const toD = toDateOrNull(to);
-    if (fromD || toD) {
-      filter.date = {};
-      if (fromD) filter.date.$gte = fromD;
-      if (toD) {
-        // to inclusive: set to end of day
-        const end = new Date(toD);
-        end.setHours(23, 59, 59, 999);
-        filter.date.$lte = end;
-      }
-    }
-
-    // search basic fields
-    if (q) {
-      const s = String(q);
-      filter.$or = [
-        { caseCode: { $regex: s, $options: "i" } },
-        { patientName: { $regex: s, $options: "i" } },
-        { serviceCode: { $regex: s, $options: "i" } },
-        { serviceName: { $regex: s, $options: "i" } },
-        { source: { $regex: s, $options: "i" } },
-      ];
-    }
-
-    const items = await Case.find(filter).sort({ date: -1, createdAt: -1 }).limit(500).lean();
-    res.json({ items, total: items.length });
-  } catch (e) {
-    next(e);
-  }
-});
-
+// ==============================
 // POST /api/cases
+// (Ghi Local và Ghi ngầm Atlas)
+// ==============================
 router.post("/", async (req, res, next) => {
   try {
     const payload = req.body || {};
 
-    // normalize dates
     payload.date = payload.date ? new Date(payload.date) : new Date();
     payload.sentAt = payload.sentAt ? new Date(payload.sentAt) : null;
     payload.receivedAt = payload.receivedAt ? new Date(payload.receivedAt) : null;
 
-    // recompute caches: price/agent/serviceCode/serviceName
     const info = await computePriceAndAgent({
       serviceId: payload.serviceId,
       doctorId: payload.doctorId,
@@ -440,39 +303,43 @@ router.post("/", async (req, res, next) => {
     payload.serviceCode = info.serviceCode || payload.serviceCode || "";
     payload.serviceName = info.serviceName || payload.serviceName || "";
 
-    // dueDate
     payload.dueDate = await computeDueDate({
       serviceId: payload.serviceId,
       receivedAt: payload.receivedAt,
     });
 
-    const created = await Case.create(payload);
-    res.json(created);
+    // 1. Đợi lưu Local xong để trả data về cho Client
+    const createdLocal = await Case.create(payload);
+
+    // 2. Lưu ngầm lên Atlas (KHÔNG dùng await để không chặn luồng)
+    
+
+    res.json(createdLocal);
   } catch (e) {
     next(e);
   }
 });
 
+
+// ==============================
 // PATCH /api/cases/:id
+// (Cập nhật Local và Cập nhật ngầm Atlas)
+// ==============================
 router.patch("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const patch = req.body || {};
 
-    // normalize date types (only if present)
     if ("date" in patch) patch.date = patch.date ? new Date(patch.date) : new Date();
     if ("sentAt" in patch) patch.sentAt = patch.sentAt ? new Date(patch.sentAt) : null;
     if ("receivedAt" in patch) patch.receivedAt = patch.receivedAt ? new Date(patch.receivedAt) : null;
 
-    // Get current doc to know if recompute needed
     const current = await Case.findById(id).lean();
     if (!current) return res.status(404).json({ message: "Not found" });
 
     const nextDoc = { ...current, ...patch };
 
-    // recompute when doctorId or serviceId changes
-    const changedServiceOrDoctor =
-      ("serviceId" in patch) || ("doctorId" in patch);
+    const changedServiceOrDoctor = ("serviceId" in patch) || ("doctorId" in patch);
 
     if (changedServiceOrDoctor) {
       const info = await computePriceAndAgent({
@@ -486,9 +353,7 @@ router.patch("/:id", async (req, res, next) => {
       patch.serviceName = info.serviceName || nextDoc.serviceName || "";
     }
 
-    // recompute dueDate when receivedAt or serviceId changes
-    const changedDue =
-      ("receivedAt" in patch) || ("serviceId" in patch);
+    const changedDue = ("receivedAt" in patch) || ("serviceId" in patch);
 
     if (changedDue) {
       patch.dueDate = await computeDueDate({
@@ -497,18 +362,35 @@ router.patch("/:id", async (req, res, next) => {
       });
     }
 
-    const updated = await Case.findByIdAndUpdate(id, patch, { new: true }).lean();
-    res.json(updated);
+    // 1. Cập nhật trên Local
+    const updatedLocal = await Case.findByIdAndUpdate(id, patch, { new: true }).lean();
+
+    // 2. Cập nhật ngầm trên Atlas với upsert: true
+    
+
+    res.json(updatedLocal);
   } catch (e) {
     next(e);
   }
 });
 
+
+// ==============================
 // DELETE /api/cases/:id
+// (Xóa Local và Xóa ngầm Atlas)
+// ==============================
 router.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
+    
+    // 1. Xóa trên Local
     await Case.findByIdAndDelete(id);
+    
+    // 2. Xóa ngầm trên Atlas
+    CaseAtlas.findByIdAndDelete(id).catch((err) => {
+      console.error(`❌ Lỗi khi xóa ca ${id} trên Atlas:`, err);
+    });
+    
     res.json({ ok: true });
   } catch (e) {
     next(e);
