@@ -22,7 +22,12 @@ export type DoctorItem = {
   salesOwner?: string; // ✅ Thêm vào đây
   agentTierLabel?: string;
 };
-
+export type ChangeLog = {
+  name: string;
+  email: string;
+  action: string;
+  changedAt: string;
+};
 export type CaseRecord = {
   _id: string;
 
@@ -82,6 +87,7 @@ export type CaseRecord = {
   updatedBy: string;
   registrationImageUrl?: string;
   resultImageUrls?: string[];
+  changes?: ChangeLog[];
 };
 
 export type CaseDraft = Omit<CaseRecord, "_id"> & {

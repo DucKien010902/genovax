@@ -451,14 +451,14 @@ export default function AdminOptionsPage() {
                               <span className="inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-semibold text-neutral-700 ring-1 ring-black/5 font-mono">
                                 {it.value}
                               </span>
-                              <span
+                              {/* <span
                                 className={cn(
                                   "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1",
                                   activePill(on),
                                 )}
                               >
                                 {on ? "Đang bật" : "Đã tắt"}
-                              </span>
+                              </span> */}
                               <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 ring-1 ring-indigo-200">
                                 Thứ tự {it.order ?? 0}
                               </span>
@@ -466,7 +466,7 @@ export default function AdminOptionsPage() {
                           </div>
 
                           <div className="flex shrink-0 gap-2">
-                            <button
+                            {/* <button
                               onClick={() =>
                                 patchItem(it.value, {
                                   isActive: !(it.isActive !== false),
@@ -475,7 +475,7 @@ export default function AdminOptionsPage() {
                               className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-xs font-bold text-neutral-900 shadow-sm hover:bg-neutral-50"
                             >
                               Bật/Tắt
-                            </button>
+                            </button> */}
                             <button
                               onClick={() => {
                                 if (window.confirm(`Xóa lựa chọn "${it.label}"?`)) {

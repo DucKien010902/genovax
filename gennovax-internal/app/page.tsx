@@ -16,8 +16,10 @@ import type {
   ServiceType,
 } from "@/lib/types";
 import CasesHeaderMobile from "@/components/CasesHeaderMobile";
+import { useAuth } from "@/lib/auth";
 
 export default function CasesPage() {
+  const { user } = useAuth();
   const [serviceType, setServiceType] = useState<ServiceType>("NIPT");
   const [options, setOptions] = useState<OptionsMap>({});
   const [rows, setRows] = useState<CaseRecord[]>([]);
@@ -150,11 +152,18 @@ export default function CasesPage() {
     // ✅ Thêm bật loading ở đây để khi gọi api lưu dữ liệu thì xoay vòng vòng
     setLoading(true);
     try {
+      // ✅ Đóng gói thêm thông tin người thao tác vào payload
+      const payload = {
+        ...data,
+        currentUserName: user?.name || "Unknown",
+        currentUserEmail: user?.email || "Unknown",
+      };
+
       if (data.isDraft) {
-        const created = await api.createCase(data);
+        const created = await api.createCase(payload);
         setRows((prev) => [created, ...prev]);
       } else if (data._id) {
-        const updated = await api.updateCase(data._id, data);
+        const updated = await api.updateCase(data._id, payload);
         setRows((prev) => prev.map((x) => (x._id === updated._id ? updated : x)));
       }
       setOpen(false);
@@ -163,7 +172,6 @@ export default function CasesPage() {
       console.error("Lỗi khi lưu:", error);
       alert(error?.message);
     } finally {
-      // ✅ Tắt loading sau khi gọi API xong (dù thành công hay thất bại)
       setLoading(false);
     }
   };
