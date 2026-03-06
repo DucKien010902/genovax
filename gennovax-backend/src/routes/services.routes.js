@@ -32,7 +32,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // POST /api/services (admin)
-router.post("/", requireRole("admin"), async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const created = await Service.create(req.body);
     res.json(created);
@@ -42,7 +42,7 @@ router.post("/", requireRole("admin"), async (req, res, next) => {
 });
 
 // PATCH /api/services/:id (admin)
-router.patch("/:id", requireRole("admin"), async (req, res, next) => {
+router.patch("/:id", async (req, res, next) => {
   try {
     const updated = await Service.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -55,7 +55,7 @@ router.patch("/:id", requireRole("admin"), async (req, res, next) => {
 });
 
 // DELETE /api/services/:id (admin)
-router.delete("/:id", requireRole("admin"), async (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     await Service.findByIdAndDelete(req.params.id);
     res.json({ ok: true });

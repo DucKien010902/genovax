@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
-
+const changeLogSchema = new mongoose.Schema({
+  name: { type: String },
+  email: { type: String },
+  action: { type: String },     // VD: "Tạo mới", "Sửa thông tin"
+  changedAt: { type: Date }     // Hoặc type: String nếu bạn dùng cách lưu text +07:00 như đã bàn
+}, { _id: false });
 const CaseSchema = new mongoose.Schema(
   {
     serviceType: { type: String, enum: ["NIPT", "ADN", "HPV","CELL"], required: true },
@@ -57,6 +62,7 @@ invoiceAddress: { type: String, default: "" },
     updatedBy: { type: String, default: "" },
     registrationImageUrl: { type: String, default: "" },
 resultImageUrls: { type: [String], default: [] },
+changes: [changeLogSchema]
   },
   { timestamps: true }
 );

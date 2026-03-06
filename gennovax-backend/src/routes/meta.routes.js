@@ -24,7 +24,7 @@ router.get("/options", async (req, res, next) => {
 // --------- ADMIN CRUD ---------
 
 // GET /api/meta/options-admin  -> full docs (kể cả inactive)
-router.get("/options-admin", requireRole("admin"), async (req, res, next) => {
+router.get("/options-admin", async (req, res, next) => {
   try {
     const items = await Option.find({}).sort({ key: 1 }).lean();
     res.json({ items });
@@ -34,7 +34,7 @@ router.get("/options-admin", requireRole("admin"), async (req, res, next) => {
 });
 
 // GET /api/meta/options-admin/:key
-router.get("/options-admin/:key", requireRole("admin"), async (req, res, next) => {
+router.get("/options-admin/:key", async (req, res, next) => {
   try {
     const doc = await Option.findOne({ key: req.params.key }).lean();
     if (!doc) return res.status(404).json({ message: "Not found" });
@@ -45,7 +45,7 @@ router.get("/options-admin/:key", requireRole("admin"), async (req, res, next) =
 });
 
 // PUT /api/meta/options-admin/:key  (upsert whole doc)
-router.put("/options-admin/:key", requireRole("admin"), async (req, res, next) => {
+router.put("/options-admin/:key",  async (req, res, next) => {
   try {
     const { key } = req.params;
     const { items = [] } = req.body || {};
@@ -63,7 +63,7 @@ router.put("/options-admin/:key", requireRole("admin"), async (req, res, next) =
 });
 
 // POST /api/meta/options-admin/:key/items  (add item)
-router.post("/options-admin/:key/items", requireRole("admin"), async (req, res, next) => {
+router.post("/options-admin/:key/items", async (req, res, next) => {
   try {
     const { key } = req.params;
     const { label, value, order = 0, isActive = true } = req.body || {};
@@ -85,7 +85,7 @@ router.post("/options-admin/:key/items", requireRole("admin"), async (req, res, 
 });
 
 // PATCH /api/meta/options-admin/:key/items/:value  (update item by value)
-router.patch("/options-admin/:key/items/:value", requireRole("admin"), async (req, res, next) => {
+router.patch("/options-admin/:key/items/:value",  async (req, res, next) => {
   try {
     const { key, value } = req.params;
     const patch = req.body || {};
@@ -109,7 +109,7 @@ router.patch("/options-admin/:key/items/:value", requireRole("admin"), async (re
   }
 });
 // POST /api/meta/options-admin (Tạo mới 1 danh mục hoàn toàn)
-router.post("/options-admin", requireRole("admin"), async (req, res, next) => {
+router.post("/options-admin",  async (req, res, next) => {
   try {
     const { key, name } = req.body;
     if (!key || !name) return res.status(400).json({ message: "Cần nhập đủ key và name" });
@@ -125,7 +125,7 @@ router.post("/options-admin", requireRole("admin"), async (req, res, next) => {
 });
 
 // PATCH /api/meta/options-admin/:key (Chỉ để sửa tên/name của danh mục)
-router.patch("/options-admin/:key", requireRole("admin"), async (req, res, next) => {
+router.patch("/options-admin/:key",  async (req, res, next) => {
   try {
     const { name } = req.body;
     if (!name) return res.status(400).json({ message: "Cần nhập tên mới" });
@@ -143,7 +143,7 @@ router.patch("/options-admin/:key", requireRole("admin"), async (req, res, next)
   }
 });
 // DELETE /api/meta/options-admin/:key/items/:value
-router.delete("/options-admin/:key/items/:value", requireRole("admin"), async (req, res, next) => {
+router.delete("/options-admin/:key/items/:value",  async (req, res, next) => {
   try {
     const { key, value } = req.params;
 
@@ -161,7 +161,7 @@ router.delete("/options-admin/:key/items/:value", requireRole("admin"), async (r
 });
 
 // DELETE /api/meta/options-admin/:key  (xóa cả key)
-router.delete("/options-admin/:key", requireRole("admin"), async (req, res, next) => {
+router.delete("/options-admin/:key", async (req, res, next) => {
   try {
     await Option.deleteOne({ key: req.params.key });
     res.json({ ok: true });

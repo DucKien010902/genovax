@@ -38,7 +38,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // POST /api/doctors  (admin)
-router.post("/", requireRole("admin"), async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const created = await Doctor.create(req.body);
     res.json(created);
@@ -48,7 +48,7 @@ router.post("/", requireRole("admin"), async (req, res, next) => {
 });
 
 // PATCH /api/doctors/:id  (admin)
-router.patch("/:id", requireRole("admin"), async (req, res, next) => {
+router.patch("/:id",  async (req, res, next) => {
   try {
     const updated = await Doctor.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -61,7 +61,7 @@ router.patch("/:id", requireRole("admin"), async (req, res, next) => {
 });
 
 // DELETE /api/doctors/:id  (admin)
-router.delete("/:id", requireRole("admin"), async (req, res, next) => {
+router.delete("/:id",  async (req, res, next) => {
   try {
     await Doctor.findByIdAndDelete(req.params.id);
     res.json({ ok: true });

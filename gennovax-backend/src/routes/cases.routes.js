@@ -306,7 +306,7 @@ router.post("/", async (req, res, next) => {
   try {
     const payload = req.body || {};
 
-    // KIỂM TRA TRÙNG MÃ CA (Nếu có nhập mã ca thì mới check)
+    // 1. KIỂM TRA TRÙNG MÃ CA (Nếu có nhập mã ca thì mới check)
     if (payload.caseCode && payload.caseCode.trim() !== "") {
       const existingCase = await Case.findOne({ caseCode: payload.caseCode.trim() }).lean();
       if (existingCase) {
@@ -314,10 +314,27 @@ router.post("/", async (req, res, next) => {
       }
     }
 
+    // 2. XỬ LÝ NGÀY THÁNG
     payload.date = payload.date ? new Date(payload.date) : new Date();
     payload.sentAt = payload.sentAt ? new Date(payload.sentAt) : null;
     payload.receivedAt = payload.receivedAt ? new Date(payload.receivedAt) : null;
 
+    // 3. XỬ LÝ LƯU VẾT NGƯỜI DÙNG TẠO MỚI (CHANGES)
+    const userName = payload.currentUserName || "Unknown";
+    const userEmail = payload.currentUserEmail || "Unknown";
+    
+    payload.changes = [{
+      name: userName,
+      email: userEmail,
+      action: "Tạo mới",
+      changedAt: new Date()
+    }];
+
+    // Xóa các trường tạm để không lưu rác vào Database
+    delete payload.currentUserName;
+    delete payload.currentUserEmail;
+
+    // 4. TÍNH TOÁN GIÁ & ĐẠI LÝ
     const info = await computePriceAndAgent({
       serviceId: payload.serviceId,
       doctorId: payload.doctorId,
@@ -328,15 +345,16 @@ router.post("/", async (req, res, next) => {
     payload.serviceCode = info.serviceCode || payload.serviceCode || "";
     payload.serviceName = info.serviceName || payload.serviceName || "";
 
+    // 5. TÍNH TOÁN NGÀY HẸN TRẢ KẾT QUẢ
     payload.dueDate = await computeDueDate({
       serviceId: payload.serviceId,
       receivedAt: payload.receivedAt,
     });
 
-    // 1. Đợi lưu Local xong để trả data về cho Client
+    // 6. THỰC THI LƯU VÀO DB LOCAL
     const createdLocal = await Case.create(payload);
 
-    // 2. Lưu ngầm lên Atlas (KHÔNG dùng await để không chặn luồng)
+    // 7. Lưu ngầm lên Atlas (KHÔNG dùng await để không chặn luồng)
     // CaseAtlas.create(payload).catch(err => console.error("Lỗi đồng bộ tạo ca lên Atlas:", err));
 
     res.json(createdLocal);
@@ -355,7 +373,7 @@ router.patch("/:id", async (req, res, next) => {
     const { id } = req.params;
     const patch = req.body || {};
 
-    // KIỂM TRA TRÙNG MÃ CA (Loại trừ chính nó)
+    // 1. KIỂM TRA TRÙNG MÃ CA (Loại trừ chính nó)
     if (patch.caseCode && patch.caseCode.trim() !== "") {
       const existingCase = await Case.findOne({
         caseCode: patch.caseCode.trim(),
@@ -367,17 +385,49 @@ router.patch("/:id", async (req, res, next) => {
       }
     }
 
+    // 2. XỬ LÝ NGÀY THÁNG
     if ("date" in patch) patch.date = patch.date ? new Date(patch.date) : new Date();
     if ("sentAt" in patch) patch.sentAt = patch.sentAt ? new Date(patch.sentAt) : null;
     if ("receivedAt" in patch) patch.receivedAt = patch.receivedAt ? new Date(patch.receivedAt) : null;
 
+    // Lấy dữ liệu ca hiện tại trong DB ra để đối chiếu
     const current = await Case.findById(id).lean();
     if (!current) return res.status(404).json({ message: "Not found" });
 
+    // 3. XỬ LÝ MẢNG LỊCH SỬ CHỈNH SỬA (CHANGES)
+    const changes = current.changes || [];
+    const userEmail = patch.currentUserEmail || "Unknown";
+    const userName = patch.currentUserName || "Unknown";
+    const now = new Date();
+
+    // Tìm xem email người này đã có trong mảng changes chưa
+    const existingIndex = changes.findIndex(c => c.email === userEmail);
+
+    if (existingIndex !== -1) {
+      // Nếu ĐÃ TỪNG sửa: Chỉ cập nhật lại thời gian lastChange
+      changes[existingIndex].changedAt = now;
+      changes[existingIndex].action = "Cập nhật"; 
+    } else {
+      // Nếu CHƯA TỪNG sửa: Thêm một record mới vào mảng
+      changes.push({
+        name: userName,
+        email: userEmail,
+        action: "Cập nhật",
+        changedAt: now
+      });
+    }
+
+    // Gán lại mảng changes vào object patch để chuẩn bị lưu
+    patch.changes = changes;
+
+    // Xóa trường tạm để không lưu rác vào Document
+    delete patch.currentUserName;
+    delete patch.currentUserEmail;
+
+    // 4. KIỂM TRA THAY ĐỔI ĐỂ TÍNH TOÁN LẠI GIÁ VÀ HẠN TRẢ KẾT QUẢ
     const nextDoc = { ...current, ...patch };
 
     const changedServiceOrDoctor = ("serviceId" in patch) || ("doctorId" in patch);
-
     if (changedServiceOrDoctor) {
       const info = await computePriceAndAgent({
         serviceId: nextDoc.serviceId,
@@ -391,7 +441,6 @@ router.patch("/:id", async (req, res, next) => {
     }
 
     const changedDue = ("receivedAt" in patch) || ("serviceId" in patch);
-
     if (changedDue) {
       patch.dueDate = await computeDueDate({
         serviceId: nextDoc.serviceId,
@@ -399,10 +448,10 @@ router.patch("/:id", async (req, res, next) => {
       });
     }
 
-    // 1. Cập nhật trên Local
+    // 5. THỰC THI CẬP NHẬT TRÊN DB LOCAL
     const updatedLocal = await Case.findByIdAndUpdate(id, patch, { new: true }).lean();
 
-    // 2. Cập nhật ngầm trên Atlas với upsert: true
+    // 6. Cập nhật ngầm trên Atlas với upsert: true
     // CaseAtlas.findByIdAndUpdate(id, patch, { new: true, upsert: true }).catch(err => console.error("Lỗi đồng bộ sửa ca lên Atlas:", err));
 
     res.json(updatedLocal);
