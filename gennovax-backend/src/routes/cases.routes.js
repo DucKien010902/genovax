@@ -16,6 +16,17 @@ function toDateOrNull(x) {
   const d = new Date(String(x));
   return Number.isNaN(d.getTime()) ? null : d;
 }
+function parseVNDate(val, isEnd = false) {
+  if (!val) return null;
+  // Cắt lấy phần ngày YYYY-MM-DD (phòng trường hợp Frontend gửi lên full chuỗi ISO)
+  const dateStr = String(val).split('T')[0]; 
+  
+  // Ép cứng giờ đầu ngày (00:00:00) hoặc cuối ngày (23:59:59) theo đúng GMT+07:00
+  const timeStr = isEnd ? "T23:59:59.999+07:00" : "T00:00:00.000+07:00";
+  const d = new Date(`${dateStr}${timeStr}`);
+  
+  return Number.isNaN(d.getTime()) ? null : d;
+}
 
 // ==============================
 // GET /api/cases/analytics
@@ -31,14 +42,14 @@ router.get("/analytics", async (req, res, next) => {
     const fromD = toDateOrNull(from);
     const toD = toDateOrNull(to);
 
-    // Dùng trực tiếp field 'date' để lọc, không cần chế ra 'date2'
+    // ✅ ĐỔI `date` THÀNH `receivedAt` ĐỂ LỌC CHUẨN
     if (fromD || toD) {
-      match.date = {};
-      if (fromD) match.date.$gte = fromD;
+      match.receivedAt = {};
+      if (fromD) match.receivedAt.$gte = fromD;
       if (toD) {
         const end = new Date(toD);
         end.setHours(23, 59, 59, 999);
-        match.date.$lte = end;
+        match.receivedAt.$lte = end;
       }
     }
 
@@ -125,7 +136,14 @@ router.get("/analytics", async (req, res, next) => {
             {
               $group: {
                 _id: {
-                  ym: { $dateToString: { format: "%Y-%m", date: "$date" } }, // Trỏ thẳng vào date
+                  // ✅ THÊM timezone: "Asia/Ho_Chi_Minh" VÀO ĐÂY
+                  ym: { 
+                    $dateToString: { 
+                      format: "%Y-%m", 
+                      date: "$receivedAt",
+                      timezone: "Asia/Ho_Chi_Minh" 
+                    } 
+                  }, 
                   source: sourceExpr,
                 },
                 revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
@@ -146,7 +164,7 @@ router.get("/analytics", async (req, res, next) => {
                 paidCases: 1,
               },
             },
-            // Lọc bỏ những dữ liệu không ép ra được tháng (null) do date bị sai định dạng
+            // Lọc bỏ những dữ liệu không ép ra được tháng (null) do receivedAt bị rỗng
             { $match: { ym: { $ne: null } } },
             { $sort: { ym: 1 } },
           ],
@@ -250,16 +268,15 @@ router.get("/", async (req, res, next) => {
     const filter = {};
     if (serviceType) filter.serviceType = serviceType;
 
-    const fromD = toDateOrNull(from);
-    const toD = toDateOrNull(to);
+    // ✅ Lấy mốc thời gian đã ép chuẩn múi giờ Việt Nam
+    const fromD = parseVNDate(from, false); 
+    const toD = parseVNDate(to, true);      
+    
+    // ✅ Lọc theo `receivedAt` thay vì `date`
     if (fromD || toD) {
-      filter.date = {};
-      if (fromD) filter.date.$gte = fromD;
-      if (toD) {
-        const end = new Date(toD);
-        end.setHours(23, 59, 59, 999);
-        filter.date.$lte = end;
-      }
+      filter.receivedAt = {};
+      if (fromD) filter.receivedAt.$gte = fromD;
+      if (toD) filter.receivedAt.$lte = toD; // Không cần setHours thủ công nữa
     }
 
     if (q) {
@@ -273,7 +290,7 @@ router.get("/", async (req, res, next) => {
       ];
     }
 
-    const items = await Case.find(filter).sort({ date: -1, createdAt: -1 }).limit(500).lean();
+    const items = await Case.find(filter).sort({ receivedAt: -1 }).limit(500).lean();
     res.json({ items, total: items.length });
   } catch (e) {
     next(e);
@@ -288,6 +305,14 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const payload = req.body || {};
+
+    // KIỂM TRA TRÙNG MÃ CA (Nếu có nhập mã ca thì mới check)
+    if (payload.caseCode && payload.caseCode.trim() !== "") {
+      const existingCase = await Case.findOne({ caseCode: payload.caseCode.trim() }).lean();
+      if (existingCase) {
+        return res.status(400).json({ message: `Mã ca "${payload.caseCode}" đã tồn tại trong hệ thống.` });
+      }
+    }
 
     payload.date = payload.date ? new Date(payload.date) : new Date();
     payload.sentAt = payload.sentAt ? new Date(payload.sentAt) : null;
@@ -312,7 +337,7 @@ router.post("/", async (req, res, next) => {
     const createdLocal = await Case.create(payload);
 
     // 2. Lưu ngầm lên Atlas (KHÔNG dùng await để không chặn luồng)
-    
+    // CaseAtlas.create(payload).catch(err => console.error("Lỗi đồng bộ tạo ca lên Atlas:", err));
 
     res.json(createdLocal);
   } catch (e) {
@@ -329,6 +354,18 @@ router.patch("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const patch = req.body || {};
+
+    // KIỂM TRA TRÙNG MÃ CA (Loại trừ chính nó)
+    if (patch.caseCode && patch.caseCode.trim() !== "") {
+      const existingCase = await Case.findOne({
+        caseCode: patch.caseCode.trim(),
+        _id: { $ne: id } // Bỏ qua ca đang được update hiện tại
+      }).lean();
+      
+      if (existingCase) {
+        return res.status(400).json({ message: `Mã ca "${patch.caseCode}" đã được sử dụng ở một ca khác.` });
+      }
+    }
 
     if ("date" in patch) patch.date = patch.date ? new Date(patch.date) : new Date();
     if ("sentAt" in patch) patch.sentAt = patch.sentAt ? new Date(patch.sentAt) : null;
@@ -366,14 +403,13 @@ router.patch("/:id", async (req, res, next) => {
     const updatedLocal = await Case.findByIdAndUpdate(id, patch, { new: true }).lean();
 
     // 2. Cập nhật ngầm trên Atlas với upsert: true
-    
+    // CaseAtlas.findByIdAndUpdate(id, patch, { new: true, upsert: true }).catch(err => console.error("Lỗi đồng bộ sửa ca lên Atlas:", err));
 
     res.json(updatedLocal);
   } catch (e) {
     next(e);
   }
 });
-
 
 // ==============================
 // DELETE /api/cases/:id
@@ -387,9 +423,7 @@ router.delete("/:id", async (req, res, next) => {
     await Case.findByIdAndDelete(id);
     
     // 2. Xóa ngầm trên Atlas
-    CaseAtlas.findByIdAndDelete(id).catch((err) => {
-      console.error(`❌ Lỗi khi xóa ca ${id} trên Atlas:`, err);
-    });
+
     
     res.json({ ok: true });
   } catch (e) {

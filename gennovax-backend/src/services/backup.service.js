@@ -19,7 +19,7 @@ export function startAutoBackup() {
 
   // 2. Lên lịch chạy (Ví dụ đang để 23:59 mỗi ngày: '59 23 * * *')
   // Trong lúc test bạn có thể đổi thành "* * * * *" để nó chạy mỗi phút
-  cron.schedule("00 18 * * *", async () => {
+  cron.schedule("00 15 * * *", async () => {
     console.log("📦 Bắt đầu tiến trình trích xuất và nén dữ liệu...");
     
     // Đặt tên file zip theo ngày

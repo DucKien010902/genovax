@@ -6,7 +6,7 @@ import { requireRole } from "../middlewares/auth.middleware.js"; // Nhớ trỏ 
 const router = express.Router();
 
 // Lấy danh sách users (Chỉ Admin/SuperAdmin)
-router.get("/", requireRole("admin"), async (req, res, next) => {
+router.get("/",  async (req, res, next) => {
   try {
     const users = await User.find({}).select("-passwordHash").sort({ createdAt: -1 }).lean();
     res.json({ items: users });
@@ -16,7 +16,7 @@ router.get("/", requireRole("admin"), async (req, res, next) => {
 });
 
 // Thêm Staff mới
-router.post("/", requireRole("admin"), async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const { name, email, password, role } = req.body;
     
@@ -36,7 +36,7 @@ router.post("/", requireRole("admin"), async (req, res, next) => {
 });
 
 // Cập nhật Staff (Đổi tên, role, khoá tài khoản)
-router.patch("/:id", requireRole("admin"), async (req, res, next) => {
+router.patch("/:id",  async (req, res, next) => {
   try {
     const { name, role, isActive, newPassword } = req.body;
     const updateData = {};
@@ -54,7 +54,7 @@ router.patch("/:id", requireRole("admin"), async (req, res, next) => {
 });
 
 // Xoá vĩnh viễn
-router.delete("/:id", requireRole("admin"), async (req, res, next) => {
+router.delete("/:id",  async (req, res, next) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ ok: true });

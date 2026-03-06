@@ -45,7 +45,7 @@ app.get("/health", (req, res) => res.json({ ok: true }));
 
 // ✅ public routes
 app.use("/api/auth", authRoutes);
-app.use("/api/users", authRoutes);
+app.use("/api/users",requireAuth, userRoutes);
 // ✅ protected routes: chống request không phải browser (mutation) + yêu cầu token
 app.use("/api/cases", browserGate(ALLOWED_ORIGINS), requireAuth, casesRoutes);
 app.use("/api/doctors", browserGate(ALLOWED_ORIGINS), requireAuth, doctorsRoutes);
