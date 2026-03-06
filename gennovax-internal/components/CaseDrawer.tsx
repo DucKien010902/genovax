@@ -156,10 +156,19 @@ function Field({
   label: string;
   children: React.ReactNode;
 }) {
+  // 1. Kiểm tra xem label có chứa chuỗi "(*)" hay không
+  const isRequired = label.includes("*");
+  
+  // 2. Xóa chuỗi "(*)" ra khỏi label gốc để tên trường hiển thị sạch sẽ
+  
+
   return (
     <div className="min-w-0">
       <div className="mb-1 text-[11px] font-semibold text-neutral-500">
-        {label}
+        {/* 3. Nếu là trường bắt buộc thì render thêm dấu * màu đỏ (rose-500) */}
+        {isRequired ? (
+          <span className="ml-1 text-[11px] font-bold text-red-500">{label}</span>
+        ):label}
       </div>
       {children}
     </div>
@@ -251,17 +260,34 @@ export default function CaseDrawer({
   onSave: (data: CaseDraft) => Promise<void>;
 }) {
   const { user, token, logout } = useAuth();
-  const isSuperAdmin = user?.role === "superadmin";
+  const isAccountingAdmin = user?.role === "accounting_admin";
+  
+  // 1. Khai báo các state cơ bản
   const [form, setForm] = useState<CaseDraft | null>(data);
+  const [sampleCount, setSampleCount] = useState(1);
+  const [collectedAmountManual, setCollectedAmountManual] = useState(false);
 
-  useEffect(() => setForm(data), [data]);
+  // 2. Xác định ca mới hay ca cũ dựa vào prop data truyền vào
+  const isNewCase = !data?._id; // Thay _id bằng trường ID thực tế của database nếu khác
+
+  // 3. ĐỒNG BỘ DATA: Cập nhật form và các cờ trạng thái mỗi khi mở ca
+  useEffect(() => {
+    setForm(data);
+    
+    if (data && data._id) {
+      // ✅ CA CŨ: Bật cờ chỉnh tay (true) để CHẶN useEffect tự động tính giá ghi đè
+      setCollectedAmountManual(true);
+    } else {
+      // ✅ CA MỚI: Tắt cờ chỉnh tay (false) để tính auto, reset số lượng mẫu về 1
+      setCollectedAmountManual(false);
+      setSampleCount(1);
+    }
+  }, [data]);
 
   const opt = useMemo(() => (k: string) => options[k] ?? [], [options]);
 
   const set = (patch: Partial<CaseDraft>) =>
     setForm((prev) => (prev ? { ...prev, ...patch } : prev));
-
-  const [collectedAmountManual, setCollectedAmountManual] = useState(false);
 
   // ===== selected service =====
   const selectedService = useMemo(() => {
@@ -272,12 +298,10 @@ export default function CaseDrawer({
     return null;
   }, [form, services]);
 
-  // ===== derived agent from source mapping =====
-  // ===== derived agent from API (thay cho map tĩnh) =====
+  // ===== derived agent from API =====
   const agent = useMemo(() => {
     if (!form || !form.source) return { level: "", label: "" };
     
-    // Tìm nguồn trong danh sách trả về từ API
     const foundDoc = doctors.find((d) => d.fullName === form.source);
     
     if (foundDoc) {
@@ -289,6 +313,8 @@ export default function CaseDrawer({
     
     return { level: "", label: "" };
   }, [form?.source, doctors]);
+
+  // ===== suggested price =====
   const suggestedPrice = useMemo(() => {
     if (!selectedService || !agent.level) return 0;
     const found = (selectedService.pricesByLevel || []).find(
@@ -300,22 +326,28 @@ export default function CaseDrawer({
   // ===== compute price realtime -> set collectedAmount =====
   useEffect(() => {
     if (!form) return;
+    
     if (!selectedService || !agent.level) {
-      if (!collectedAmountManual && (form.collectedAmount ?? 0) !== 0)
+      if (!collectedAmountManual && (form.collectedAmount ?? 0) !== 0) {
         set({ collectedAmount: 0 });
+      }
       return;
     }
-    if (
-      !collectedAmountManual &&
-      (form.collectedAmount ?? 0) !== suggestedPrice
-    ) {
-      set({ collectedAmount: suggestedPrice });
+    
+    // ✅ 4. Tự động tính giá = Giá đề xuất * Số lượng mẫu 
+    // Chỉ chạy vào đây khi mở ca mới hoặc khi người dùng cố tình ấn nút Reset
+    if (!collectedAmountManual) {
+      const autoPrice = suggestedPrice * sampleCount;
+      if ((form.collectedAmount ?? 0) !== autoPrice) {
+        set({ collectedAmount: autoPrice });
+      }
     }
   }, [
     selectedService?.serviceCode,
     agent.level,
     suggestedPrice,
     collectedAmountManual,
+    sampleCount, // Thêm sampleCount vào dependency để tính lại khi đổi số mẫu
   ]);
   
   // ===== compute due date realtime =====
@@ -485,7 +517,7 @@ export default function CaseDrawer({
 
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
                   <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-bold text-emerald-700 ring-1 ring-emerald-200">
-                    {agent.label || "Chưa xác định cấp"}
+                    {agent.level || "Chưa xác định cấp"}
                   </span>
                   <span className="rounded-full bg-amber-50 px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200">
                     Giá: {fmtMoney(form.collectedAmount ?? 0)}
@@ -495,6 +527,9 @@ export default function CaseDrawer({
                       Hạn KQ: {new Date(form.dueDate).toLocaleString()}
                     </span>
                   )}
+                  <span className="rounded-full bg-amber-50 px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200 hidden lg:flex">
+                    Dấu * là trường bắt buộc
+                  </span>
                 </div>
               </div>
 
@@ -543,7 +578,7 @@ export default function CaseDrawer({
                 </div>
 
                 <div className="space-y-3">
-                  <Field label="Mã ca">
+                  <Field label="* Mã ca">
                     <Input
                       value={form.caseCode}
                       onChange={(v) => set({ caseCode: v })}
@@ -561,7 +596,7 @@ export default function CaseDrawer({
                     />
                   </Field>
 
-                  <Field label="Nguồn">
+                  <Field label="* Nguồn">
                     <Select
                       value={form.source}
                       onChange={(v) => {
@@ -586,7 +621,7 @@ export default function CaseDrawer({
                     />
                   </Field>
 
-                  <Field label="NVKD phụ trách">
+                  <Field label="* NVKD phụ trách">
                     <Select
                       value={form.salesOwner}
                       onChange={(v) => set({ salesOwner: v })}
@@ -613,7 +648,7 @@ export default function CaseDrawer({
                 </div>
 
                 <div className="space-y-3">
-                  <Field label="Họ và tên">
+                  <Field label="* Họ và tên">
                     <Input
                       value={form.patientName}
                       onChange={(v) => set({ patientName: v })}
@@ -623,7 +658,7 @@ export default function CaseDrawer({
                   </Field>
 
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <Field label="Dịch vụ (mã)">
+                    <Field label="* Dịch vụ (mã)">
                       <Select
                         value={form.serviceCode}
                         onChange={(v) => {
@@ -655,70 +690,94 @@ export default function CaseDrawer({
                     </Field>
                   </div>
 
-                  <Field label="Tài chính">
+                  <Field label="* Tài chính">
                     <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3">
                       <div className="mb-2 flex items-center justify-between gap-2">
                         <div className="text-[11px] font-semibold text-emerald-700">
-                          Thông tin doanh thu {isSuperAdmin && "& Giá vốn"}
+                          Thông tin doanh thu {isAccountingAdmin && "& Giá vốn"}
                         </div>
                         <span className="rounded-full bg-white/70 px-2 py-1 text-[11px] font-bold text-emerald-800 ring-1 ring-black/5">
                           {collectedAmountManual ? "chỉnh tay" : "auto"}
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                        <div className="rounded-xl bg-white/70 p-3 ring-1 ring-black/5">
-                          <div className="mb-2 flex items-center justify-between">
-                            <div className="text-[11px] font-semibold text-neutral-500">
-                              Tiền thu (Doanh thu)
-                            </div>
-                            <button
-                              type="button"
-                              className="rounded-lg bg-white px-2 py-1 text-[11px] font-bold ring-1 ring-black/10 hover:bg-neutral-50"
-                              onClick={() => {
-                                set({ collectedAmount: suggestedPrice });
-                                setCollectedAmountManual(false);
-                              }}
-                            >
-                              Reset
-                            </button>
-                          </div>
-                          <Input
-                            value={String(form.collectedAmount ?? 0)}
-                            onChange={(v) => {
-                              const n =
-                                Number(String(v).replace(/[^\d]/g, "")) || 0;
-                              set({ collectedAmount: n });
-                              setCollectedAmountManual(true);
-                            }}
-                            tone="emerald"
-                          />
-                          <div className="mt-1 text-[13px] font-bold text-emerald-700">
-                            {fmtMoney(form.collectedAmount ?? 0)}
-                          </div>
-                        </div>
+                      <div className="flex flex-col gap-3">
+  {/* Block 1: Tiền thu (Doanh thu) - Ai cũng thấy */}
+  <div className="rounded-xl bg-white/70 p-3 ring-1 ring-black/5">
+    <div className="mb-2 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+      <div className="text-[11px] font-semibold text-neutral-500">
+        Tiền thu 
+      </div>
 
+      <div className="flex items-center gap-2">
+        {/* Chỉ hiển thị chọn số lượng mẫu nếu là Ca Mới */}
+        {isNewCase && (
+          <div className="flex items-center gap-1">
+            <span className="text-[10px] text-neutral-500">SL mẫu:</span>
+            <input
+              type="number"
+              min={1}
+              value={sampleCount}
+              onChange={(e) => {
+                const val = Math.max(1, parseInt(e.target.value) || 1);
+                setSampleCount(val);
+                setCollectedAmountManual(false); // Kích hoạt lại tính auto để nhân giá
+              }}
+              className="w-12 rounded border border-black/10 px-1 py-0.5 text-center text-[11px] outline-none focus:ring-2 focus:ring-emerald-200"
+            />
+          </div>
+        )}
 
-                          <div className={`rounded-xl bg-rose-50/50 p-3 ring-1 ring-rose-200/50 ${isSuperAdmin ? "none" : "hidden"}`}>
-                            <div className="mb-2 text-[11px] font-semibold text-rose-700">
-                              Giá xuất vốn (Giá Cost)
-                            </div>
-                            <Input
-                              value={String((form as any).costPrice ?? 0)}
-                              onChange={(v) => {
-                                const n =
-                                  Number(String(v).replace(/[^\d]/g, "")) || 0;
-                                set({ costPrice: n });
-                              }}
-                              placeholder="Nhập giá vốn..."
-                              tone="rose"
-                            />
-                            <div className="mt-1 text-[13px] font-bold text-rose-700">
-                              {fmtMoney((form as any).costPrice ?? 0)}
-                            </div>
-                          </div>
+        <button
+          type="button"
+          className="rounded-lg bg-white px-2 py-1 text-[11px] font-bold ring-1 ring-black/10 hover:bg-neutral-50"
+          onClick={() => {
+            set({
+              collectedAmount: suggestedPrice * (isNewCase ? sampleCount : 1),
+            });
+            setCollectedAmountManual(false);
+          }}
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+    
+    <Input
+      value={String(form.collectedAmount ?? 0)}
+      onChange={(v) => {
+        const n = Number(String(v).replace(/[^\d]/g, "")) || 0;
+        set({ collectedAmount: n });
+        setCollectedAmountManual(true);
+      }}
+      tone="emerald"
+    />
+    <div className="mt-1 text-[13px] font-bold text-emerald-700">
+      {fmtMoney(form.collectedAmount ?? 0)}
+    </div>
+  </div>
 
-                      </div>
+  {/* Block 2: Giá xuất vốn (Giá Cost) - Chỉ hiển thị cho SuperAdmin, đẩy xuống dưới */}
+  {isAccountingAdmin && (
+    <div className="rounded-xl bg-rose-50/50 p-3 ring-1 ring-rose-200/50">
+      <div className="mb-2 text-[11px] font-semibold text-rose-700">
+        Giá xuất vốn (Giá Cost)
+      </div>
+      <Input
+        value={String((form as any).costPrice ?? 0)}
+        onChange={(v) => {
+          const n = Number(String(v).replace(/[^\d]/g, "")) || 0;
+          set({ costPrice: n });
+        }}
+        placeholder="Nhập giá vốn..."
+        tone="rose"
+      />
+      <div className="mt-1 text-[13px] font-bold text-rose-700">
+        {fmtMoney((form as any).costPrice ?? 0)}
+      </div>
+    </div>
+  )}
+</div>
                     </div>
                   </Field>
 
@@ -742,7 +801,7 @@ export default function CaseDrawer({
 
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <Field label="Mức chuyển lab">
+                    <Field label="* Mức chuyển lab">
                       <Select
                         value={form.transferStatus}
                         onChange={(v) => set({ transferStatus: v })}
@@ -751,7 +810,7 @@ export default function CaseDrawer({
                       />
                     </Field>
 
-                    <Field label="Tiếp nhận mẫu">
+                    <Field label="* Tiếp nhận mẫu">
                       <Select
                         value={form.receiveStatus}
                         onChange={(v) => set({ receiveStatus: v })}
@@ -762,7 +821,7 @@ export default function CaseDrawer({
                   </div>
 
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <Field label="Xử lý mẫu">
+                    <Field label="* Xử lý mẫu">
                       <Select
                         value={form.processStatus}
                         onChange={(v) => set({ processStatus: v })}
@@ -781,7 +840,7 @@ export default function CaseDrawer({
                     </Field>
                   </div>
 
-                  <Field label="Ngày nhận">
+                  <Field label="* Ngày nhận">
                     <div className="grid grid-cols-2 gap-2">
                       <SingleDatePicker
                         value={isoDateFromISODateTime((form as any).receivedAt)}
@@ -908,7 +967,7 @@ export default function CaseDrawer({
 
                 <div className="space-y-4 ">
                   {/* --- Block Xuất Hóa Đơn --- */}
-                  <div className={`rounded-2xl bg-slate-50 p-3 ring-1 ring-black/5 ${isSuperAdmin ? "none" : "hidden"}`}>
+                  <div className={`rounded-2xl bg-slate-50 p-3 ring-1 ring-black/5 ${isAccountingAdmin ? "none" : "hidden"}`}>
                     <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm mb-3 cursor-pointer">
                       <input
                         type="checkbox"

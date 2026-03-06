@@ -18,6 +18,7 @@ import SingleDatePicker, { ISODate } from "@/components/DatePicker"; // chỉnh 
 import { caseApi } from "@/lib/api"; // chỉnh path
 
 import { ServiceType } from "@/lib/types";
+import LoadingOverlay from "@/components/LoadingOverlay";
 type ScopeMode = "total" | "month";
 
 function cn(...a: Array<string | false | null | undefined>) {
@@ -188,6 +189,8 @@ export default function AdminDashboardPage() {
     !monthlyBarsData.length && !bySource.length && !topSourcesComputed.length;
 
   return (
+    <>
+    <LoadingOverlay isLoading={loading} />
     <div className="min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
       {/* Header */}
       <div className="sticky top-0 z-30 border-b border-black/5 bg-white/75 backdrop-blur dark:border-white/10 dark:bg-neutral-950/70">
@@ -635,6 +638,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

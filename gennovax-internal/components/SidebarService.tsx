@@ -13,6 +13,7 @@ function Icon({ t, active }: { t: ServiceType; active: boolean }) {
     NIPT: "from-pink-500 to-rose-600 shadow-rose-500/40",
     ADN: "from-blue-400 to-indigo-600 shadow-blue-500/40",
     HPV: "from-emerald-400 to-teal-600 shadow-emerald-500/40",
+    CELL: "from-orange-400 to-yellow-600 shadow-yellow-500/40",
   };
 
   return (
@@ -49,6 +50,7 @@ export default function SidebarService({
     { key: "NIPT", label: "NIPT", badge: "Sàng lọc", desc: "Trước sinh", glow: "group-hover:shadow-rose-500/20" },
     { key: "ADN", label: "ADN", badge: "Pháp lý", desc: "Giám định", glow: "group-hover:shadow-blue-500/20" },
     { key: "HPV", label: "HPV", badge: "Tế bào", desc: "Xét nghiệm", glow: "group-hover:shadow-emerald-500/20" },
+    { key: "CELL", label: "CELL", badge: "Tế bào", desc: "Xét nghiệm", glow: "group-hover:shadow-orange-500/20" },
   ] as const, []);
 
   return (

@@ -1,4 +1,4 @@
-export type ServiceType = "NIPT" | "ADN" | "HPV";
+export type ServiceType = "NIPT" | "ADN" | "HPV" | "CELL";
 
 export type OptionItem = { label: string; value: string };
 export type OptionsMap = Record<string, OptionItem[]>;

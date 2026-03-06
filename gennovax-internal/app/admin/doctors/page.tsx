@@ -84,6 +84,7 @@ export default function AdminDoctorsPage() {
   const startEdit = (d: Doctor) => {
     setEditingId(d._id);
     setForm({ ...d });
+    window.scrollTo({ top: 0, behavior: "smooth" })
   };
 
   const submit = async () => {
@@ -164,7 +165,7 @@ export default function AdminDoctorsPage() {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={startCreate}
-                className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
+                className="rounded-2xl bg-blue-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
               >
                 + Tạo mới
               </button>
@@ -184,7 +185,7 @@ export default function AdminDoctorsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm font-bold text-neutral-900">
-                  {editingId ? "Sửa Doctor" : "Tạo Doctor"}
+                  {editingId ? "Sửa nguồn thu" : "Tạo nguồn thu"}
                 </div>
                 <div className="mt-1 text-xs text-neutral-500">
                   Nhập thông tin cơ bản + level đại lý
@@ -295,7 +296,7 @@ export default function AdminDoctorsPage() {
 
                 <button
                   onClick={load}
-                  className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
+                  className="rounded-2xl bg-blue-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
                 >
                   Tải
                 </button>
@@ -356,18 +357,18 @@ export default function AdminDoctorsPage() {
 
                           <div className="mt-2 flex flex-wrap gap-2 text-xs text-neutral-600">
                             <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 ring-1 ring-black/5">
-                              ☎ {d.phone || "—"}
+                              {d.phone || "—"}
                             </span>
                             {d.address ? (
                               <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 ring-1 ring-black/5">
-                                📍{" "}
+                                {" "}
                                 <span className="max-w-[520px] truncate">
                                   {d.address}
                                 </span>
                               </span>
                             ) : (
                               <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 ring-1 ring-black/5">
-                                📍 —
+                                —
                               </span>
                             )}
                           </div>
@@ -382,13 +383,13 @@ export default function AdminDoctorsPage() {
                         <div className="flex shrink-0 gap-2">
                           <button
                             onClick={() => startEdit(d)}
-                            className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-xs font-bold text-neutral-900 shadow-sm hover:bg-neutral-50"
+                            className="cursor-pointer rounded-2xl border border-black/10 bg-white px-3 py-2 text-xs font-bold text-neutral-900 shadow-sm hover:bg-neutral-50"
                           >
                             Sửa
                           </button>
                           <button
                             onClick={() => del(d._id)}
-                            className="rounded-2xl bg-rose-600 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-rose-500 active:scale-[0.99]"
+                            className="cursor-pointer rounded-2xl bg-rose-600 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-rose-500 active:scale-[0.99]"
                           >
                             Xoá
                           </button>

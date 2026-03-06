@@ -2,6 +2,7 @@
 
 import { CaseRecord } from "@/lib/types";
 import { useAuth } from "@/lib/auth";
+import { api } from "@/lib/api"; // ✅ Hãy đảm bảo đường dẫn import này đúng với project của bạn
 
 function Pill({
   text,
@@ -104,22 +105,50 @@ export default function CasesTable({
   rows,
   loading,
   onRowClick,
+  fetchCases, // ✅ Nhận hàm tải lại dữ liệu từ component cha
 }: {
   rows: CaseRecord[];
   loading?: boolean;
-  isSuperAdmin?: boolean;
   onRowClick: (r: CaseRecord) => void;
+  fetchCases?: () => void; // Khai báo type optional để không báo lỗi nếu tạm chưa truyền
 }) {
-  const { user, token, logout } = useAuth();
-  const isSuperAdmin = user?.role === "superadmin";
-  const colCount = isSuperAdmin ? 14 : 12; // Để render trạng thái empty/loading
+  const { user } = useAuth();
+  
+  // Kiểm tra quyền Admin/Superadmin
+  const isAccountingAdmin = user?.role === "accounting_admin";
+  const isAdminOrSuper = user?.role === "admin" || user?.role === "super_admin";
 
+  const colCount = isAccountingAdmin ? 14 : 12;
+
+  // ✅ Hàm xử lý xóa
+  const handleDelete = async (e: React.MouseEvent, caseId: string, patientName: string) => {
+    e.stopPropagation(); // Tránh kích hoạt onRowClick
+    
+    if (!window.confirm(`Bạn có chắc chắn muốn xóa ca của bệnh nhân "${patientName || 'Không tên'}" không? Hành động này không thể hoàn tác.`)) {
+      return;
+    }
+
+    try {
+      await api.deleteCase(caseId);
+      // Gọi hàm fetchCases để cha tải lại dữ liệu
+      if (fetchCases) {
+        fetchCases();
+      } else {
+        // Fallback reload lại trang nếu chưa truyền fetchCases
+        window.location.reload(); 
+      }
+    } catch (error) {
+      console.error("Lỗi khi xóa:", error);
+      alert("Đã xảy ra lỗi khi xóa ca. Vui lòng thử lại!");
+    }
+  };
+  
   return (
     <div className="rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
-      <div className="min-h-[36vh]  max-h-[72vh] overflow-auto">
+      <div className="min-h-[36vh] max-h-[72vh] overflow-auto">
         <table
           className={`w-full table-fixed text-neutral-900 ${
-            isSuperAdmin ? "min-w-[1120px]" : "min-w-[980px]"
+            isAccountingAdmin ? "min-w-[1150px]" : "min-w-[1020px]"
           }`}
         >
           <colgroup>
@@ -129,8 +158,8 @@ export default function CasesTable({
             <col className="w-[110px]" /> {/* Mã ca */}
 
             {/* ✅ 2 Cột của Admin */}
-            {isSuperAdmin && <col className="w-[70px]" />} {/* Xuất HĐ */}
-            {isSuperAdmin && <col className="w-[90px]" />} {/* Giá Cost */}
+            {isAccountingAdmin && <col className="w-[70px]" />} {/* Xuất HĐ */}
+            {isAccountingAdmin && <col className="w-[90px]" />} {/* Giá Cost */}
 
             <col className="w-[140px]" /> {/* Họ và tên */}
             <col className="w-[140px]" /> {/* Nguồn */}
@@ -139,7 +168,9 @@ export default function CasesTable({
             <col className="w-[160px]" /> {/* Tên dịch vụ */}
             <col className="w-[64px]" /> {/* Đã TT */}
             <col className="w-[110px]" /> {/* Tiền thu */}
-            <col className="w-[92px]" /> {/* Chi tiết */}
+            
+            {/* ✅ Đổi cột "Chi tiết" thành "Hành động", nới rộng để chứa 2 nút nếu cần */}
+            <col className={isAdminOrSuper ? "w-[120px]" : "w-[92px]"} /> 
           </colgroup>
 
           <thead className="sticky top-0 z-10">
@@ -154,10 +185,10 @@ export default function CasesTable({
               <th className={`${thBase} bg-neutral-50`}>Mã ca</th>
 
               {/* ✅ Tiêu đề 2 Cột Admin */}
-              {isSuperAdmin && (
+              {isAccountingAdmin && (
                 <th className={`${thBase} bg-white text-center`}>Xuất HĐ</th>
               )}
-              {isSuperAdmin && (
+              {isAccountingAdmin && (
                 <th className={`${thBase} bg-neutral-50 text-center`}>Nhập Cost</th>
               )}
 
@@ -168,8 +199,8 @@ export default function CasesTable({
               <th className={`${thBase} bg-neutral-50`}>Tên dịch vụ</th>
               <th className={`${thBase} bg-white`}>Đã TT</th>
               <th className={`${thBase} bg-neutral-50 text-right`}>Tiền thu</th>
-              <th className={`${thBase} bg-white border-r-0 text-right`}>
-                Chi tiết
+              <th className={`${thBase} bg-white border-r-0 text-center`}>
+                Hành động
               </th>
             </tr>
           </thead>
@@ -194,7 +225,7 @@ export default function CasesTable({
                   onClick={() => onRowClick(r)}
                   className="cursor-pointer odd:bg-white even:bg-neutral-50/40 hover:bg-sky-50"
                 >
-                  <td className="px-3 py-2 sticky left-0 z-20 bg-white border-r border-black/5 align-middle">
+                  <td className="px-3 py-2 sticky left-0 z-0 bg-white border-r border-black/5 align-middle">
                     <SttBadge stt={r.stt || idx + 1} dueDate={r.dueDate} processStatus={r.processStatus} />
                   </td>
 
@@ -213,7 +244,7 @@ export default function CasesTable({
                   </td>
 
                   {/* ✅ Nội dung 2 Cột Admin */}
-                  {isSuperAdmin && (
+                  {isAccountingAdmin && (
                     <td className={`${tdBase} text-center`}>
                       <div className="flex h-full items-center justify-center">
                         <Dot 
@@ -223,7 +254,7 @@ export default function CasesTable({
                       </div>
                     </td>
                   )}
-                  {isSuperAdmin && (
+                  {isAccountingAdmin && (
                     <td className={`${tdBase} text-center`}>
                       <div className="flex h-full items-center justify-center">
                         <Dot 
@@ -284,16 +315,29 @@ export default function CasesTable({
                     {(r.collectedAmount ?? 0).toLocaleString()}
                   </td>
 
-                  <td className="px-3 py-2 border-r-0 text-right align-middle">
-                    <button
-                      className="rounded-lg bg-sky-600 px-2.5 py-1 text-[11px] font-bold text-white hover:opacity-95 whitespace-nowrap"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRowClick(r);
-                      }}
-                    >
-                      Xem
-                    </button>
+                  {/* ✅ Cột Hành động (Xem + Xóa) */}
+                  <td className="px-3 py-2 border-r-0 text-center align-middle">
+                    <div className="flex justify-center gap-2 ">
+                      <button
+                        className="cursor-pointer rounded-lg bg-sky-600 px-2.5 py-1 text-[11px] font-bold text-white hover:opacity-95 whitespace-nowrap"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRowClick(r);
+                        }}
+                      >
+                        Xem
+                      </button>
+                      
+                      {/* Nút Xóa chỉ hiện nếu là admin/superadmin */}
+                      {isAdminOrSuper && (
+                        <button
+                          className="cursor-pointer rounded-lg bg-rose-500 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-rose-600 whitespace-nowrap"
+                          onClick={(e) => handleDelete(e, r._id, r.patientName || "")}
+                        >
+                          Xóa
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))

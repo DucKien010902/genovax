@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { Lock, ArrowRight, Eye, EyeOff } from "lucide-react"; // Bổ sung icon cho đẹp
+import { Lock, ArrowRight, Eye, EyeOff, User } from "lucide-react"; // ✅ Import thêm User
 
 function cn(...a: Array<string | false | null | undefined>) {
   return a.filter(Boolean).join(" ");
@@ -44,7 +44,7 @@ export default function LoginPage() {
         style={{ backgroundImage: `url(${BG_URL})` }}
       />
 
-      {/* Overlay mờ ảo - Dùng màu Slate/Đen kết hợp blur mạnh để tạo hiệu ứng Cinematic */}
+      {/* Overlay mờ ảo */}
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" />
 
       {/* Content Container */}
@@ -53,10 +53,8 @@ export default function LoginPage() {
           
           {/* CỘT TRÁI: VISUAL - Gradient Xanh Tím Hồng */}
           <div className="relative hidden md:flex flex-col justify-between overflow-hidden p-12 text-white">
-            {/* Nền Gradient chính */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 opacity-95" />
             
-            {/* Hiệu ứng ánh sáng ảo (Glow) */}
             <div className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-white/20 blur-3xl" />
             <div className="absolute -bottom-32 -right-32 h-80 w-80 rounded-full bg-blue-400/30 blur-3xl" />
 
@@ -75,7 +73,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <h1 className="mt-8 text-4xl  leading-[1.15] tracking-tight text-white lg:text-5xl">
+              <h1 className="mt-8 text-4xl leading-[1.15] tracking-tight text-white lg:text-5xl">
                 Nền tảng quản lý <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-pink-200">
                   chuyên nghiệp.
@@ -110,23 +108,28 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-5">
-              {/* Email Input */}
+              {/* ✅ Email Input có Icon User */}
               <div className="group">
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500 group-focus-within:text-purple-600 transition-colors">
                   Địa chỉ Email
                 </label>
-                <input
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@gennovax.vn"
-                  className={cn(
-                    "w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-3.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400",
-                    "focus:border-purple-400 focus:bg-white focus:ring-4 focus:ring-purple-500/10"
-                  )}
-                />
+                <div className="relative">
+                  {/* Icon nằm tuyệt đối bên trái */}
+                  <User className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-purple-500" />
+                  <input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@gennovax.vn"
+                    className={cn(
+                      // Thay px-4 bằng pl-11 pr-4 để chừa chỗ cho icon bên trái
+                      "w-full rounded-2xl border border-slate-200 bg-white/80 py-3.5 pl-11 pr-4 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400",
+                      "focus:border-purple-400 focus:bg-white focus:ring-4 focus:ring-purple-500/10"
+                    )}
+                  />
+                </div>
               </div>
 
-              {/* Password Input */}
+              {/* ✅ Password Input có Icon Lock */}
               <div className="group">
                 <div className="mb-1.5 flex items-center justify-between">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-500 group-focus-within:text-purple-600 transition-colors">
@@ -141,19 +144,24 @@ export default function LoginPage() {
                     {show ? "Ẩn" : "Hiện"}
                   </button>
                 </div>
-                <input
-                  type={show ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className={cn(
-                    "w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-3.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400",
-                    "focus:border-purple-400 focus:bg-white focus:ring-4 focus:ring-purple-500/10"
-                  )}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !loading) onSubmit();
-                  }}
-                />
+                <div className="relative">
+                  {/* Icon nằm tuyệt đối bên trái */}
+                  <Lock className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-purple-500" />
+                  <input
+                    type={show ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className={cn(
+                      // Thay px-4 bằng pl-11 pr-4 để chừa chỗ cho icon bên trái
+                      "w-full rounded-2xl border border-slate-200 bg-white/80 py-3.5 pl-11 pr-4 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400",
+                      "focus:border-purple-400 focus:bg-white focus:ring-4 focus:ring-purple-500/10"
+                    )}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !loading) onSubmit();
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Submit Button */}

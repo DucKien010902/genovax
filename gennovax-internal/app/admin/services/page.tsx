@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth";
 type PriceByLevel = { level: string; price: number };
 type Service = {
   _id: string;
-  serviceType: "NIPT" | "ADN" | "HPV";
+  serviceType: "NIPT" | "ADN" | "HPV"|"CELL";
   serviceCode: string;
   name: string;
   turnaroundHours?: number;
@@ -22,6 +22,7 @@ function cn(...a: Array<string | false | null | undefined>) {
 function toneByType(t: Service["serviceType"]) {
   if (t === "NIPT") return "bg-rose-50 text-rose-700 ring-rose-200";
   if (t === "HPV") return "bg-emerald-50 text-emerald-700 ring-emerald-200";
+  if (t === "CELL") return "bg-orange-50 text-emerald-700 ring-emerald-200";
   return "bg-blue-50 text-blue-700 ring-blue-200"; // ADN
 }
 
@@ -53,6 +54,7 @@ export default function AdminServicesPage() {
 
   const pageTitle = useMemo(() => {
     if (serviceType === "NIPT") return "Quản lý dịch vụ và bảng giá • NIPT";
+    if (serviceType === "CELL") return "Quản lý dịch vụ và bảng giá • CELL";
     if (serviceType === "HPV") return "Quản lý dịch vụ và bảng giá • HPV";
     return "Quản lý dịch vụ và bảng giá • ADN";
   }, [serviceType]);
@@ -93,6 +95,7 @@ export default function AdminServicesPage() {
       ...s,
       pricesByLevel: (s.pricesByLevel || []).map((x) => ({ ...x })),
     });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const submit = async () => {
@@ -209,7 +212,7 @@ export default function AdminServicesPage() {
               />
               <button
                 onClick={startCreate}
-                className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
+                className="rounded-2xl bg-blue-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
               >
                 + Tạo mới
               </button>
@@ -246,7 +249,7 @@ export default function AdminServicesPage() {
             <div className="mt-4 space-y-4">
               <Row label="Loại dịch vụ">
                 <select
-                  value={form.serviceType || serviceType}
+                  value={serviceType}
                   onChange={(e) =>
                     setForm((p) => ({
                       ...p,
@@ -258,6 +261,7 @@ export default function AdminServicesPage() {
                   <option value="NIPT">NIPT</option>
                   <option value="ADN">ADN</option>
                   <option value="HPV">HPV</option>
+                  <option value="CELL">CELL</option>
                 </select>
               </Row>
 
@@ -515,6 +519,7 @@ function SelectPill(props: { value: string; onChange: (v: string) => void }) {
         <option value="NIPT">NIPT</option>
         <option value="ADN">ADN</option>
         <option value="HPV">HPV</option>
+        <option value="CELL">CELL</option>
       </select>
     </div>
   );

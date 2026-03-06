@@ -18,7 +18,7 @@ async function j<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export type Role = "admin" | "staff" | "superadmin";
+export type Role = "admin" | "staff" | "super_admin"| "accounting_admin";
 export type LoginResponse = {
   token: string;
   user: { id: string; name: string; email: string; role: Role };
@@ -91,6 +91,11 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(patch),
     }).then((r) => j<CaseRecord>(r)),
+
+  deleteCase: (id: string) =>
+    authFetch(`${API_BASE}/cases/${id}`, {
+      method: "DELETE",
+    }).then((r) => j<{ ok: boolean }>(r)),
 
   login: (payload: { email: string; password: string }) =>
     fetch(`${API_BASE}/auth/login`, {

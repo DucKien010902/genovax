@@ -5,6 +5,7 @@ import SidebarService from "@/components/SidebarService";
 import CasesHeader from "@/components/CasesHeader";
 import CasesTable from "@/components/CasesTable";
 import CaseDrawer from "@/components/CaseDrawer";
+import LoadingOverlay from "@/components/LoadingOverlay"; // ✅ Import Loading Component
 import { api } from "@/lib/api";
 import type {
   CaseDraft,
@@ -22,6 +23,8 @@ export default function CasesPage() {
   const [rows, setRows] = useState<CaseRecord[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [doctors, setDoctors] = useState<DoctorItem[]>([]);
+  
+  // State quản lý loading toàn cục cho trang này
   const [loading, setLoading] = useState(false);
 
   const [open, setOpen] = useState(false);
@@ -44,7 +47,6 @@ export default function CasesPage() {
 
       setOptions(opt);
       setRows(list.items);
-
       setServices(svc.items ?? []);
       setDoctors(doc.items ?? []);
     } finally {
@@ -55,6 +57,7 @@ export default function CasesPage() {
   useEffect(() => {
     void load();
   }, [serviceType]);
+  
   const onApplyFilters = () => void load();
 
   const onAdd = () => {
@@ -62,29 +65,22 @@ export default function CasesPage() {
       isDraft: true,
       serviceType,
       date: new Date().toISOString(),
-
       stt: 0,
       invoiceRequested: false,
       caseCode: "",
       patientName: "",
-
       lab: "",
-
-      // ✅ thêm để chọn dịch vụ và tính giá
       serviceId: null,
       serviceName: "",
       serviceCode: "",
       price: 0,
-
       detailNote: "",
-
       source: "",
       salesOwner: "",
       sampleCollector: "",
       doctorId: null,
       agentLevel: "",
       agentTierLabel: "",
-
       sentAt: null,
       paid: false,
       collectedAmount: 0,
@@ -93,17 +89,14 @@ export default function CasesPage() {
       receiveStatus: "",
       processStatus: "",
       feedbackStatus: "",
-
       glReturned: false,
       gxReceived: false,
       softFileDone: false,
       hardFileDone: false,
-
-      invoiceInfo: "", // (Có thể giữ lại hoặc xóa tùy bạn)
+      invoiceInfo: "",
       invoiceName: "",
       invoiceTaxCode: "",
       invoiceAddress: "",
-
       receivedAt: null,
       createdBy: "",
       updatedBy: "",
@@ -122,125 +115,119 @@ export default function CasesPage() {
     setOpen(false);
     setEditing(null);
   };
+
   function validateCaseDraft(d: CaseDraft) {
     const errs: string[] = [];
-
-    // ✅ bắt buộc chung
     if (!d.caseCode) errs.push("Thiếu mã Code.");
     if (!d.serviceType) errs.push("Thiếu loại dịch vụ (serviceType).");
     if (!d.patientName?.trim()) errs.push("Thiếu họ và tên khách hàng.");
     if (!d.source?.trim()) errs.push("Thiếu nguồn.");
-    // if (!d.lab?.trim()) errs.push("Thiếu Lab.");
     if (!d.salesOwner?.trim()) errs.push("Thiếu NVKD phụ trách.");
-    // if (!d.sampleCollector?.trim()) errs.push("Thiếu người thu mẫu.");
-
-    // ✅ dịch vụ + giá
     if (!d.serviceCode?.trim()) errs.push("Chưa chọn dịch vụ (mã).");
     if (!d.serviceName?.trim()) errs.push("Chưa có tên dịch vụ.");
     if (!d.collectedAmount || d.collectedAmount <= 0)
       errs.push("Tiền thu chưa được tính (giá = 0).");
-
-    // ✅ luồng xử lý
     if (!d.transferStatus?.trim()) errs.push("Thiếu trạng thái chuyển lab.");
     if (!d.receiveStatus?.trim()) errs.push("Thiếu trạng thái tiếp nhận.");
     if (!d.processStatus?.trim()) errs.push("Thiếu trạng thái xử lý.");
-    // if (!d.feedbackStatus?.trim()) errs.push("Thiếu trạng thái phản hồi.");
-
-    // ✅ ngày nhận (nếu bạn coi là bắt buộc)
     if (!d.receivedAt) errs.push("Chưa chọn ngày nhận mẫu.");
 
-    // ✅ nếu tick xuất hóa đơn thì bắt buộc invoiceInfo
     if (d.invoiceRequested) {
       if (!d.invoiceName?.trim()) errs.push("Xuất Hóa đơn: Thiếu Tên đơn vị.");
       if (!d.invoiceTaxCode?.trim()) errs.push("Xuất Hóa đơn: Thiếu Mã số thuế.");
       if (!d.invoiceAddress?.trim()) errs.push("Xuất Hóa đơn: Thiếu Địa chỉ.");
     }
-
-    // ✅ nếu muốn bắt caseCode bắt buộc thì bật dòng này
-    // if (!d.caseCode?.trim()) errs.push("Thiếu mã ca.");
-
     return errs;
   }
 
   const onSave = async (data: CaseDraft) => {
     const errs = validateCaseDraft(data);
     if (errs.length) {
-      // tạm thời dùng alert, sau bạn thay bằng toast UI
       alert("Không thể lưu vì thiếu thông tin:\n\n- " + errs.join("\n- "));
       return;
     }
 
-    if (data.isDraft) {
-      const created = await api.createCase(data);
-      setRows((prev) => [created, ...prev]);
+    // ✅ Thêm bật loading ở đây để khi gọi api lưu dữ liệu thì xoay vòng vòng
+    setLoading(true);
+    try {
+      if (data.isDraft) {
+        const created = await api.createCase(data);
+        setRows((prev) => [created, ...prev]);
+      } else if (data._id) {
+        const updated = await api.updateCase(data._id, data);
+        setRows((prev) => prev.map((x) => (x._id === updated._id ? updated : x)));
+      }
       setOpen(false);
       setEditing(null);
-      return;
-    }
-
-    if (data._id) {
-      const updated = await api.updateCase(data._id, data);
-      setRows((prev) => prev.map((x) => (x._id === updated._id ? updated : x)));
-      setOpen(false);
-      setEditing(null);
+    } catch (error:any) {
+      console.error("Lỗi khi lưu:", error);
+      alert(error?.message);
+    } finally {
+      // ✅ Tắt loading sau khi gọi API xong (dù thành công hay thất bại)
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-50 via-neutral-50 to-neutral-100">
-      <div className="flex">
-        <div className="sticky top-0 h-screen hidden lg:flex">
-          <SidebarService active={serviceType} onChange={setServiceType} />
+    <>
+      {/* ✅ Đặt Overlay Loading ra ngoài cùng để che toàn bộ màn hình */}
+      <LoadingOverlay isLoading={loading} />
+
+      <div className="min-h-screen bg-gradient-to-b from-neutral-50 via-neutral-50 to-neutral-100">
+        <div className="flex">
+          <div className="sticky top-0 h-screen hidden lg:flex">
+            <SidebarService active={serviceType} onChange={setServiceType} />
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="relative z-[20] hidden lg:block">
+              <CasesHeader
+                serviceType={serviceType}
+                q={q}
+                setQ={setQ}
+                from={from}
+                setFrom={setFrom}
+                to={to}
+                setTo={setTo}
+                loading={loading}
+                onAdd={onAdd}
+                onApply={onApplyFilters}
+              />
+            </div>
+
+            {/* MOBILE & TABLET HEADER */}
+            <div className="block lg:hidden">
+              <CasesHeaderMobile
+                serviceType={serviceType}
+                setServiceType={setServiceType}
+                q={q}
+                setQ={setQ}
+                from={from}
+                setFrom={setFrom}
+                to={to}
+                setTo={setTo}
+                loading={loading}
+                onAdd={onAdd}
+                onApply={onApplyFilters}
+              />
+            </div>
+
+            <div className="p-5 z-0">
+              <CasesTable rows={rows} loading={loading} onRowClick={onEdit} />
+            </div>
+          </div>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="hidden lg:block">
-            <CasesHeader
-              serviceType={serviceType}
-              q={q}
-              setQ={setQ}
-              from={from}
-              setFrom={setFrom}
-              to={to}
-              setTo={setTo}
-              loading={loading}
-              onAdd={onAdd}
-              onApply={onApplyFilters}
-            />
-          </div>
-
-          {/* MOBILE & TABLET HEADER (Hiện trên mọi màn hình bị ẩn Sidebar) */}
-          <div className="block lg:hidden">
-            <CasesHeaderMobile
-              serviceType={serviceType}
-              setServiceType={setServiceType}
-              q={q}
-              setQ={setQ}
-              from={from} // ✅ Truyền thêm from
-              setFrom={setFrom}
-              to={to}     // ✅ Truyền thêm to
-              setTo={setTo}
-              loading={loading}
-              onAdd={onAdd}
-              onApply={onApplyFilters}
-            />
-          </div>
-
-          <div className="p-5">
-            <CasesTable rows={rows} loading={loading} onRowClick={onEdit} />
-          </div>
-        </div>
+        <CaseDrawer
+          open={open}
+          data={editing}
+          options={options}
+          services={services}
+          doctors={doctors}
+          onClose={onCloseDrawer}
+          onSave={onSave}
+        />
       </div>
-
-      <CaseDrawer
-        open={open}
-        data={editing}
-        options={options}
-        services={services}
-        doctors={doctors}
-        onClose={onCloseDrawer}
-        onSave={onSave}
-      />
-    </div>
+    </>
   );
 }

@@ -25,6 +25,11 @@ const serviceMeta: Record<
     desc: "Tế bào / HPV / combo",
     pill: "bg-emerald-600 text-white",
   },
+  CELL: {
+    title: "CELL",
+    desc: "Tế bào / CELL / combo",
+    pill: "bg-orange-600 text-white",
+  },
 };
 
 export default function CasesHeader(props: {
@@ -210,7 +215,7 @@ export default function CasesHeader(props: {
               + Thêm ca
             </button>
             {/* ✅ Nút Xuất Excel + Dropdown */}
-            <div className="relative" ref={menuRef}>
+            <div className="relative z-50" ref={menuRef}>
               <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
                 disabled={isExporting}
@@ -221,7 +226,7 @@ export default function CasesHeader(props: {
 
               {/* Menu Dropdown */}
               {showExportMenu && !isExporting && (
-                <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/10 z-50">
+                <div className="z-50 absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/10 z-100">
                   <div className="text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">
                     Tùy chọn xuất
                   </div>

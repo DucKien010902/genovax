@@ -207,7 +207,7 @@ export default function AdminOptionsPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={load}
-                className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
+                className="rounded-2xl bg-blue-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
               >
                 Tải lại
               </button>
@@ -257,7 +257,7 @@ export default function AdminOptionsPage() {
                   />
                   <button
                     onClick={addKey}
-                    className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
+                    className="rounded-2xl bg-blue-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
                     title="Tạo"
                   >
                     +
@@ -280,7 +280,7 @@ export default function AdminOptionsPage() {
                   return (
                     <button
                       key={d.key}
-                      onClick={() => setActiveKey(d.key)}
+                      onClick={() => {setActiveKey(d.key);window.scrollTo({ top: 0, behavior: "smooth" });}}
                       className={cn(
                         "w-full rounded-3xl px-4 py-3 text-left transition",
                         "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60",
@@ -331,8 +331,8 @@ export default function AdminOptionsPage() {
           <div className="lg:col-span-2 rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
               <div>
-                <div className="text-lg font-extrabold text-neutral-900">
-                  Cấu hình Item
+                <div className="text-lg font-bold text-neutral-900">
+                  Giá trị lựa chọn
                 </div>
                 <div className="mt-1 text-xs text-neutral-500">
                   {active?.items?.length ?? 0} items • sort theo order tăng dần
@@ -385,7 +385,7 @@ export default function AdminOptionsPage() {
                   onChange={(e) =>
                     setNewItem((p) => ({ ...p, label: e.target.value }))
                   }
-                  placeholder="Nhãn (vd: Tỉnh Bắc Ninh)"
+                  placeholder="Tên của lựa chon"
                   className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
                 />
                 <input
@@ -393,7 +393,7 @@ export default function AdminOptionsPage() {
                   onChange={(e) =>
                     setNewItem((p) => ({ ...p, value: e.target.value }))
                   }
-                  placeholder="Giá trị lưu DB (vd: bacninh)"
+                  placeholder="Giá trị của lựa chọn"
                   className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200 font-mono"
                 />
                 <input
@@ -412,7 +412,7 @@ export default function AdminOptionsPage() {
                 <button
                   onClick={addItem}
                   disabled={!activeKey}
-                  className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 disabled:opacity-50 active:scale-[0.99]"
+                  className="rounded-2xl bg-blue-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 disabled:opacity-50 active:scale-[0.99]"
                 >
                   + Thêm
                 </button>
