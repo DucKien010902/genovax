@@ -13,7 +13,7 @@ const CaseSchema = new mongoose.Schema(
     stt: { type: Number, default: 0 },
     date: { type: Date, default: Date.now },
 
-    invoiceRequested: { type: Boolean, default: false },
+    
     caseCode: { type: String, default: "" },
     patientName: { type: String, default: "" },
 
@@ -29,7 +29,9 @@ const CaseSchema = new mongoose.Schema(
     price: { type: Number, default: 0 },
 
     paid: { type: Boolean, default: false },
+    paymentMethod: { type: String, default: "" },
     collectedAmount: { type: Number, default: 0 },
+    receivedAmount: { type: Number, default: 0 },
     costPrice: { type: Number, default: 0 },
 
     // workflow
@@ -52,11 +54,13 @@ const CaseSchema = new mongoose.Schema(
     softFileDone: { type: Boolean, default: false },
     hardFileDone: { type: Boolean, default: false },
 
-
-invoiceInfo: { type: String, default: "" },
-invoiceName: { type: String, default: "" },
-invoiceTaxCode: { type: String, default: "" },
-invoiceAddress: { type: String, default: "" },
+invoiceType: { type: String, enum: ["company", "personal"], default: "company" }, // Thêm loại HĐ
+    invoiceName: { type: String, default: "" }, // Tên Cty / Tên Cá nhân
+    invoiceTaxCode: { type: String, default: "" }, // Chỉ dùng cho Cty
+    invoiceIdCard: { type: String, default: "" }, // CCCD - Dùng cho Cá nhân
+    invoiceIssueDate: { type: String, default: "" }, // Ngày cấp - Dùng cho Cá nhân
+    invoiceIssuePlace: { type: String, default: "" }, // Nơi cấp - Dùng cho Cá nhân
+    invoiceAddress: { type: String, default: "" }, // Dùng chung
 
     createdBy: { type: String, default: "" },
     updatedBy: { type: String, default: "" },

@@ -28,10 +28,9 @@ const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || "http://localhost:3000")
   .filter(Boolean);
 
 const corsOptions = {
-  origin(origin, cb) {
-    if (!origin) return cb(null, true);
-    if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
-    return cb(new Error("Not allowed by CORS"));
+  origin: function (origin, callback) {
+    // Cho phép mọi origin (nếu có origin thì trả về true, không có - như Postman - cũng cho qua)
+    callback(null, true);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],

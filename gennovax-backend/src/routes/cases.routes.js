@@ -34,40 +34,62 @@ function parseVNDate(val, isEnd = false) {
 // ==============================
 router.get("/analytics", async (req, res, next) => {
   try {
-    const { serviceType, from = "", to = "", top = "10" } = req.query;
+    const { serviceType, month } = req.query; // month = "2024-05" hoặc "ALL"
 
-    const match = {};
-    if (serviceType) match.serviceType = String(serviceType);
+    // 1. Lọc theo Loại Dịch Vụ (Áp dụng cho toàn bộ dữ liệu)
+    const match1 = {};
+    if (serviceType) match1.serviceType = String(serviceType);
 
-    const fromD = toDateOrNull(from);
-    const toD = toDateOrNull(to);
-
-    // ✅ ĐỔI `date` THÀNH `receivedAt` ĐỂ LỌC CHUẨN
-    if (fromD || toD) {
-      match.receivedAt = {};
-      if (fromD) match.receivedAt.$gte = fromD;
-      if (toD) {
-        const end = new Date(toD);
-        end.setHours(23, 59, 59, 999);
-        match.receivedAt.$lte = end;
-      }
-    }
+    // 2. Lọc theo Tháng (Áp dụng cho KPI, Bảng nguồn, Bảng dịch vụ)
+    const monthFilter = (month && month !== "ALL") ? { ym: String(month) } : {};
 
     const sourceExpr = {
       $ifNull: [
         { $cond: [{ $eq: ["$source", ""] }, null, "$source"] },
-        "Unknown",
+        "Chưa xác định",
       ],
     };
 
-    const topN = Math.max(1, Math.min(50, parseInt(String(top || "10"), 10) || 10));
-
-    // Pipeline nhẹ nhàng hơn, không dùng $switch hay $dateFromString
     const [result] = await Case.aggregate([
-      { $match: match },
+      { $match: match1 },
+      // Tạo trường 'ym' (Year-Month) chuẩn múi giờ VN để phân nhóm và lọc
+      {
+        $addFields: {
+          ym: {
+            $dateToString: {
+              format: "%Y-%m",
+              date: "$receivedAt",
+              timezone: "Asia/Ho_Chi_Minh"
+            }
+          }
+        }
+      },
       {
         $facet: {
+          // --- A. BIỂU ĐỒ THEO THÁNG (Không bị lọc bởi monthFilter, luôn hiện đủ các tháng) ---
+          monthlyTrend: [
+            { $match: { ym: { $ne: null } } },
+            {
+              $group: {
+                _id: "$ym",
+                revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                cost: { $sum: { $ifNull: ["$costPrice", 0] } },
+                cases: { $sum: 1 }
+              }
+            },
+            {
+              $project: {
+                _id: 0, ym: "$_id", revenue: 1, cost: 1, cases: 1,
+                netRevenue: { $subtract: ["$revenue", "$cost"] }
+              }
+            },
+            { $sort: { ym: 1 } }
+          ],
+
+          // --- B. KPIs (Bị lọc bởi monthFilter) ---
+          // --- B. KPIs (Bị lọc bởi monthFilter) ---
           kpis: [
+            { $match: monthFilter },
             {
               $group: {
                 _id: null,
@@ -75,181 +97,87 @@ router.get("/analytics", async (req, res, next) => {
                 paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
                 totalRevenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
                 totalCost: { $sum: { $ifNull: ["$costPrice", 0] } },
-                totalListPrice: { $sum: { $ifNull: ["$price", 0] } },
-              },
+                // ✅ MỚI: Chỉ cộng (Doanh thu - Chi phí) cho những ca CÓ ĐÁNH DẤU ĐÃ THANH TOÁN (paid: true)
+                actualNetRevenue: {
+                  $sum: {
+                    $cond: [
+                      { $eq: ["$paid", true] },
+                      {
+                        $subtract: [
+                          { $ifNull: ["$collectedAmount", 0] },
+                          { $ifNull: ["$costPrice", 0] }
+                        ]
+                      },
+                      0
+                    ]
+                  }
+                }
+              }
             },
             {
               $project: {
-                _id: 0,
-                totalCases: 1,
-                paidCases: 1,
-                totalRevenue: 1,
+                _id: 0, 
+                totalCases: 1, 
+                paidCases: 1, 
+                totalRevenue: 1, 
                 totalCost: 1,
-                totalNetRevenue: { $subtract: ["$totalRevenue", "$totalCost"] },
-                totalListPrice: 1,
-                paidRate: {
-                  $cond: [
-                    { $gt: ["$totalCases", 0] },
-                    { $divide: ["$paidCases", "$totalCases"] },
-                    0,
-                  ],
-                },
-              },
-            },
+                actualNetRevenue: 1, // Lợi nhuận thực tế đã tính bên trên
+                totalNetRevenue: { $subtract: ["$totalRevenue", "$totalCost"] }, // Lợi nhuận dự kiến tổng
+                paidRate: { $cond: [{ $gt: ["$totalCases", 0] }, { $divide: ["$paidCases", "$totalCases"] }, 0] }
+              }
+            }
           ],
 
+          // --- C. BẢNG XẾP HẠNG NGUỒN (Bị lọc bởi monthFilter) ---
           bySource: [
+            { $match: monthFilter },
             {
               $group: {
                 _id: sourceExpr,
-                totalCases: { $sum: 1 },
-                paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
-                revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
-                cost: { $sum: { $ifNull: ["$costPrice", 0] } },
-                listPrice: { $sum: { $ifNull: ["$price", 0] } },
-              },
-            },
-            { $addFields: { source: "$_id" } },
-            {
-              $project: {
-                _id: 0,
-                source: 1,
-                totalCases: 1,
-                paidCases: 1,
-                revenue: 1,
-                cost: 1,
-                netRevenue: { $subtract: ["$revenue", "$cost"] },
-                listPrice: 1,
-                paidRate: {
-                  $cond: [
-                    { $gt: ["$totalCases", 0] },
-                    { $divide: ["$paidCases", "$totalCases"] },
-                    0,
-                  ],
-                },
-              },
-            },
-            { $sort: { netRevenue: -1, paidCases: -1, totalCases: -1 } },
-          ],
-
-          monthlyBySource: [
-            {
-              $group: {
-                _id: {
-                  // ✅ THÊM timezone: "Asia/Ho_Chi_Minh" VÀO ĐÂY
-                  ym: { 
-                    $dateToString: { 
-                      format: "%Y-%m", 
-                      date: "$receivedAt",
-                      timezone: "Asia/Ho_Chi_Minh" 
-                    } 
-                  }, 
-                  source: sourceExpr,
-                },
                 revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
                 cost: { $sum: { $ifNull: ["$costPrice", 0] } },
                 cases: { $sum: 1 },
-                paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
-              },
-            },
-            {
-              $project: {
-                _id: 0,
-                ym: "$_id.ym",
-                source: "$_id.source",
-                revenue: 1,
-                cost: 1,
-                netRevenue: { $subtract: ["$revenue", "$cost"] },
-                cases: 1,
-                paidCases: 1,
-              },
-            },
-            // Lọc bỏ những dữ liệu không ép ra được tháng (null) do receivedAt bị rỗng
-            { $match: { ym: { $ne: null } } },
-            { $sort: { ym: 1 } },
-          ],
-
-          topSources: [
-            {
-              $group: {
-                _id: sourceExpr,
-                revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
-                cost: { $sum: { $ifNull: ["$costPrice", 0] } },
-                paidCases: { $sum: { $cond: ["$paid", 1, 0] } },
-                totalCases: { $sum: 1 },
-              },
-            },
-            {
-              $project: {
-                revenue: 1,
-                cost: 1,
-                netRevenue: { $subtract: ["$revenue", "$cost"] },
-                paidCases: 1,
-                totalCases: 1,
+                paidCases: { $sum: { $cond: ["$paid", 1, 0] } }
               }
             },
-            { $sort: { netRevenue: -1 } },
-            { $limit: topN },
             {
               $project: {
-                _id: 0,
-                source: "$_id",
-                revenue: 1,
-                cost: 1,
-                netRevenue: 1,
-                paidCases: 1,
-                totalCases: 1,
-              },
+                _id: 0, source: "$_id", revenue: 1, cost: 1, cases: 1, paidCases: 1,
+                netRevenue: { $subtract: ["$revenue", "$cost"] },
+              }
             },
+            { $sort: { netRevenue: -1, cases: -1 } }
           ],
-        },
-      },
+
+          // --- D. BẢNG XẾP HẠNG DỊCH VỤ CHI TIẾT (Bị lọc bởi monthFilter) ---
+          byService: [
+            { $match: monthFilter },
+            {
+              $group: {
+                _id: { code: "$serviceCode", name: "$serviceName" },
+                revenue: { $sum: { $ifNull: ["$collectedAmount", 0] } },
+                cost: { $sum: { $ifNull: ["$costPrice", 0] } },
+                cases: { $sum: 1 }
+              }
+            },
+            {
+              $project: {
+                _id: 0, serviceCode: "$_id.code", serviceName: "$_id.name",
+                revenue: 1, cost: 1, cases: 1,
+                netRevenue: { $subtract: ["$revenue", "$cost"] }
+              }
+            },
+            { $sort: { netRevenue: -1, cases: -1 } }
+          ]
+        }
+      }
     ]);
 
-    const monthlyRaw = result?.monthlyBySource || [];
-    const allSources = Array.from(new Set(monthlyRaw.map((x) => x.source)));
-
-    const map = new Map();
-    for (const row of monthlyRaw) {
-      const key = row.ym;
-      if (!map.has(key))
-        map.set(key, { 
-            ym: key, 
-            totalRevenue: 0, 
-            totalCost: 0, 
-            totalNetRevenue: 0, 
-            totalCases: 0, 
-            paidCases: 0 
-        });
-      const obj = map.get(key);
-      
-      obj[row.source] = row.netRevenue;
-      obj.totalRevenue += row.revenue || 0;
-      obj.totalCost += row.cost || 0;
-      obj.totalNetRevenue += row.netRevenue || 0;
-      obj.totalCases += row.cases || 0;
-      obj.paidCases += row.paidCases || 0;
-    }
-    const monthly = Array.from(map.values()).sort((a, b) =>
-      String(a.ym).localeCompare(String(b.ym))
-    );
-
     res.json({
-      kpis:
-        result?.kpis?.[0] || {
-          totalCases: 0,
-          paidCases: 0,
-          totalRevenue: 0,
-          totalCost: 0,
-          totalNetRevenue: 0,
-          totalListPrice: 0,
-          paidRate: 0,
-        },
+      kpis: result?.kpis?.[0] || { totalCases: 0, paidCases: 0, totalRevenue: 0, totalCost: 0, totalNetRevenue: 0, paidRate: 0 },
+      monthlyTrend: result?.monthlyTrend || [],
       bySource: result?.bySource || [],
-      topSources: result?.topSources || [],
-      monthly,
-      monthlyDetails: monthlyRaw, 
-      sourceKeys: allSources,
+      byService: result?.byService || [],
     });
   } catch (e) {
     next(e);
