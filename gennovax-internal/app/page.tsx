@@ -25,7 +25,7 @@ export default function CasesPage() {
   const [rows, setRows] = useState<CaseRecord[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [doctors, setDoctors] = useState<DoctorItem[]>([]);
-  
+
   // State quản lý loading toàn cục cho trang này
   const [loading, setLoading] = useState(false);
 
@@ -59,7 +59,7 @@ export default function CasesPage() {
   useEffect(() => {
     void load();
   }, [serviceType]);
-  
+
   const onApplyFilters = () => void load();
 
   const onAdd = () => {
@@ -68,7 +68,6 @@ export default function CasesPage() {
       serviceType,
       date: new Date().toISOString(),
       stt: 0,
-      invoiceRequested: false,
       caseCode: "",
       patientName: "",
       lab: "",
@@ -95,7 +94,6 @@ export default function CasesPage() {
       gxReceived: false,
       softFileDone: false,
       hardFileDone: false,
-      invoiceInfo: "",
       invoiceName: "",
       invoiceTaxCode: "",
       invoiceAddress: "",
@@ -133,12 +131,6 @@ export default function CasesPage() {
     if (!d.receiveStatus?.trim()) errs.push("Thiếu trạng thái tiếp nhận.");
     if (!d.processStatus?.trim()) errs.push("Thiếu trạng thái xử lý.");
     if (!d.receivedAt) errs.push("Chưa chọn ngày nhận mẫu.");
-
-    if (d.invoiceRequested) {
-      if (!d.invoiceName?.trim()) errs.push("Xuất Hóa đơn: Thiếu Tên đơn vị.");
-      if (!d.invoiceTaxCode?.trim()) errs.push("Xuất Hóa đơn: Thiếu Mã số thuế.");
-      if (!d.invoiceAddress?.trim()) errs.push("Xuất Hóa đơn: Thiếu Địa chỉ.");
-    }
     return errs;
   }
 
@@ -164,11 +156,13 @@ export default function CasesPage() {
         setRows((prev) => [created, ...prev]);
       } else if (data._id) {
         const updated = await api.updateCase(data._id, payload);
-        setRows((prev) => prev.map((x) => (x._id === updated._id ? updated : x)));
+        setRows((prev) =>
+          prev.map((x) => (x._id === updated._id ? updated : x)),
+        );
       }
       setOpen(false);
       setEditing(null);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Lỗi khi lưu:", error);
       alert(error?.message);
     } finally {

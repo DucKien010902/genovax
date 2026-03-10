@@ -4,7 +4,17 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { BarChart3, Stethoscope, Activity, Settings, UserCog, LogOut, User, Calculator, FileText } from "lucide-react";
+import {
+  BarChart3,
+  Stethoscope,
+  Activity,
+  Settings,
+  UserCog,
+  LogOut,
+  User,
+  Calculator,
+  FileText,
+} from "lucide-react";
 
 function cn(...a: Array<string | false | null | undefined>) {
   return a.filter(Boolean).join(" ");
@@ -45,7 +55,9 @@ export default function AppHeader() {
   if (!token || !user) return null;
 
   // ✅ Kích hoạt menu Quản trị cho cả 3 quyền này
-  const showAdminMenu = ["admin", "super_admin", "accounting_admin"].includes(user.role);
+  const showAdminMenu = ["admin", "super_admin", "accounting_admin"].includes(
+    user.role,
+  );
 
   // ✅ CẤU HÌNH MENU LINH HOẠT THEO QUYỀN (Thêm allowedRoles)
   const allAdminItems = [
@@ -82,7 +94,7 @@ export default function AppHeader() {
       desc: "Danh mục quản lý tài khoản",
       href: "/admin/users",
       icon: UserCog,
-      allowedRoles: ["super_admin", "admin", ], // Tuỳ bạn, hôm qua đã phân quyền ở page này
+      allowedRoles: ["super_admin", "admin"], // Tuỳ bạn, hôm qua đã phân quyền ở page này
     },
     // --- CÁC TAB CHỜ PHÁT TRIỂN DÀNH CHO KẾ TOÁN ---
     {
@@ -90,19 +102,21 @@ export default function AppHeader() {
       desc: "Theo dõi công nợ (Đang phát triển)",
       href: "#", // Dấu # để chặn chuyển trang
       icon: Calculator,
-      allowedRoles: [ "accounting_admin"],
+      allowedRoles: ["accounting_admin"],
     },
     {
       label: "Báo cáo chi phí",
       desc: "Chi phí vận hành (Đang phát triển)",
       href: "#",
       icon: FileText,
-      allowedRoles: [ "accounting_admin"],
+      allowedRoles: ["accounting_admin"],
     },
   ];
 
   // ✅ Lọc ra những menu mà user hiện tại được phép xem
-  const visibleAdminItems = allAdminItems.filter(item => item.allowedRoles.includes(user.role));
+  const visibleAdminItems = allAdminItems.filter((item) =>
+    item.allowedRoles.includes(user.role),
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-black/10">
@@ -119,28 +133,28 @@ export default function AppHeader() {
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
         <div className="relative flex h-20 lg:h-24 items-center justify-between gap-3">
           {/* Left */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push("/")}>
-            <div className="h-12 w-12 rounded-2xl shadow-sm overflow-hidden ring-1 ring-black/10 bg-white/70">
-              <Image
-                src="/icon.png"
-                alt="Logo"
-                width={60}
-                height={60}
-                className="h-full w-full object-cover"
-                priority
-              />
-            </div>
+          <div
+            className="flex items-center gap-3 cursor-pointer"
+            onClick={() => router.push("/")}
+          >
+            <div className="h-14 w-14 rounded-2xl shadow-sm overflow-hidden ring-1 ring-blue-300 bg-white/70 flex items-center justify-center">
+  <img
+    src="https://res.cloudinary.com/da6f4dmql/image/upload/v1773128350/genbio1-1_hf0tjp.png"
+    alt="Logo"
+    className="h-full w-full object-contain p-1.5"
+  />
+</div>
 
             <div className="leading-tight">
-              <div className="text-sm font-semibold text-neutral-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.6)]">
-                Quản lý mẫu thu
+              <div className="text-sm font-semibold text-purple-800 drop-shadow-[0_1px_0_rgba(255,255,255,0.6)]">
+                Danh mục quản lý
               </div>
-              <div className="text-xs text-neutral-600 drop-shadow-[0_1px_0_rgba(255,255,255,0.55)]">
-                Gennovax Internal
+              <div className="text-xs text-purple-800 drop-shadow-[0_1px_0_rgba(255,255,255,0.55)]">
+                Gennovax Lab
               </div>
             </div>
 
-            <span className="hidden md:inline-flex items-center rounded-full bg-emerald-50/90 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200 shadow-sm">
+            <span className="hidden md:inline-flex items-center rounded-full bg-emerald-50/90 px-2.5 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-200 shadow-sm">
               Online
             </span>
           </div>
@@ -168,7 +182,6 @@ export default function AppHeader() {
 
           {/* Right */}
           <div className="flex items-center gap-2">
-            
             {/* ✅ Menu Quản trị chỉ hiển thị khi có quyền */}
             {showAdminMenu && (
               <div className="relative ">
@@ -182,15 +195,21 @@ export default function AppHeader() {
                     openAdmin && "ring-4 ring-indigo-200",
                   )}
                 >
-                  <span className={`inline-flex h-9 w-9 items-center justify-center rounded-2xl text-white font-black shadow-sm ${user.role === 'accounting_admin' ? 'bg-gradient-to-br from-amber-400 to-orange-500' : 'bg-gradient-to-br from-indigo-500 to-purple-600'}`}>
-                    {user.role === 'accounting_admin' ? 'K' : 'A'}
+                  <span
+                    className={`inline-flex h-9 w-9 items-center justify-center rounded-2xl text-white font-black shadow-sm ${user.role === "accounting_admin" ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gradient-to-br from-indigo-500 to-purple-600"}`}
+                  >
+                    {user.role === "accounting_admin" ? "K" : "A"}
                   </span>
                   <div className="hidden sm:block text-left">
                     <div className="text-sm font-semibold text-neutral-900">
-                      {user.role === 'accounting_admin' ? 'Nghiệp vụ' : 'Quản trị'}
+                      {user.role === "accounting_admin"
+                        ? "Nghiệp vụ"
+                        : "Quản trị"}
                     </div>
                     <div className="text-xs text-neutral-600">
-                      {user.role === 'accounting_admin' ? 'Công cụ Kế toán' : 'Admin tools'}
+                      {user.role === "accounting_admin"
+                        ? "Công cụ Kế toán"
+                        : "Admin tools"}
                     </div>
                   </div>
                   <span className="text-neutral-600">▾</span>
@@ -210,14 +229,20 @@ export default function AppHeader() {
                         <div className="pointer-events-none absolute -bottom-10 -left-10 h-24 w-24 rounded-full bg-fuchsia-400/15 blur-2xl" />
 
                         <div className="flex items-start gap-3">
-                          <div className={`grid h-11 w-11 place-items-center rounded-2xl text-white shadow-sm ring-1 ring-white/30 ${user.role === 'accounting_admin' ? 'bg-gradient-to-br from-amber-400 to-orange-500' : 'bg-gradient-to-br from-indigo-600 to-fuchsia-600'}`}>
-                            <span className="text-sm font-black">{user.role === 'accounting_admin' ? 'K' : 'A'}</span>
+                          <div
+                            className={`grid h-11 w-11 place-items-center rounded-2xl text-white shadow-sm ring-1 ring-white/30 ${user.role === "accounting_admin" ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gradient-to-br from-indigo-600 to-fuchsia-600"}`}
+                          >
+                            <span className="text-sm font-black">
+                              {user.role === "accounting_admin" ? "K" : "A"}
+                            </span>
                           </div>
 
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <div className="text-base font-bold tracking-tight text-neutral-900">
-                                {user.role === 'accounting_admin' ? 'Nghiệp vụ Kế toán' : 'Khu vực quản trị'}
+                                {user.role === "accounting_admin"
+                                  ? "Nghiệp vụ Kế toán"
+                                  : "Khu vực quản trị"}
                               </div>
                             </div>
                             <div className="mt-1 text-xs text-neutral-600">
@@ -232,7 +257,8 @@ export default function AppHeader() {
                       <div className="p-2">
                         {/* ✅ Chỉ map những item đã được filter */}
                         {visibleAdminItems.map((it) => {
-                          const active = pathname?.startsWith(it.href) && it.href !== "#";
+                          const active =
+                            pathname?.startsWith(it.href) && it.href !== "#";
 
                           return (
                             <button
@@ -273,19 +299,28 @@ export default function AppHeader() {
                                   )}
                                 >
                                   {it.icon && (
-                                    <it.icon 
+                                    <it.icon
                                       className={cn(
-                                        "w-5 h-5 transition-transform duration-200", 
-                                        active ? "scale-110" : "group-hover:scale-110"
-                                      )} 
-                                      strokeWidth={active ? 2.5 : 2} 
+                                        "w-5 h-5 transition-transform duration-200",
+                                        active
+                                          ? "scale-110"
+                                          : "group-hover:scale-110",
+                                      )}
+                                      strokeWidth={active ? 2.5 : 2}
                                     />
                                   )}
                                 </div>
 
                                 <div className="min-w-0 flex-1">
                                   <div className="flex items-center justify-between gap-2">
-                                    <div className={cn("truncate text-sm font-semibold", it.href === "#" ? "text-neutral-500" : "text-neutral-900")}>
+                                    <div
+                                      className={cn(
+                                        "truncate text-sm font-semibold",
+                                        it.href === "#"
+                                          ? "text-neutral-500"
+                                          : "text-neutral-900",
+                                      )}
+                                    >
                                       {it.label}
                                     </div>
 
@@ -295,7 +330,8 @@ export default function AppHeader() {
                                         active
                                           ? "bg-indigo-100 text-indigo-700 ring-indigo-200"
                                           : "bg-neutral-100 text-neutral-600 ring-black/5 group-hover:bg-indigo-50 group-hover:text-indigo-700 group-hover:ring-indigo-200",
-                                        it.href === "#" && "bg-amber-50 text-amber-600 ring-amber-200 group-hover:bg-amber-100 group-hover:text-amber-700"
+                                        it.href === "#" &&
+                                          "bg-amber-50 text-amber-600 ring-amber-200 group-hover:bg-amber-100 group-hover:text-amber-700",
                                       )}
                                     >
                                       {it.href === "#" ? "Soon" : "Tools"}

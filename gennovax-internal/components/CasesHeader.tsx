@@ -49,7 +49,7 @@ export default function CasesHeader(props: {
   // --- EXCEL EXPORT STATE ---
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [exportMonth, setExportMonth] = useState(
-    new Date().toISOString().slice(0, 7) // Mặc định là tháng hiện tại (YYYY-MM)
+    new Date().toISOString().slice(0, 7), // Mặc định là tháng hiện tại (YYYY-MM)
   );
   const [isExporting, setIsExporting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -77,7 +77,15 @@ export default function CasesHeader(props: {
         // Ngày đầu tháng (00:00:00)
         fetchFrom = new Date(Number(year), Number(month) - 1, 1).toISOString();
         // Ngày cuối tháng (23:59:59)
-        fetchTo = new Date(Number(year), Number(month), 0, 23, 59, 59, 999).toISOString();
+        fetchTo = new Date(
+          Number(year),
+          Number(month),
+          0,
+          23,
+          59,
+          59,
+          999,
+        ).toISOString();
       }
 
       // Gọi API lấy dữ liệu (limit 10000 để đảm bảo lấy hết thay vì chỉ 1 trang)
@@ -85,7 +93,7 @@ export default function CasesHeader(props: {
         serviceType: "",
         from: fetchFrom,
         to: fetchTo,
-        limit: 10000, 
+        limit: 10000,
       });
 
       const data = res.items;
@@ -97,8 +105,10 @@ export default function CasesHeader(props: {
 
       // MAP DATA SANG TÊN CỘT TIẾNG VIỆT
       const excelData = data.map((item, index) => ({
-        "STT": item.stt || index + 1,
-        "Ngày tạo": item.date ? new Date(item.date).toLocaleDateString("vi-VN") : "",
+        STT: item.stt || index + 1,
+        "Ngày tạo": item.date
+          ? new Date(item.date).toLocaleDateString("vi-VN")
+          : "",
         "Mã ca": item.caseCode || "",
         "Tên bệnh nhân": item.patientName || "",
         "Nhóm dịch vụ": item.serviceType || "",
@@ -115,9 +125,12 @@ export default function CasesHeader(props: {
         "Trạng thái tiếp nhận": item.receiveStatus || "",
         "Trạng thái xử lý": item.processStatus || "",
         "Trạng thái phản hồi": item.feedbackStatus || "",
-        "Ngày nhận mẫu": item.receivedAt ? new Date(item.receivedAt).toLocaleString("vi-VN") : "",
-        "Hẹn trả KQ": item.dueDate ? new Date(item.dueDate).toLocaleString("vi-VN") : "",
-        "Yêu cầu xuất HĐ": item.invoiceRequested ? "Có" : "Không",
+        "Ngày nhận mẫu": item.receivedAt
+          ? new Date(item.receivedAt).toLocaleString("vi-VN")
+          : "",
+        "Hẹn trả KQ": item.dueDate
+          ? new Date(item.dueDate).toLocaleString("vi-VN")
+          : "",
         "Tên công ty (HĐ)": item.invoiceName || "",
         "Mã số thuế (HĐ)": item.invoiceTaxCode || "",
         "Địa chỉ (HĐ)": item.invoiceAddress || "",
@@ -128,10 +141,9 @@ export default function CasesHeader(props: {
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachCa");
-      
+
       const fileName = `TongHop_TatCaDichVu_${type === "month" ? exportMonth : "TatCa"}_${new Date().getTime()}.xlsx`;
       XLSX.writeFile(workbook, fileName);
-
     } catch (error) {
       console.error("Lỗi xuất Excel:", error);
       alert("Có lỗi xảy ra khi xuất file Excel. Vui lòng thử lại!");
@@ -202,7 +214,7 @@ export default function CasesHeader(props: {
             {/* Nút Lọc */}
             <button
               onClick={props.onApply}
-              className="rounded-2xl bg-neutral-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
+              className="rounded-2xl bg-blue-900 cursor-pointer px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
               disabled={props.loading}
             >
               {props.loading ? "..." : "Lọc"}
@@ -210,7 +222,7 @@ export default function CasesHeader(props: {
 
             <button
               onClick={props.onAdd}
-              className="rounded-2xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
+              className="rounded-2xl cursor-pointer bg-gradient-to-r from-indigo-600 to-fuchsia-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
             >
               + Thêm ca
             </button>
@@ -226,11 +238,11 @@ export default function CasesHeader(props: {
 
               {/* Menu Dropdown */}
               {showExportMenu && !isExporting && (
-                <div className="z-50 absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/10 z-100">
+                <div className="z-50 cursor-pointer absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/10 z-100">
                   <div className="text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">
                     Tùy chọn xuất
                   </div>
-                  
+
                   {/* Xuất Tất cả */}
                   <button
                     onClick={() => handleExport("all")}
@@ -246,8 +258,8 @@ export default function CasesHeader(props: {
                     <label className="block text-[11px] font-semibold text-neutral-500 mb-1">
                       Hoặc chọn tháng:
                     </label>
-                    <input 
-                      type="month" 
+                    <input
+                      type="month"
                       value={exportMonth}
                       onChange={(e) => setExportMonth(e.target.value)}
                       className="w-full rounded-xl border border-black/10 bg-neutral-50 px-3 py-1.5 text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-emerald-200 mb-2"

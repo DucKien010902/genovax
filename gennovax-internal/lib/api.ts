@@ -18,7 +18,7 @@ async function j<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export type Role = "admin" | "staff" | "super_admin"| "accounting_admin";
+export type Role = "admin" | "staff" | "super_admin" | "accounting_admin";
 export type LoginResponse = {
   token: string;
   user: { id: string; name: string; email: string; role: Role };
@@ -110,7 +110,11 @@ export const api = {
     }).then((r) => j<LoginResponse["user"]>(r)),
 
   // --- Profile ---
-  updateProfile: (payload: { name?: string; oldPassword?: string; newPassword?: string }) =>
+  updateProfile: (payload: {
+    name?: string;
+    oldPassword?: string;
+    newPassword?: string;
+  }) =>
     authFetch(`${API_BASE}/auth/profile`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -124,14 +128,18 @@ export const api = {
     }),
 
   // --- Users Admin ---
-  usersList: () => authFetch(`${API_BASE}/users`).then(r => j<{items: any[]}>(r)),
+  usersList: () =>
+    authFetch(`${API_BASE}/users`).then((r) => j<{ items: any[] }>(r)),
   userCreate: (payload: any) =>
     authFetch(`${API_BASE}/users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }).then(async (r) => {
-      if (!r.ok) throw new Error((await r.json().catch(()=>({}))).message || "Lỗi tạo User");
+      if (!r.ok)
+        throw new Error(
+          (await r.json().catch(() => ({}))).message || "Lỗi tạo User",
+        );
       return r.json();
     }),
   userUpdate: (id: string, patch: any) =>
@@ -139,9 +147,11 @@ export const api = {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(patch),
-    }).then(r => j<any>(r)),
+    }).then((r) => j<any>(r)),
   userDelete: (id: string) =>
-    authFetch(`${API_BASE}/users/${id}`, { method: "DELETE" }).then(r => j<{ok: true}>(r)),
+    authFetch(`${API_BASE}/users/${id}`, { method: "DELETE" }).then((r) =>
+      j<{ ok: true }>(r),
+    ),
   // --- Doctors CRUD ---
   doctorCreate: (payload: any) =>
     authFetch(`${API_BASE}/doctors`, {
@@ -186,6 +196,10 @@ export const api = {
   optionsAdminList: () =>
     authFetch(`${API_BASE}/meta/options-admin`).then((r) =>
       j<{ items: any[] }>(r),
+    ),
+  optionsAdminGetKey: (key: string) =>
+    authFetch(`${API_BASE}/meta/options-admin/${encodeURIComponent(key)}`).then(
+      (r) => j<any>(r),
     ),
 
   optionsAdminAddItem: (key: string, payload: any) =>
@@ -239,46 +253,22 @@ export const api = {
 };
 export const caseApi = {
   analytics: (params: {
-    serviceType?: ServiceType | ""; // "" hoặc undefined => ALL
-    from?: string;
-    to?: string;
-    top?: number;
+    serviceType?: string;
+    month?: string; // "YYYY-MM" hoặc "ALL"
   }) => {
-    const qs = new URLSearchParams(
-      Object.entries(params).reduce(
-        (acc, [k, v]) => {
-          if (v !== undefined && v !== "" && v !== null) acc[k] = String(v);
-          return acc;
-        },
-        {} as Record<string, string>,
-      ),
-    ).toString();
+    const qs = new URLSearchParams();
+    if (params.serviceType) qs.append("serviceType", params.serviceType);
+    if (params.month) qs.append("month", params.month);
 
-    return authFetch(`${API_BASE}/cases/analytics?${qs}`).then((r) =>
+    return authFetch(`${API_BASE}/cases/analytics?${qs.toString()}`).then((r) =>
       j<{
         kpis: {
-          totalCases: number;
-          paidCases: number;
-          totalRevenue: number;
-          totalListPrice: number;
-          paidRate: number;
+          totalCases: number; paidCases: number; totalRevenue: number;
+          totalCost: number; totalNetRevenue: number; paidRate: number;
         };
-        bySource: Array<{
-          source: string;
-          totalCases: number;
-          paidCases: number;
-          revenue: number;
-          listPrice: number;
-          paidRate: number;
-        }>;
-        topSources: Array<{
-          source: string;
-          revenue: number;
-          paidCases: number;
-          totalCases: number;
-        }>;
-        monthly: Array<Record<string, any>>; // {ym, totalRevenue, ...sourceKeys}
-        sourceKeys: string[];
+        monthlyTrend: Array<{ ym: string; revenue: number; cost: number; netRevenue: number; cases: number }>;
+        bySource: Array<{ source: string; revenue: number; cost: number; netRevenue: number; cases: number }>;
+        byService: Array<{ serviceName: string; serviceCode: string; revenue: number; cost: number; netRevenue: number; cases: number }>;
       }>(r),
     );
   },

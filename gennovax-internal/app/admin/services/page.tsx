@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 type PriceByLevel = { level: string; price: number };
 type Service = {
   _id: string;
-  serviceType: "NIPT" | "ADN" | "HPV"|"CELL";
+  serviceType: "NIPT" | "ADN" | "HPV" | "CELL";
   serviceCode: string;
   name: string;
   turnaroundHours?: number;
@@ -41,6 +42,9 @@ export default function AdminServicesPage() {
   const [serviceType, setServiceType] = useState<Service["serviceType"]>("ADN");
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [agentLevels, setAgentLevels] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<Partial<Service>>({
@@ -76,6 +80,19 @@ export default function AdminServicesPage() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceType]);
+  useEffect(() => {
+    // Lấy danh sách Level từ cấu hình Options
+    api
+      .optionsAdminGetKey("agentLevels")
+      .then((res) => {
+        if (res && res.items) {
+          setAgentLevels(res.items);
+        }
+      })
+      .catch((err) => {
+        console.warn("Chưa có cấu hình agentLevels hoặc lỗi load:", err);
+      });
+  }, []);
 
   const startCreate = () => {
     setEditingId(null);
@@ -84,7 +101,8 @@ export default function AdminServicesPage() {
       serviceCode: "",
       name: "",
       turnaroundHours: 48,
-      pricesByLevel: [{ level: "cap3", price: 0 }],
+      // Lấy level đầu tiên làm mặc định, nếu không có thì fallback về "cap3"
+      pricesByLevel: [{ level: agentLevels[0]?.value || "cap3", price: 0 }],
       isActive: true,
     });
   };
@@ -150,7 +168,10 @@ export default function AdminServicesPage() {
   const addPriceRow = () => {
     setForm((p) => ({
       ...p,
-      pricesByLevel: [...(p.pricesByLevel || []), { level: "", price: 0 }],
+      pricesByLevel: [
+        ...(p.pricesByLevel || []),
+        { level: agentLevels[0]?.value || "", price: 0 },
+      ],
     }));
   };
 
@@ -174,6 +195,7 @@ export default function AdminServicesPage() {
 
   return (
     <div className="min-h-[calc(100vh-96px)] bg-gradient-to-b from-neutral-50 to-white">
+      {loading && <LoadingOverlay isLoading={loading}/>}
       <div className="mx-auto max-w-[1400px] p-4 sm:p-6 space-y-6">
         {/* Header */}
         <div className="rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
@@ -201,8 +223,6 @@ export default function AdminServicesPage() {
                   </span>
                 )}
               </div>
-
-              
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -232,7 +252,7 @@ export default function AdminServicesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm font-bold text-neutral-900">
-                  {editingId ? "Sửa Service" : "Tạo Service"}
+                  {editingId ? "Sửa Service" : "Tạo dịch vụ mới"}
                 </div>
                 <div className="mt-1 text-xs text-neutral-500">
                   Điền thông tin cơ bản + bảng giá theo level
@@ -310,14 +330,22 @@ export default function AdminServicesPage() {
                 <div className="mt-3 space-y-2">
                   {(form.pricesByLevel || []).map((x, idx) => (
                     <div key={idx} className="grid grid-cols-12 gap-2">
-                      <input
+                      <select
                         value={x.level}
                         onChange={(e) =>
                           updatePriceRow(idx, { level: e.target.value })
                         }
-                        placeholder="cap1"
                         className="col-span-5 rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
-                      />
+                      >
+                        <option value="" disabled>
+                          Chọn cấp đại lý
+                        </option>
+                        {agentLevels.map((lvl) => (
+                          <option key={lvl.value} value={lvl.value}>
+                            {lvl.label} ({lvl.value})
+                          </option>
+                        ))}
+                      </select>
                       <input
                         value={String(x.price)}
                         onChange={(e) =>
@@ -365,9 +393,9 @@ export default function AdminServicesPage() {
             <div className="mt-5 flex gap-2">
               <button
                 onClick={submit}
-                className="flex-1 rounded-2xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-95 active:scale-[0.99]"
+                className="flex-1 cursor-pointer rounded-2xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-95 active:scale-[0.99]"
               >
-                {editingId ? "Lưu thay đổi" : "Tạo Service"}
+                {editingId ? "Lưu thay đổi" : "Tạo dịch vụ mới"}
               </button>
 
               <button
@@ -477,13 +505,13 @@ export default function AdminServicesPage() {
                           <div className="flex shrink-0 gap-2">
                             <button
                               onClick={() => startEdit(s)}
-                              className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-xs font-bold text-neutral-900 shadow-sm hover:bg-neutral-50"
+                              className="rounded-2xl cursor-pointer border border-black/10 bg-white px-3 py-2 text-xs font-bold text-neutral-900 shadow-sm hover:bg-neutral-50"
                             >
                               Sửa
                             </button>
                             <button
                               onClick={() => del(s._id)}
-                              className="rounded-2xl bg-rose-600 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-rose-500 active:scale-[0.99]"
+                              className="rounded-2xl cursor-pointer bg-rose-600 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-rose-500 active:scale-[0.99]"
                             >
                               Xoá
                             </button>

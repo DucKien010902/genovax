@@ -50,17 +50,17 @@ export default function LoginPage() {
       {/* Content Container */}
       <div className="relative z-10 w-full max-w-5xl">
         <div className="grid grid-cols-1 overflow-hidden rounded-[2.5rem] border border-white/40 bg-white/80 shadow-2xl shadow-purple-900/30 backdrop-blur-2xl md:grid-cols-2">
-          
           {/* CỘT TRÁI: VISUAL - Gradient Xanh Tím Hồng */}
           <div className="relative hidden md:flex flex-col justify-between overflow-hidden p-12 text-white">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 opacity-95" />
-            
+
             <div className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-white/20 blur-3xl" />
             <div className="absolute -bottom-32 -right-32 h-80 w-80 rounded-full bg-blue-400/30 blur-3xl" />
 
             <div className="relative z-10">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-black tracking-widest text-white/90 backdrop-blur-md border border-white/20 uppercase">
-                Gennovax <span className="text-white/50">•</span> Case Management
+                Gennovax <span className="text-white/50">•</span> Case
+                Management
               </div>
 
               <div className="mt-12 flex items-center gap-5">
@@ -68,8 +68,12 @@ export default function LoginPage() {
                   <Lock className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <div className="text-lg font-bold text-white">Secure Access</div>
-                  <div className="text-sm font-medium text-white/70">Bảo mật & Phân quyền nội bộ</div>
+                  <div className="text-lg font-bold text-white">
+                    Secure Access
+                  </div>
+                  <div className="text-sm font-medium text-white/70">
+                    Bảo mật & Phân quyền nội bộ
+                  </div>
                 </div>
               </div>
 
@@ -81,7 +85,8 @@ export default function LoginPage() {
               </h1>
 
               <div className="mt-8 rounded-2xl bg-black/10 px-5 py-4 text-sm font-medium leading-relaxed text-white/90 backdrop-blur-sm border border-white/10">
-                💡 Dữ liệu được mã hóa và đồng bộ theo thời gian thực, đảm bảo luồng công việc giữa các phòng ban luôn thông suốt.
+                💡 Dữ liệu được mã hóa và đồng bộ theo thời gian thực, đảm bảo
+                luồng công việc giữa các phòng ban luôn thông suốt.
               </div>
             </div>
 
@@ -123,7 +128,7 @@ export default function LoginPage() {
                     className={cn(
                       // Thay px-4 bằng pl-11 pr-4 để chừa chỗ cho icon bên trái
                       "w-full rounded-2xl border border-slate-200 bg-white/80 py-3.5 pl-11 pr-4 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400",
-                      "focus:border-purple-400 focus:bg-white focus:ring-4 focus:ring-purple-500/10"
+                      "focus:border-purple-400 focus:bg-white focus:ring-4 focus:ring-purple-500/10",
                     )}
                   />
                 </div>
@@ -140,7 +145,11 @@ export default function LoginPage() {
                     onClick={() => setShow((v) => !v)}
                     className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-bold text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
                   >
-                    {show ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    {show ? (
+                      <EyeOff className="w-3.5 h-3.5" />
+                    ) : (
+                      <Eye className="w-3.5 h-3.5" />
+                    )}
                     {show ? "Ẩn" : "Hiện"}
                   </button>
                 </div>
@@ -155,7 +164,7 @@ export default function LoginPage() {
                     className={cn(
                       // Thay px-4 bằng pl-11 pr-4 để chừa chỗ cho icon bên trái
                       "w-full rounded-2xl border border-slate-200 bg-white/80 py-3.5 pl-11 pr-4 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400",
-                      "focus:border-purple-400 focus:bg-white focus:ring-4 focus:ring-purple-500/10"
+                      "focus:border-purple-400 focus:bg-white focus:ring-4 focus:ring-purple-500/10",
                     )}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !loading) onSubmit();
@@ -178,7 +187,10 @@ export default function LoginPage() {
               </button>
 
               <div className="mt-6 text-center">
-                <a href="#" className="text-xs font-bold text-slate-400 hover:text-purple-600 transition-colors">
+                <a
+                  href="#"
+                  className="text-xs font-bold text-slate-400 hover:text-purple-600 transition-colors"
+                >
                   Quên mật khẩu?
                 </a>
               </div>

@@ -18,9 +18,15 @@ export type ServiceItem = {
 export type DoctorItem = {
   _id: string;
   fullName: string;
-  agentLevel: string; // cap1/cap2/cap3
-  salesOwner?: string; // ✅ Thêm vào đây
+  // XÓA: agentLevel?: string;
+  agentLevels?: string[];        // Mảng các cấp
+  defaultAgentLevel?: string;    // Cấp mặc định
+  salesOwner?: string;
   agentTierLabel?: string;
+  phone?: string;
+  address?: string;
+  note?: string;
+  isActive?: boolean;
 };
 export type ChangeLog = {
   name: string;
@@ -34,7 +40,7 @@ export type CaseRecord = {
   stt: number;
   date: string;
 
-  invoiceRequested: boolean;
+
   caseCode: string;
   patientName: string;
 
@@ -57,6 +63,7 @@ export type CaseRecord = {
 
   sentAt: string | null;
   paid: boolean;
+  paymentMethod?: string; // Thêm dòng này
   receivedAt: string | null;
   dueDate: string | null;
 
@@ -65,6 +72,7 @@ export type CaseRecord = {
   agentTierLabel: string;
 
   collectedAmount: number;
+  receivedAmount?: number;
   costPrice?: number;
 
   transferStatus: string;
@@ -78,10 +86,13 @@ export type CaseRecord = {
   hardFileDone: boolean;
 
   // ✅ CẬP NHẬT THÔNG TIN HÓA ĐƠN
-  invoiceInfo?: string; // Vẫn có thể giữ lại nếu DB cũ còn dữ liệu, nên để optional
-  invoiceName?: string; // Tên đơn vị / công ty
-  invoiceTaxCode?: string; // Mã số thuế
-  invoiceAddress?: string; // Địa chỉ xuất HĐ
+  invoiceType?: "company" | "personal"; // Thêm dòng này
+  invoiceName?: string; 
+  invoiceTaxCode?: string; 
+  invoiceIdCard?: string; // Thêm CCCD
+  invoiceIssueDate?: string; // Thêm Ngày cấp
+  invoiceIssuePlace?: string; // Thêm Nơi cấp
+  invoiceAddress?: string;
 
   createdBy: string;
   updatedBy: string;

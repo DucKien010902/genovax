@@ -3,16 +3,29 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { Plus, Trash2, ShieldAlert, ShieldCheck, User as UserIcon, X, Calculator } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  ShieldAlert,
+  ShieldCheck,
+  User as UserIcon,
+  X,
+  Calculator,
+} from "lucide-react";
 
 export default function AdminUsersPage() {
   const { user } = useAuth(); // Dùng thông tin user.role để phân quyền chi tiết
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // States cho Form Thêm (Bỏ form sửa)
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "staff" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "staff",
+  });
 
   const load = async () => {
     setLoading(true);
@@ -21,11 +34,11 @@ export default function AdminUsersPage() {
       let fetchedUsers = res.items || [];
 
       // 1. Khai báo trọng số phân cấp
-      const roleWeight: Record<string, number> = { 
-        super_admin: 3, 
-        admin: 2, 
-        accounting_admin: 2, 
-        staff: 1 
+      const roleWeight: Record<string, number> = {
+        super_admin: 3,
+        admin: 2,
+        accounting_admin: 2,
+        staff: 1,
       };
 
       // Lấy trọng số của user đang đăng nhập
@@ -40,7 +53,10 @@ export default function AdminUsersPage() {
       });
 
       // 3. Sắp xếp ưu tiên hiển thị từ cao xuống thấp
-      fetchedUsers.sort((a: any, b: any) => (roleWeight[b.role] || 0) - (roleWeight[a.role] || 0));
+      fetchedUsers.sort(
+        (a: any, b: any) =>
+          (roleWeight[b.role] || 0) - (roleWeight[a.role] || 0),
+      );
 
       setUsers(fetchedUsers);
     } catch (e) {
@@ -51,7 +67,11 @@ export default function AdminUsersPage() {
   };
 
   useEffect(() => {
-    if (user?.role === "admin" || user?.role === "super_admin" || user?.role === "accounting_admin") {
+    if (
+      user?.role === "admin" ||
+      user?.role === "super_admin" ||
+      user?.role === "accounting_admin"
+    ) {
       load();
     }
   }, [user]);
@@ -67,7 +87,10 @@ export default function AdminUsersPage() {
 
     // Admin hoặc Kế toán chỉ có quyền tác động vào nhân viên (staff)
     // Các quyền ngang hàng nhau (Admin và Kế toán) sẽ KHÔNG được quản lý chéo nhau
-    if ((user?.role === "admin" || user?.role === "accounting_admin") && targetUser.role === "staff") {
+    if (
+      (user?.role === "admin" || user?.role === "accounting_admin") &&
+      targetUser.role === "staff"
+    ) {
       return true;
     }
 
@@ -93,7 +116,7 @@ export default function AdminUsersPage() {
   const toggleActive = async (u: any) => {
     if (u._id === user?.id) return alert("Không thể tự khóa chính mình!");
     if (!canManage(u)) return alert("Bạn không có quyền khóa tài khoản này!");
-    
+
     try {
       await api.userUpdate(u._id, { isActive: !u.isActive });
       load();
@@ -105,8 +128,13 @@ export default function AdminUsersPage() {
   const handleDelete = async (u: any) => {
     if (u._id === user?.id) return alert("Không thể tự xóa chính mình!");
     if (!canManage(u)) return alert("Bạn không có quyền xóa tài khoản này!");
-    if (!window.confirm(`Chắc chắn xóa tài khoản: ${u.name}? Hành động này không thể hoàn tác.`)) return;
-    
+    if (
+      !window.confirm(
+        `Chắc chắn xóa tài khoản: ${u.name}? Hành động này không thể hoàn tác.`,
+      )
+    )
+      return;
+
     try {
       await api.userDelete(u._id);
       load();
@@ -116,13 +144,20 @@ export default function AdminUsersPage() {
   };
 
   // Bảo vệ route: Admin, Kế toán, Super Admin mới được xem
-  if (!user || !["admin", "super_admin", "accounting_admin"].includes(user.role)) {
+  if (
+    !user ||
+    !["admin", "super_admin", "accounting_admin"].includes(user.role)
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50 p-6">
         <div className="text-center">
           <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto mb-3" />
-          <h2 className="text-xl font-bold text-neutral-800">Truy cập bị từ chối</h2>
-          <p className="text-neutral-500 mt-1">Bạn không có quyền truy cập trang quản trị này.</p>
+          <h2 className="text-xl font-bold text-neutral-800">
+            Truy cập bị từ chối
+          </h2>
+          <p className="text-neutral-500 mt-1">
+            Bạn không có quyền truy cập trang quản trị này.
+          </p>
         </div>
       </div>
     );
@@ -131,7 +166,6 @@ export default function AdminUsersPage() {
   return (
     <div className="min-h-screen bg-neutral-50 p-4 sm:p-8">
       <div className="mx-auto max-w-6xl">
-        
         {/* HEADER */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
@@ -140,10 +174,12 @@ export default function AdminUsersPage() {
               Quản lý Tài Khoản
             </h1>
             <p className="text-sm text-neutral-500 mt-1">
-              {user.role === "super_admin" ? "Toàn quyền quản lý hệ thống." : "Quản lý và cấp quyền cho Nhân viên."}
+              {user.role === "super_admin"
+                ? "Toàn quyền quản lý hệ thống."
+                : "Quản lý và cấp quyền cho Nhân viên."}
             </p>
           </div>
-          <button 
+          <button
             onClick={openAdd}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-indigo-200 hover:bg-indigo-700 hover:shadow-lg transition-all active:scale-[0.98]"
           >
@@ -168,7 +204,10 @@ export default function AdminUsersPage() {
               <tbody className="divide-y divide-black/5">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-neutral-400 font-medium">
+                    <td
+                      colSpan={5}
+                      className="p-8 text-center text-neutral-400 font-medium"
+                    >
                       <div className="flex flex-col items-center justify-center gap-3">
                         <div className="w-6 h-6 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
                         Đang tải danh sách...
@@ -176,22 +215,37 @@ export default function AdminUsersPage() {
                     </td>
                   </tr>
                 ) : users.length === 0 ? (
-                  <tr><td colSpan={5} className="p-8 text-center text-neutral-400">Không có dữ liệu</td></tr>
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="p-8 text-center text-neutral-400"
+                    >
+                      Không có dữ liệu
+                    </td>
+                  </tr>
                 ) : (
-                  users.map(u => {
+                  users.map((u) => {
                     const isMe = u._id === user?.id;
                     const hasManagePermission = canManage(u);
-                    
+
                     return (
-                      <tr key={u._id} className={`transition-colors hover:bg-neutral-50/50 ${isMe ? 'bg-indigo-50/30' : ''}`}>
+                      <tr
+                        key={u._id}
+                        className={`transition-colors hover:bg-neutral-50/50 ${isMe ? "bg-indigo-50/30" : ""}`}
+                      >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm ${
-                              u.role === 'super_admin' ? 'bg-gradient-to-br from-fuchsia-500 to-purple-600' :
-                              u.role === 'admin' ? 'bg-gradient-to-br from-rose-400 to-red-500' :
-                              u.role === 'accounting_admin' ? 'bg-gradient-to-br from-amber-400 to-orange-500' :
-                              'bg-gradient-to-br from-blue-400 to-indigo-500'
-                            }`}>
+                            <div
+                              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm ${
+                                u.role === "super_admin"
+                                  ? "bg-gradient-to-br from-fuchsia-500 to-purple-600"
+                                  : u.role === "admin"
+                                    ? "bg-gradient-to-br from-rose-400 to-red-500"
+                                    : u.role === "accounting_admin"
+                                      ? "bg-gradient-to-br from-amber-400 to-orange-500"
+                                      : "bg-gradient-to-br from-blue-400 to-indigo-500"
+                              }`}
+                            >
                               {u.name.charAt(0).toUpperCase()}
                             </div>
                             <div className="font-bold text-neutral-900 flex items-center gap-2">
@@ -204,44 +258,67 @@ export default function AdminUsersPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-neutral-600 font-medium">{u.email}</td>
+                        <td className="px-6 py-4 text-neutral-600 font-medium">
+                          {u.email}
+                        </td>
                         <td className="px-6 py-4 text-center">
-                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                            u.role === 'super_admin' ? 'bg-fuchsia-100 text-fuchsia-700 border border-fuchsia-200' : 
-                            u.role === 'admin' ? 'bg-rose-100 text-rose-700 border border-rose-200' : 
-                            u.role === 'accounting_admin' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-                            'bg-blue-50 text-blue-600 border border-blue-100'
-                          }`}>
-                            {u.role === 'super_admin' && <ShieldAlert className="w-3 h-3" />}
-                            {u.role === 'admin' && <ShieldCheck className="w-3 h-3" />}
-                            {u.role === 'accounting_admin' && <Calculator className="w-3 h-3" />}
-                            {u.role === 'staff' && <UserIcon className="w-3 h-3" />}
-                            {u.role === 'accounting_admin' ? 'Kế Toán' : u.role}
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                              u.role === "super_admin"
+                                ? "bg-fuchsia-100 text-fuchsia-700 border border-fuchsia-200"
+                                : u.role === "admin"
+                                  ? "bg-rose-100 text-rose-700 border border-rose-200"
+                                  : u.role === "accounting_admin"
+                                    ? "bg-amber-50 text-amber-700 border border-amber-200"
+                                    : "bg-blue-50 text-blue-600 border border-blue-100"
+                            }`}
+                          >
+                            {u.role === "super_admin" && (
+                              <ShieldAlert className="w-3 h-3" />
+                            )}
+                            {u.role === "admin" && (
+                              <ShieldCheck className="w-3 h-3" />
+                            )}
+                            {u.role === "accounting_admin" && (
+                              <Calculator className="w-3 h-3" />
+                            )}
+                            {u.role === "staff" && (
+                              <UserIcon className="w-3 h-3" />
+                            )}
+                            {u.role === "accounting_admin" ? "Kế Toán" : u.role}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-center">
                           {/* Nút Toggle Switch */}
-                          <button 
+                          <button
                             disabled={!hasManagePermission}
                             onClick={() => toggleActive(u)}
                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${
-                              u.isActive ? 'bg-emerald-500' : 'bg-neutral-300'
-                            } ${!hasManagePermission ? 'opacity-40 cursor-not-allowed grayscale' : 'cursor-pointer hover:shadow-md'}`}
-                            title={!hasManagePermission ? "Không có quyền khóa/mở" : "Bật/Tắt trạng thái"}
+                              u.isActive ? "bg-emerald-500" : "bg-neutral-300"
+                            } ${!hasManagePermission ? "opacity-40 cursor-not-allowed grayscale" : "cursor-pointer hover:shadow-md"}`}
+                            title={
+                              !hasManagePermission
+                                ? "Không có quyền khóa/mở"
+                                : "Bật/Tắt trạng thái"
+                            }
                           >
-                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ease-in-out ${
-                              u.isActive ? 'translate-x-6' : 'translate-x-1'
-                            }`} />
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ease-in-out ${
+                                u.isActive ? "translate-x-6" : "translate-x-1"
+                              }`}
+                            />
                           </button>
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
                             {/* ĐÃ BỎ NÚT SỬA */}
-                            <button 
+                            <button
                               disabled={!hasManagePermission}
-                              onClick={() => handleDelete(u)} 
+                              onClick={() => handleDelete(u)}
                               className={`p-2 rounded-xl transition-all ${
-                                !hasManagePermission ? 'text-neutral-300 cursor-not-allowed' : 'text-rose-500 hover:bg-rose-50 hover:scale-105'
+                                !hasManagePermission
+                                  ? "text-neutral-300 cursor-not-allowed"
+                                  : "text-rose-500 hover:bg-rose-50 hover:scale-105"
                               }`}
                               title="Xóa tài khoản"
                             >
@@ -267,26 +344,35 @@ export default function AdminUsersPage() {
               <h3 className="text-xl font-bold text-neutral-900">
                 Tạo Tài Khoản Mới
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-1.5 bg-neutral-100 text-neutral-500 hover:text-neutral-800 hover:bg-neutral-200 rounded-full transition-colors">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="p-1.5 bg-neutral-100 text-neutral-500 hover:text-neutral-800 hover:bg-neutral-200 rounded-full transition-colors"
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            
+
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-neutral-600 mb-1.5 uppercase tracking-wide">Tên hiển thị</label>
-                <input 
-                  value={form.name} onChange={e => setForm({...form, name: e.target.value})} 
-                  className="w-full rounded-xl border border-black/10 bg-neutral-50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all" 
+                <label className="block text-xs font-bold text-neutral-600 mb-1.5 uppercase tracking-wide">
+                  Tên hiển thị
+                </label>
+                <input
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full rounded-xl border border-black/10 bg-neutral-50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                   placeholder="VD: Nguyễn Văn A"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-xs font-bold text-neutral-600 mb-1.5 uppercase tracking-wide">Email đăng nhập</label>
-                <input 
-                  value={form.email} onChange={e => setForm({...form, email: e.target.value})} 
-                  className="w-full rounded-xl border border-black/10 bg-neutral-50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all" 
+                <label className="block text-xs font-bold text-neutral-600 mb-1.5 uppercase tracking-wide">
+                  Email đăng nhập
+                </label>
+                <input
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full rounded-xl border border-black/10 bg-neutral-50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                   placeholder="admin@gennovax.vn"
                 />
               </div>
@@ -295,20 +381,26 @@ export default function AdminUsersPage() {
                 <label className="block text-xs font-bold text-neutral-600 mb-1.5 uppercase tracking-wide">
                   Mật khẩu
                 </label>
-                <input 
-                  type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} 
-                  className="w-full rounded-xl border border-black/10 bg-neutral-50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all" 
+                <input
+                  type="password"
+                  value={form.password}
+                  onChange={(e) =>
+                    setForm({ ...form, password: e.target.value })
+                  }
+                  className="w-full rounded-xl border border-black/10 bg-neutral-50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                   placeholder="••••••••"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-neutral-600 mb-1.5 uppercase tracking-wide">Vai trò</label>
-                <select 
-                  value={form.role} 
-                  onChange={e => setForm({...form, role: e.target.value})} 
+                <label className="block text-xs font-bold text-neutral-600 mb-1.5 uppercase tracking-wide">
+                  Vai trò
+                </label>
+                <select
+                  value={form.role}
+                  onChange={(e) => setForm({ ...form, role: e.target.value })}
                   // Khóa chọn role nếu không phải Super Admin
-                  disabled={user?.role !== 'super_admin'} 
+                  disabled={user?.role !== "super_admin"}
                   className="w-full rounded-xl border border-black/10 bg-neutral-50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all disabled:bg-neutral-100 disabled:text-neutral-500 disabled:cursor-not-allowed"
                 >
                   <option value="staff">Nhân viên (Staff)</option>
@@ -316,12 +408,14 @@ export default function AdminUsersPage() {
                   {user?.role === "super_admin" && (
                     <>
                       <option value="admin">Quản trị viên (Admin)</option>
-                      <option value="accounting_admin">Kế toán (Accounting Admin)</option>
+                      <option value="accounting_admin">
+                        Kế toán (Accounting Admin)
+                      </option>
                       <option value="super_admin">Super Admin</option>
                     </>
                   )}
                 </select>
-                {user?.role !== 'super_admin' && (
+                {user?.role !== "super_admin" && (
                   <p className="mt-1 text-[11px] text-amber-600 font-medium">
                     * Bạn chỉ có quyền cấp tài khoản Nhân viên.
                   </p>
@@ -330,11 +424,14 @@ export default function AdminUsersPage() {
             </div>
 
             <div className="mt-8 flex gap-3">
-              <button onClick={() => setIsModalOpen(false)} className="flex-1 rounded-xl bg-neutral-100 py-3 text-sm font-bold text-neutral-600 hover:bg-neutral-200 hover:text-neutral-800 transition-colors">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="flex-1 rounded-xl bg-neutral-100 py-3 text-sm font-bold text-neutral-600 hover:bg-neutral-200 hover:text-neutral-800 transition-colors"
+              >
                 Hủy bỏ
               </button>
-              <button 
-                onClick={handleSave} 
+              <button
+                onClick={handleSave}
                 disabled={!form.name || !form.email || !form.password}
                 className="flex-1 rounded-xl bg-indigo-600 py-3 text-sm font-bold text-white hover:bg-indigo-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >

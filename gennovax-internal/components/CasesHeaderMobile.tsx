@@ -24,7 +24,7 @@ export default function CasesHeaderMobile(props: MobileHeaderProps) {
   // --- EXCEL EXPORT STATE ---
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [exportMonth, setExportMonth] = useState(
-    new Date().toISOString().slice(0, 7)
+    new Date().toISOString().slice(0, 7),
   );
   const [isExporting, setIsExporting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,15 @@ export default function CasesHeaderMobile(props: MobileHeaderProps) {
       if (type === "month" && exportMonth) {
         const [year, month] = exportMonth.split("-");
         fetchFrom = new Date(Number(year), Number(month) - 1, 1).toISOString();
-        fetchTo = new Date(Number(year), Number(month), 0, 23, 59, 59, 999).toISOString();
+        fetchTo = new Date(
+          Number(year),
+          Number(month),
+          0,
+          23,
+          59,
+          59,
+          999,
+        ).toISOString();
       }
 
       const res = await api.cases({
@@ -65,8 +73,10 @@ export default function CasesHeaderMobile(props: MobileHeaderProps) {
       }
 
       const excelData = data.map((item: any, index: number) => ({
-        "STT": item.stt || index + 1,
-        "Ngày tạo": item.date ? new Date(item.date).toLocaleDateString("vi-VN") : "",
+        STT: item.stt || index + 1,
+        "Ngày tạo": item.date
+          ? new Date(item.date).toLocaleDateString("vi-VN")
+          : "",
         "Mã ca": item.caseCode || "",
         "Tên bệnh nhân": item.patientName || "",
         "Nhóm dịch vụ": item.serviceType || "",
@@ -83,8 +93,12 @@ export default function CasesHeaderMobile(props: MobileHeaderProps) {
         "Trạng thái tiếp nhận": item.receiveStatus || "",
         "Trạng thái xử lý": item.processStatus || "",
         "Trạng thái phản hồi": item.feedbackStatus || "",
-        "Ngày nhận mẫu": item.receivedAt ? new Date(item.receivedAt).toLocaleString("vi-VN") : "",
-        "Hẹn trả KQ": item.dueDate ? new Date(item.dueDate).toLocaleString("vi-VN") : "",
+        "Ngày nhận mẫu": item.receivedAt
+          ? new Date(item.receivedAt).toLocaleString("vi-VN")
+          : "",
+        "Hẹn trả KQ": item.dueDate
+          ? new Date(item.dueDate).toLocaleString("vi-VN")
+          : "",
         "Yêu cầu xuất HĐ": item.invoiceRequested ? "Có" : "Không",
         "Tên công ty (HĐ)": item.invoiceName || "",
         "Mã số thuế (HĐ)": item.invoiceTaxCode || "",
@@ -95,10 +109,9 @@ export default function CasesHeaderMobile(props: MobileHeaderProps) {
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachCa");
-      
+
       const fileName = `TongHop_TatCaDichVu_${type === "month" ? exportMonth : "TatCa"}_${new Date().getTime()}.xlsx`;
       XLSX.writeFile(workbook, fileName);
-
     } catch (error) {
       console.error("Lỗi xuất Excel:", error);
       alert("Có lỗi xảy ra khi xuất file Excel. Vui lòng thử lại!");
@@ -112,12 +125,12 @@ export default function CasesHeaderMobile(props: MobileHeaderProps) {
     { label: "NIPT", value: "NIPT" },
     { label: "ADN", value: "ADN" },
     { label: "HPV", value: "HPV" },
+    { label: "CELL", value: "CELL" },
   ];
 
   return (
     <div className="border-b bg-white/95 backdrop-blur sticky top-0 z-40 shadow-sm">
       <div className="flex flex-col gap-3 px-4 py-3">
-        
         {/* HÀNG 1: Tiêu đề & Cụm nút Thao tác */}
         <div className="flex items-center justify-between">
           <div className="flex-1">
@@ -151,9 +164,11 @@ export default function CasesHeaderMobile(props: MobileHeaderProps) {
                 </button>
                 <div className="my-2 border-t border-black/5"></div>
                 <div className="px-3">
-                  <label className="block text-[11px] font-semibold text-neutral-500 mb-1">Xuất theo tháng:</label>
-                  <input 
-                    type="month" 
+                  <label className="block text-[11px] font-semibold text-neutral-500 mb-1">
+                    Xuất theo tháng:
+                  </label>
+                  <input
+                    type="month"
                     value={exportMonth}
                     onChange={(e) => setExportMonth(e.target.value)}
                     className="w-full rounded-xl border border-black/10 bg-neutral-50 px-3 py-1.5 text-sm outline-none mb-2"
@@ -237,7 +252,6 @@ export default function CasesHeaderMobile(props: MobileHeaderProps) {
             {props.loading ? "..." : "Lọc"}
           </button>
         </div> */}
-        
       </div>
     </div>
   );

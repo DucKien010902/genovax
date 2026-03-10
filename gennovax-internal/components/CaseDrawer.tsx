@@ -8,7 +8,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import type { CaseDraft, OptionsMap, ServiceItem,DoctorItem} from "@/lib/types";
+import type {
+  CaseDraft,
+  OptionsMap,
+  ServiceItem,
+  DoctorItem,
+} from "@/lib/types";
 import SingleDatePicker from "./DatePicker";
 import { useAuth } from "@/lib/auth";
 
@@ -158,17 +163,20 @@ function Field({
 }) {
   // 1. Kiểm tra xem label có chứa chuỗi "(*)" hay không
   const isRequired = label.includes("*");
-  
+
   // 2. Xóa chuỗi "(*)" ra khỏi label gốc để tên trường hiển thị sạch sẽ
-  
 
   return (
     <div className="min-w-0">
       <div className="mb-1 text-[11px] font-semibold text-neutral-500">
         {/* 3. Nếu là trường bắt buộc thì render thêm dấu * màu đỏ (rose-500) */}
         {isRequired ? (
-          <span className="ml-1 text-[11px] font-bold text-red-500">{label}</span>
-        ):label}
+          <span className="ml-1 text-[11px] font-bold text-red-500">
+            {label}
+          </span>
+        ) : (
+          label
+        )}
       </div>
       {children}
     </div>
@@ -261,7 +269,7 @@ export default function CaseDrawer({
 }) {
   const { user, token, logout } = useAuth();
   const isAccountingAdmin = user?.role === "accounting_admin";
-  
+
   // 1. Khai báo các state cơ bản
   const [form, setForm] = useState<CaseDraft | null>(data);
   const [sampleCount, setSampleCount] = useState(1);
@@ -271,9 +279,19 @@ export default function CaseDrawer({
   const isNewCase = !data?._id; // Thay _id bằng trường ID thực tế của database nếu khác
 
   // 3. ĐỒNG BỘ DATA: Cập nhật form và các cờ trạng thái mỗi khi mở ca
+  // 3. ĐỒNG BỘ DATA: Cập nhật form và các cờ trạng thái mỗi khi mở ca
   useEffect(() => {
-    setForm(data);
-    
+    // ✅ FIX LỖI PAYMENT METHOD: Bơm luôn giá trị mặc định cho ca cũ nếu đang bị thiếu
+    if (data) {
+      const clonedData = { ...data };
+      if (clonedData.paid && !clonedData.paymentMethod) {
+        clonedData.paymentMethod = "Chuyển khoản"; // Tự động gán nếu đã thanh toán mà chưa có method
+      }
+      setForm(clonedData);
+    } else {
+      setForm(null);
+    }
+
     if (data && data._id) {
       // ✅ CA CŨ: Bật cờ chỉnh tay (true) để CHẶN useEffect tự động tính giá ghi đè
       setCollectedAmountManual(true);
@@ -290,6 +308,7 @@ export default function CaseDrawer({
     setForm((prev) => (prev ? { ...prev, ...patch } : prev));
 
   // ===== selected service =====
+  // ===== selected service =====
   const selectedService = useMemo(() => {
     if (!form) return null;
     if (form.serviceCode) {
@@ -298,21 +317,48 @@ export default function CaseDrawer({
     return null;
   }, [form, services]);
 
-  // ===== derived agent from API =====
+  // ✅ 1. Lấy ra danh sách các cấp hợp lệ của riêng Nguồn (Doctor) đang chọn
+  const availableLevelsForSource = useMemo(() => {
+    if (!form?.source) return [];
+    const doc = doctors.find(d => d.fullName === form.source);
+    let levels = doc?.agentLevels || [];
+    if (levels.length === 0) levels = ["cap3"]; // Fallback nếu chưa có cấp nào
+
+    const allAgentLevels = opt("agentLevels");
+    return levels.map(lvl => {
+      const found = allAgentLevels.find(x => x.value === lvl);
+      return {
+        label: found ? found.label : lvl, // Lấy label đẹp (VD: "Đại lý Cấp 1")
+        value: lvl
+      };
+    });
+  }, [form?.source, doctors, opt]);
+
+  // ✅ 2. Cập nhật lại logic lấy Cấp hiện tại (Ưu tiên cấp được chọn trong form)
   const agent = useMemo(() => {
     if (!form || !form.source) return { level: "", label: "" };
-    
-    const foundDoc = doctors.find((d) => d.fullName === form.source);
-    
-    if (foundDoc) {
-      return { 
-        level: foundDoc.agentLevel || "cap3", 
-        label: foundDoc.agentTierLabel || "Cấp 3" 
+
+    // Dùng cấp đang được lưu trong form
+    if (form.agentLevel) {
+      return {
+        level: form.agentLevel,
+        label: form.agentTierLabel || "",
       };
     }
-    
+
+    // Nếu form chưa có, fallback về mặc định của Doctor
+    const foundDoc = doctors.find((d) => d.fullName === form.source);
+    if (foundDoc) {
+      return {
+        level: foundDoc.defaultAgentLevel || (foundDoc.agentLevels?.[0]) || "cap3",
+        label: foundDoc.agentTierLabel || "Cấp 3",
+      };
+    }
+
     return { level: "", label: "" };
-  }, [form?.source, doctors]);
+  }, [form?.source, form?.agentLevel, form?.agentTierLabel, doctors]);
+
+  // ===== suggested price =====
 
   // ===== suggested price =====
   const suggestedPrice = useMemo(() => {
@@ -322,19 +368,19 @@ export default function CaseDrawer({
     );
     return found?.price ?? 0;
   }, [selectedService?.serviceCode, agent.level]);
-  
+
   // ===== compute price realtime -> set collectedAmount =====
   useEffect(() => {
     if (!form) return;
-    
+
     if (!selectedService || !agent.level) {
       if (!collectedAmountManual && (form.collectedAmount ?? 0) !== 0) {
         set({ collectedAmount: 0 });
       }
       return;
     }
-    
-    // ✅ 4. Tự động tính giá = Giá đề xuất * Số lượng mẫu 
+
+    // ✅ 4. Tự động tính giá = Giá đề xuất * Số lượng mẫu
     // Chỉ chạy vào đây khi mở ca mới hoặc khi người dùng cố tình ấn nút Reset
     if (!collectedAmountManual) {
       const autoPrice = suggestedPrice * sampleCount;
@@ -349,7 +395,7 @@ export default function CaseDrawer({
     collectedAmountManual,
     sampleCount, // Thêm sampleCount vào dependency để tính lại khi đổi số mẫu
   ]);
-  
+
   // ===== compute due date realtime =====
   useEffect(() => {
     if (!form) return;
@@ -552,7 +598,7 @@ export default function CaseDrawer({
                 />
 
                 <button
-                  className="rounded-xl px-3 py-2 text-[12px] text-black font-bold ring-1 ring-black/10 hover:bg-neutral-50"
+                  className="cursor-pointer rounded-xl px-3 py-2 text-[12px] text-black font-bold ring-1 ring-black/10 hover:bg-neutral-50"
                   onClick={onClose}
                 >
                   Đóng
@@ -587,37 +633,61 @@ export default function CaseDrawer({
                     />
                   </Field>
 
-                  <Field label="Lab">
-                    <Select
-                      value={form.lab}
-                      onChange={(v) => set({ lab: v })}
-                      items={opt("labs")}
-                      tone="emerald"
-                    />
-                  </Field>
+                  
 
                   <Field label="* Nguồn">
                     <Select
                       value={form.source}
                       onChange={(v) => {
-                        // Tìm Doctor/Nguồn vừa chọn
-                        const selectedDoc = doctors.find(d => d.fullName === v);
-                        
-                        // Lấy NVKD từ DB (nếu bạn đã thêm field), tạm thời dùng map cũ nếu chưa có
-                        const owner = (selectedDoc as any)?.salesOwner || SOURCE_TO_SALES_OWNER[v] || "";
-                        
+                        const selectedDoc = doctors.find(
+                          (d) => d.fullName === v,
+                        );
+
+                        const owner =
+                          (selectedDoc as any)?.salesOwner ||
+                          SOURCE_TO_SALES_OWNER[v] ||
+                          "";
+
+                        // ✅ Tự động tìm cấp mặc định của Nguồn vừa chọn
+                        let defaultLevel = "cap3";
+                        if (selectedDoc) {
+                          if (selectedDoc.defaultAgentLevel) {
+                            defaultLevel = selectedDoc.defaultAgentLevel;
+                          } else if (selectedDoc.agentLevels && selectedDoc.agentLevels.length > 0) {
+                            defaultLevel = selectedDoc.agentLevels[0];
+                          }
+                        }
+
                         set({
                           source: v,
-                          doctorId: selectedDoc?._id || null, // ✅ Lưu ID của nguồn vào DB
+                          doctorId: selectedDoc?._id || null,
                           ...(owner ? { salesOwner: owner } : {}),
+                          agentLevel: defaultLevel, // <- Điền luôn cấp mặc định vào ca
+                          agentTierLabel: selectedDoc?.agentTierLabel || "",
                         });
+                        
+                        // Bật lại auto giá để giá cập nhật theo nguồn mới
+                        setCollectedAmountManual(false); 
                       }}
-                      // ✅ Biến danh sách API thành danh sách cho dropdown
                       items={doctors.map((d) => ({
                         label: d.fullName,
                         value: d.fullName,
                       }))}
                       tone="amber"
+                    />
+                  </Field>
+
+                  {/* ✅ THÊM TRƯỜNG CHỌN CẤP ĐẠI LÝ (Chỉ hiện các cấp nguồn này sở hữu) */}
+                  <Field label="* Cấp áp dụng">
+                    <Select
+                      value={form.agentLevel || ""}
+                      onChange={(v) => {
+                        set({ agentLevel: v });
+                        // Bật lại tính giá tự động để form nhảy số tiền ứng với cấp mới
+                        setCollectedAmountManual(false); 
+                      }}
+                      items={availableLevelsForSource}
+                      tone="emerald"
                     />
                   </Field>
 
@@ -627,6 +697,14 @@ export default function CaseDrawer({
                       onChange={(v) => set({ salesOwner: v })}
                       items={opt("salesOwners")}
                       tone="blue"
+                    />
+                  </Field>
+                  <Field label="Lab">
+                    <Select
+                      value={form.lab}
+                      onChange={(v) => set({ lab: v })}
+                      items={opt("labs")}
+                      tone="emerald"
                     />
                   </Field>
 
@@ -697,71 +775,100 @@ export default function CaseDrawer({
                           Thông tin doanh thu {isAccountingAdmin && "& Giá vốn"}
                         </div>
                         <span className="rounded-full bg-white/70 px-2 py-1 text-[11px] font-bold text-emerald-800 ring-1 ring-black/5">
-                          {collectedAmountManual ? "chỉnh tay" : "auto"}
+                          {collectedAmountManual ? "chỉnh tay" : "tự động"}
                         </span>
                       </div>
 
                       <div className="flex flex-col gap-3">
-  {/* Block 1: Tiền thu (Doanh thu) - Ai cũng thấy */}
-  <div className="rounded-xl bg-white/70 p-3 ring-1 ring-black/5">
-    <div className="mb-2 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-      <div className="text-[11px] font-semibold text-neutral-500">
-        Tiền thu 
+                        {/* Block 1: Tiền thu (Doanh thu) - Ai cũng thấy */}
+                        <div className="rounded-xl bg-white/70 p-3 ring-1 ring-black/5">
+                          <div className="mb-2 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                            <div className="text-[11px] font-semibold text-neutral-500">
+                              Tiền thu
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              {/* Chỉ hiển thị chọn số lượng mẫu nếu là Ca Mới */}
+                              {isNewCase && (
+                                <div className="flex items-center gap-1">
+                                  <span className="text-[10px] text-neutral-500">
+                                    SL mẫu:
+                                  </span>
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    value={sampleCount}
+                                    onChange={(e) => {
+                                      const val = Math.max(
+                                        1,
+                                        parseInt(e.target.value) || 1,
+                                      );
+                                      setSampleCount(val);
+                                      setCollectedAmountManual(false); // Kích hoạt lại tính auto để nhân giá
+                                    }}
+                                    className="w-12 rounded border border-black/10 px-1 py-0.5 text-center text-[11px] outline-none focus:ring-2 focus:ring-emerald-200"
+                                  />
+                                </div>
+                              )}
+
+                              <button
+                                type="button"
+                                className="rounded-lg bg-white px-2 py-1 text-[11px] font-bold ring-1 ring-black/10 hover:bg-neutral-50"
+                                onClick={() => {
+                                  set({
+                                    collectedAmount:
+                                      suggestedPrice *
+                                      (isNewCase ? sampleCount : 1),
+                                  });
+                                  setCollectedAmountManual(false);
+                                }}
+                              >
+                                Reset
+                              </button>
+                            </div>
+                          </div>
+
+                          <Input
+                            value={String(form.collectedAmount ?? 0)}
+                            onChange={(v) => {
+                              const n =
+                                Number(String(v).replace(/[^\d]/g, "")) || 0;
+                              set({ collectedAmount: n });
+                              setCollectedAmountManual(true);
+                            }}
+                            tone="emerald"
+                          />
+                          <div className="mt-1 text-[13px] font-bold text-emerald-700">
+                            {fmtMoney(form.collectedAmount ?? 0)}
+                          </div>
+                        </div>
+
+                        {/* Block 2: Giá xuất vốn (Giá Cost) - Chỉ hiển thị cho SuperAdmin, đẩy xuống dưới */}
+                        {isAccountingAdmin && (
+  <div className="grid grid-cols-2 gap-3">
+    {/* Cột 1: Tiền đã nhận */}
+    <div className="rounded-xl bg-indigo-50/50 p-3 ring-1 ring-indigo-200/50">
+      <div className="mb-2 text-[11px] font-semibold text-indigo-700">
+        Tiền đã nhận
       </div>
-
-      <div className="flex items-center gap-2">
-        {/* Chỉ hiển thị chọn số lượng mẫu nếu là Ca Mới */}
-        {isNewCase && (
-          <div className="flex items-center gap-1">
-            <span className="text-[10px] text-neutral-500">SL mẫu:</span>
-            <input
-              type="number"
-              min={1}
-              value={sampleCount}
-              onChange={(e) => {
-                const val = Math.max(1, parseInt(e.target.value) || 1);
-                setSampleCount(val);
-                setCollectedAmountManual(false); // Kích hoạt lại tính auto để nhân giá
-              }}
-              className="w-12 rounded border border-black/10 px-1 py-0.5 text-center text-[11px] outline-none focus:ring-2 focus:ring-emerald-200"
-            />
-          </div>
-        )}
-
-        <button
-          type="button"
-          className="rounded-lg bg-white px-2 py-1 text-[11px] font-bold ring-1 ring-black/10 hover:bg-neutral-50"
-          onClick={() => {
-            set({
-              collectedAmount: suggestedPrice * (isNewCase ? sampleCount : 1),
-            });
-            setCollectedAmountManual(false);
-          }}
-        >
-          Reset
-        </button>
+      <Input
+        value={String((form as any).receivedAmount ?? 0)}
+        onChange={(v) => {
+          const n = Number(String(v).replace(/[^\d]/g, "")) || 0;
+          set({ receivedAmount: n } as any);
+        }}
+        placeholder="Nhập số tiền..."
+        tone="blue"
+      />
+      <div className="mt-1 text-[13px] font-bold text-indigo-700">
+        {fmtMoney((form as any).receivedAmount ?? 0)}
       </div>
     </div>
-    
-    <Input
-      value={String(form.collectedAmount ?? 0)}
-      onChange={(v) => {
-        const n = Number(String(v).replace(/[^\d]/g, "")) || 0;
-        set({ collectedAmount: n });
-        setCollectedAmountManual(true);
-      }}
-      tone="emerald"
-    />
-    <div className="mt-1 text-[13px] font-bold text-emerald-700">
-      {fmtMoney(form.collectedAmount ?? 0)}
-    </div>
-  </div>
 
-  {/* Block 2: Giá xuất vốn (Giá Cost) - Chỉ hiển thị cho SuperAdmin, đẩy xuống dưới */}
-  {isAccountingAdmin && (
+    {/* Cột 2: Giá xuất vốn */}
     <div className="rounded-xl bg-rose-50/50 p-3 ring-1 ring-rose-200/50">
       <div className="mb-2 text-[11px] font-semibold text-rose-700">
-        Giá xuất vốn (Giá Cost)
+        Giá xuất vốn (Cost)
       </div>
       <Input
         value={String((form as any).costPrice ?? 0)}
@@ -776,8 +883,9 @@ export default function CaseDrawer({
         {fmtMoney((form as any).costPrice ?? 0)}
       </div>
     </div>
-  )}
-</div>
+  </div>
+)}
+                      </div>
                     </div>
                   </Field>
 
@@ -896,118 +1004,219 @@ export default function CaseDrawer({
                   </div>
 
                   <div className="mt-2 rounded-2xl bg-white p-3 ring-1 ring-black/5">
-                    <div className="mb-2 text-[12px] font-bold text-neutral-900">
-                      Trạng thái trả File & Thanh toán
-                    </div>
+  <div className="mb-2 text-[12px] font-bold text-neutral-900">
+    Trạng thái trả File & Thanh toán
+  </div>
 
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mb-2">
-                      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm">
-                        <input
-                          type="checkbox"
-                          checked={!!(form as any).paid}
-                          onChange={(e) => set({ paid: e.target.checked })}
-                        />
-                        Đã thanh toán
-                      </label>
-                      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm">
-                        <input
-                          type="checkbox"
-                          checked={!!(form as any).glReturned}
-                          onChange={(e) =>
-                            set({ glReturned: e.target.checked })
-                          }
-                        />
-                        GL trả
-                      </label>
-                    </div>
+  <div className="space-y-2">
+    {/* HÀNG 1: Thanh toán & Phương thức */}
+    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+        <input
+          type="checkbox"
+          checked={!!(form as any).paid}
+          onChange={(e) => {
+            const isPaid = e.target.checked;
+            set({
+              paid: isPaid,
+              paymentMethod: isPaid ? "Chuyển khoản" : "Chuyển khoản",
+            } as any);
+          }}
+        />
+        <span className={cn("font-bold", (form as any).paid ? "text-indigo-700" : "text-neutral-700")}>
+          Đã thanh toán
+        </span>
+      </label>
 
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm">
-                        <input
-                          type="checkbox"
-                          checked={!!(form as any).gxReceived}
-                          onChange={(e) =>
-                            set({ gxReceived: e.target.checked })
-                          }
-                        />
-                        GX nhận
-                      </label>
+      {/* Box chọn phương thức chỉ hiện bên phải nếu đã tick thanh toán */}
+      {(form as any).paid ? (
+        <div className="h-full">
+          <Select
+            value={(form as any).paymentMethod || "Chuyển khoản"}
+            onChange={(v) => set({ paymentMethod: v } as any)}
+            items={[
+              { label: "Chuyển khoản", value: "Chuyển khoản" },
+              { label: "Tiền mặt", value: "Tiền mặt" },
+            ]}
+            tone="blue"
+          />
+        </div>
+      ) : (
+        <div className="hidden md:block"></div> /* Khối đệm để giữ layout */
+      )}
+    </div>
 
-                      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm">
-                        <input
-                          type="checkbox"
-                          checked={!!(form as any).softFileDone}
-                          onChange={(e) =>
-                            set({ softFileDone: e.target.checked })
-                          }
-                        />
-                        Trả file mềm
-                      </label>
+    {/* HÀNG 2: GL Trả & GX Nhận */}
+    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+        <input
+          type="checkbox"
+          checked={!!(form as any).glReturned}
+          onChange={(e) => set({ glReturned: e.target.checked })}
+        />
+        GL trả
+      </label>
 
-                      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm md:col-span-2">
-                        <input
-                          type="checkbox"
-                          checked={!!(form as any).hardFileDone}
-                          onChange={(e) =>
-                            set({ hardFileDone: e.target.checked })
-                          }
-                        />
-                        Trả file cứng
-                      </label>
-                    </div>
-                  </div>
+      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+        <input
+          type="checkbox"
+          checked={!!(form as any).gxReceived}
+          onChange={(e) => set({ gxReceived: e.target.checked })}
+        />
+        GX nhận
+      </label>
+    </div>
+
+    {/* HÀNG 3: Trả file mềm & cứng */}
+    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+        <input
+          type="checkbox"
+          checked={!!(form as any).softFileDone}
+          onChange={(e) => set({ softFileDone: e.target.checked })}
+        />
+        Trả file mềm
+      </label>
+
+      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+        <input
+          type="checkbox"
+          checked={!!(form as any).hardFileDone}
+          onChange={(e) => set({ hardFileDone: e.target.checked })}
+        />
+        Trả file cứng
+      </label>
+    </div>
+  </div>
+</div>
                 </div>
               </section>
 
               {/* Cột 4: Tài liệu ảnh & Hóa đơn (Cột mới chuyển sang) */}
-              <section className={`rounded-2xl bg-white p-3 ring-1 ring-black/5 lg:col-span-3 {}`}>
+              <section
+                className={`rounded-2xl bg-white p-3 ring-1 ring-black/5 lg:col-span-3 {}`}
+              >
                 <div className="mb-2 text-[12px] font-bold text-neutral-900">
                   Hồ sơ Ảnh & Hóa đơn
                 </div>
 
+                
                 <div className="space-y-4 ">
                   {/* --- Block Xuất Hóa Đơn --- */}
-                  <div className={`rounded-2xl bg-slate-50 p-3 ring-1 ring-black/5 ${isAccountingAdmin ? "none" : "hidden"}`}>
-                    <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm mb-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={!!(form as any).invoiceRequested}
-                        onChange={(e) =>
-                          set({ invoiceRequested: e.target.checked })
-                        }
-                      />
-                      <span className="font-bold text-neutral-700">Yêu cầu xuất hóa đơn</span>
-                    </label>
-
-                    {(form as any).invoiceRequested && (
-                      <div className="space-y-3 rounded-xl bg-amber-50 p-3 ring-1 ring-amber-200">
-                        <Field label="Tên công ty / Đơn vị">
-                          <Input
-                            value={(form as any).invoiceName ?? ""}
-                            onChange={(v) => set({ invoiceName: v })}
-                            placeholder="Nhập tên đơn vị..."
-                            tone="amber"
-                          />
-                        </Field>
-                        <Field label="Mã số thuế">
-                          <Input
-                            value={(form as any).invoiceTaxCode ?? ""}
-                            onChange={(v) => set({ invoiceTaxCode: v })}
-                            placeholder="Nhập MST..."
-                            tone="amber"
-                          />
-                        </Field>
-                        <Field label="Địa chỉ">
-                          <Textarea
-                            value={(form as any).invoiceAddress ?? ""}
-                            onChange={(v) => set({ invoiceAddress: v })}
-                            placeholder="Nhập địa chỉ..."
-                            rows={2}
-                            tone="amber"
-                          />
-                        </Field>
+                  {/* --- Block Xuất Hóa Đơn --- */}
+                  <div className="rounded-2xl bg-slate-50 p-3 ring-1 ring-black/5">
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="text-[12px] font-bold text-neutral-900">
+                        Thông tin xuất hóa đơn
                       </div>
-                    )}
+                      {/* Nút Toggle Chọn Loại */}
+                      <div className="flex items-center gap-1 rounded-lg bg-black/10 p-1">
+                        <button
+                          type="button"
+                          onClick={() => set({ invoiceType: "company" } as any)}
+                          className={cn(
+                            "rounded-md px-3 py-1 text-[11px] font-bold transition-all",
+                            (form as any).invoiceType !== "personal" // Mặc định là company
+                              ? "bg-white shadow text-indigo-700"
+                              : "text-neutral-500 hover:text-neutral-700"
+                          )}
+                        >
+                          Công ty
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => set({ invoiceType: "personal" } as any)}
+                          className={cn(
+                            "rounded-md px-3 py-1 text-[11px] font-bold transition-all",
+                            (form as any).invoiceType === "personal"
+                              ? "bg-white shadow text-indigo-700"
+                              : "text-neutral-500 hover:text-neutral-700"
+                          )}
+                        >
+                          Cá nhân
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 rounded-xl bg-amber-50 p-3 ring-1 ring-amber-200">
+                      {(form as any).invoiceType === "personal" ? (
+                        /* ============ FORM CÁ NHÂN ============ */
+                        <>
+                          <Field label="Họ tên người nhận">
+                            <Input
+                              value={(form as any).invoiceName ?? ""}
+                              onChange={(v) => set({ invoiceName: v })}
+                              placeholder="Nhập họ tên..."
+                              tone="amber"
+                            />
+                          </Field>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Field label="Số CCCD/CMND">
+                              <Input
+                                value={(form as any).invoiceIdCard ?? ""}
+                                onChange={(v) => set({ invoiceIdCard: v } as any)}
+                                placeholder="Nhập số CCCD..."
+                                tone="amber"
+                              />
+                            </Field>
+                            <Field label="Ngày cấp">
+                              <Input
+                                value={(form as any).invoiceIssueDate ?? ""}
+                                onChange={(v) => set({ invoiceIssueDate: v } as any)}
+                                placeholder="DD/MM/YYYY"
+                                tone="amber"
+                              />
+                            </Field>
+                          </div>
+                          <Field label="Nơi cấp">
+                            <Input
+                              value={(form as any).invoiceIssuePlace ?? ""}
+                              onChange={(v) => set({ invoiceIssuePlace: v } as any)}
+                              placeholder="Nhập nơi cấp CCCD..."
+                              tone="amber"
+                            />
+                          </Field>
+                          <Field label="Địa chỉ">
+                            <Textarea
+                              value={(form as any).invoiceAddress ?? ""}
+                              onChange={(v) => set({ invoiceAddress: v })}
+                              placeholder="Nhập địa chỉ..."
+                              rows={2}
+                              tone="amber"
+                            />
+                          </Field>
+                        </>
+                      ) : (
+                        /* ============ FORM CÔNG TY ============ */
+                        <>
+                          <Field label="Tên công ty / Đơn vị">
+                            <Input
+                              value={(form as any).invoiceName ?? ""}
+                              onChange={(v) => set({ invoiceName: v })}
+                              placeholder="Nhập tên đơn vị..."
+                              tone="amber"
+                            />
+                          </Field>
+                          <Field label="Mã số thuế">
+                            <Input
+                              value={(form as any).invoiceTaxCode ?? ""}
+                              onChange={(v) => set({ invoiceTaxCode: v })}
+                              placeholder="Nhập MST..."
+                              tone="amber"
+                            />
+                          </Field>
+                          <Field label="Địa chỉ">
+                            <Textarea
+                              value={(form as any).invoiceAddress ?? ""}
+                              onChange={(v) => set({ invoiceAddress: v })}
+                              placeholder="Nhập địa chỉ..."
+                              rows={2}
+                              tone="amber"
+                            />
+                          </Field>
+                        </>
+                      )}
+                    </div>
                   </div>
 
                   {/* --- Block Upload Ảnh --- */}
@@ -1139,7 +1348,6 @@ export default function CaseDrawer({
                   </div>
                 </div>
               </section>
-
             </div>
           </div>
         </div>
