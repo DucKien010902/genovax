@@ -14,6 +14,7 @@ import {
   User,
   Calculator,
   FileText,
+  Database,
 } from "lucide-react";
 
 function cn(...a: Array<string | false | null | undefined>) {
@@ -96,6 +97,13 @@ export default function AppHeader() {
       icon: UserCog,
       allowedRoles: ["super_admin", "admin"], // Tuỳ bạn, hôm qua đã phân quyền ở page này
     },
+    {
+      label: "Quản lý file dữ liệu",
+      desc: "Danh mục quản lý dữ liệu",
+      href: "/admin/drive",
+      icon: Database,
+      allowedRoles: ["super_admin", "admin"], // Tuỳ bạn, hôm qua đã phân quyền ở page này
+    },
     // --- CÁC TAB CHỜ PHÁT TRIỂN DÀNH CHO KẾ TOÁN ---
     {
       label: "Quản lý công nợ",
@@ -138,12 +146,12 @@ export default function AppHeader() {
             onClick={() => router.push("/")}
           >
             <div className="h-14 w-14 rounded-2xl shadow-sm overflow-hidden ring-1 ring-blue-300 bg-white/70 flex items-center justify-center">
-  <img
-    src="https://res.cloudinary.com/da6f4dmql/image/upload/v1773128350/genbio1-1_hf0tjp.png"
-    alt="Logo"
-    className="h-full w-full object-contain p-1.5"
-  />
-</div>
+              <img
+                src="https://res.cloudinary.com/da6f4dmql/image/upload/v1773128350/genbio1-1_hf0tjp.png"
+                alt="Logo"
+                className="h-full w-full object-contain p-1.5"
+              />
+            </div>
 
             <div className="leading-tight">
               <div className="text-sm font-semibold text-purple-800 drop-shadow-[0_1px_0_rgba(255,255,255,0.6)]">

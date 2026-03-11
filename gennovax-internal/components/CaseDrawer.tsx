@@ -16,6 +16,7 @@ import type {
 } from "@/lib/types";
 import SingleDatePicker from "./DatePicker";
 import { useAuth } from "@/lib/auth";
+import { caseApi } from "@/lib/api";
 
 /** ✅ FE map nguồn -> cấp đại lý (không đụng DB) */
 const SOURCE_TO_AGENT: Record<
@@ -280,23 +281,30 @@ export default function CaseDrawer({
 
   // 3. ĐỒNG BỘ DATA: Cập nhật form và các cờ trạng thái mỗi khi mở ca
   // 3. ĐỒNG BỘ DATA: Cập nhật form và các cờ trạng thái mỗi khi mở ca
+  // 3. ĐỒNG BỘ DATA: Cập nhật form và các cờ trạng thái mỗi khi mở ca
   useEffect(() => {
-    // ✅ FIX LỖI PAYMENT METHOD: Bơm luôn giá trị mặc định cho ca cũ nếu đang bị thiếu
     if (data) {
       const clonedData = { ...data };
+      
+      // ✅ FIX 1: Lỗi Payment Method
       if (clonedData.paid && !clonedData.paymentMethod) {
-        clonedData.paymentMethod = "Chuyển khoản"; // Tự động gán nếu đã thanh toán mà chưa có method
+        clonedData.paymentMethod = "Chuyển khoản"; 
       }
+      
+      // ✅ FIX 2: Bơm mặc định loại Hóa đơn là "company" nếu chưa có
+      if (!clonedData.invoiceType) {
+        clonedData.invoiceType = "company";
+      }
+
       setForm(clonedData);
     } else {
-      setForm(null);
+      // Nếu là tạo mới (data = null), có thể khởi tạo các giá trị default
+      setForm(null); 
     }
 
     if (data && data._id) {
-      // ✅ CA CŨ: Bật cờ chỉnh tay (true) để CHẶN useEffect tự động tính giá ghi đè
       setCollectedAmountManual(true);
     } else {
-      // ✅ CA MỚI: Tắt cờ chỉnh tay (false) để tính auto, reset số lượng mẫu về 1
       setCollectedAmountManual(false);
       setSampleCount(1);
     }
@@ -320,16 +328,16 @@ export default function CaseDrawer({
   // ✅ 1. Lấy ra danh sách các cấp hợp lệ của riêng Nguồn (Doctor) đang chọn
   const availableLevelsForSource = useMemo(() => {
     if (!form?.source) return [];
-    const doc = doctors.find(d => d.fullName === form.source);
+    const doc = doctors.find((d) => d.fullName === form.source);
     let levels = doc?.agentLevels || [];
     if (levels.length === 0) levels = ["cap3"]; // Fallback nếu chưa có cấp nào
 
     const allAgentLevels = opt("agentLevels");
-    return levels.map(lvl => {
-      const found = allAgentLevels.find(x => x.value === lvl);
+    return levels.map((lvl) => {
+      const found = allAgentLevels.find((x) => x.value === lvl);
       return {
         label: found ? found.label : lvl, // Lấy label đẹp (VD: "Đại lý Cấp 1")
-        value: lvl
+        value: lvl,
       };
     });
   }, [form?.source, doctors, opt]);
@@ -350,7 +358,8 @@ export default function CaseDrawer({
     const foundDoc = doctors.find((d) => d.fullName === form.source);
     if (foundDoc) {
       return {
-        level: foundDoc.defaultAgentLevel || (foundDoc.agentLevels?.[0]) || "cap3",
+        level:
+          foundDoc.defaultAgentLevel || foundDoc.agentLevels?.[0] || "cap3",
         label: foundDoc.agentTierLabel || "Cấp 3",
       };
     }
@@ -409,134 +418,103 @@ export default function CaseDrawer({
   }, [selectedService?.serviceCode, form?.receivedAt, form?.dueDate]);
 
   // =========================
-  // ✅ UPLOAD IMAGE (Cloudinary)
+  // ✅ UPLOAD FILE (MINIO VPS)
   // =========================
   const regInputRef = useRef<HTMLInputElement | null>(null);
+  const receiptInputRef = useRef<HTMLInputElement | null>(null); // Thêm ref cho Hóa đơn
   const resInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [imageUploadError, setImageUploadError] = useState<string | null>(null);
 
-  const uploadToCloudinary = useCallback(async (file: File) => {
-    if (!file.type.startsWith("image/")) {
-      throw new Error("File không hợp lệ. Vui lòng chọn ảnh.");
+  // Hàm xử lý Upload chung cho cả 3 loại file
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: "registrationImageUrl" | "receiptImageUrl" | "resultImageUrls",
+    isMultiple: boolean = false
+  ) => {
+    // Bắt buộc phải có mã ca để làm tên thư mục trên MinIO
+    if (!form?.caseCode?.trim()) {
+      alert("Vui lòng nhập 'Mã ca' trước khi tải file để hệ thống tạo thư mục lưu trữ!");
+      e.target.value = "";
+      return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      throw new Error("Ảnh quá lớn. Vui lòng chọn ảnh dưới 5MB.");
-    }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    const files = Array.from(e.target.files || []);
+    if (!files.length || !form) return;
 
-    const response = await axios.post(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-      formData,
-    );
+    setIsUploadingImage(true);
+    setImageUploadError(null);
 
-    const url = String(response.data.secure_url || "");
-    if (!url) throw new Error("Upload xong nhưng không lấy được URL.");
-    return url;
-  }, []);
-
-  const handleUploadRegistration = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file || !form) return;
-
-      setIsUploadingImage(true);
-      setImageUploadError(null);
-
-      try {
-        const url = await uploadToCloudinary(file);
-        set({ registrationImageUrl: url });
-      } catch (err: any) {
-        setImageUploadError(
-          err?.message || "Tải ảnh lên thất bại. Vui lòng thử lại.",
-        );
-      } finally {
-        setIsUploadingImage(false);
-        e.target.value = "";
-      }
-    },
-    [form, set, uploadToCloudinary],
-  );
-
-  const handleUploadResults = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files || []);
-      if (!files.length || !form) return;
-
-      setIsUploadingImage(true);
-      setImageUploadError(null);
-
-      try {
-        const current = Array.isArray((form as any).resultImageUrls)
-          ? ((form as any).resultImageUrls as string[])
-          : [];
-
+    try {
+      if (!isMultiple) {
+        // Upload 1 file (Đơn ĐK hoặc Hóa đơn)
+        const res = await caseApi.uploadFile(files[0], form.caseCode);
+        set({ [field]: res.url } as any);
+      } else {
+        // Upload nhiều file (Kết quả - Tối đa 2)
+        const current = Array.isArray((form as any).resultImageUrls) ? [...(form as any).resultImageUrls] : [];
         const remain = Math.max(0, 2 - current.length);
-        if (remain <= 0) {
-          throw new Error(
-            "Ảnh kết quả tối đa 2 ảnh. Hãy xoá bớt nếu muốn tải thêm.",
-          );
-        }
-
+        if (remain <= 0) throw new Error("Chỉ được tải tối đa 2 file kết quả.");
+        
         const picked = files.slice(0, remain);
-
-        const uploaded: string[] = [];
+        const uploadedUrls: string[] = [];
+        
         for (const f of picked) {
-          const url = await uploadToCloudinary(f);
-          uploaded.push(url);
+          const res = await caseApi.uploadFile(f, form.caseCode);
+          uploadedUrls.push(res.url);
         }
-
-        set({ resultImageUrls: [...current, ...uploaded] as any });
-      } catch (err: any) {
-        setImageUploadError(
-          err?.message || "Tải ảnh lên thất bại. Vui lòng thử lại.",
-        );
-      } finally {
-        setIsUploadingImage(false);
-        e.target.value = "";
+        set({ resultImageUrls: [...current, ...uploadedUrls] } as any);
       }
-    },
-    [form, set, uploadToCloudinary],
-  );
+    } catch (err: any) {
+      setImageUploadError(err?.message || "Tải file lên thất bại. Vui lòng thử lại.");
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = "";
+    }
+  };
 
-  const removeRegistration = useCallback(() => {
-    set({ registrationImageUrl: "" });
-  }, [set]);
+  // Hàm xử lý Xóa file chung (Xóa giao diện & Xóa thật trên MinIO)
+  const handleRemoveFile = async (
+    field: "registrationImageUrl" | "receiptImageUrl" | "resultImageUrls",
+    urlToRemove: string,
+    idx?: number
+  ) => {
+    // 1. Gọi API xóa file vật lý trên MinIO để giải phóng dung lượng VPS
+    try {
+      if (caseApi.deleteFileMinio) {
+        await caseApi.deleteFileMinio(urlToRemove);
+      }
+    } catch (e) {
+      console.warn("Không thể xóa file vật lý trên MinIO", e);
+    }
 
-  const removeResultAt = useCallback(
-    (idx: number) => {
-      if (!form) return;
-      const current = Array.isArray((form as any).resultImageUrls)
-        ? ([...(form as any).resultImageUrls] as string[])
-        : [];
+    // 2. Cập nhật lại UI form
+    if (field === "resultImageUrls" && typeof idx === "number") {
+      const current = Array.isArray((form as any).resultImageUrls) ? [...(form as any).resultImageUrls] : [];
       current.splice(idx, 1);
-      set({ resultImageUrls: current as any });
-    },
-    [form, set],
-  );
+      set({ resultImageUrls: current } as any);
+    } else {
+      set({ [field]: "" } as any);
+    }
+  };
 
   if (!open || !form) return null;
 
   const serviceItemsForSelect = services
     .filter((s) => s.serviceType === form.serviceType && s.isActive)
     .map((s) => ({
-      label: `${s.serviceCode} — ${s.name}`,
+      label: `${s.serviceCode}`,
       value: s.serviceCode,
     }));
 
-  const registrationUrl = (form as any).registrationImageUrl as
-    | string
-    | undefined;
+  const registrationUrl = (form as any).registrationImageUrl as string | undefined;
+  const receiptUrl = (form as any).receiptImageUrl as string | undefined;
   const resultUrls = (
     Array.isArray((form as any).resultImageUrls)
       ? ((form as any).resultImageUrls as string[])
       : []
   ) as string[];
-
   return (
     <div className="fixed inset-0 z-50 text-red">
       {/* backdrop */}
@@ -581,21 +559,7 @@ export default function CaseDrawer({
 
               <div className="flex shrink-0 items-center gap-2">
                 {/* ✅ hidden inputs */}
-                <input
-                  ref={regInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleUploadRegistration}
-                />
-                <input
-                  ref={resInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleUploadResults}
-                />
+                
 
                 <button
                   className="cursor-pointer rounded-xl px-3 py-2 text-[12px] text-black font-bold ring-1 ring-black/10 hover:bg-neutral-50"
@@ -633,8 +597,6 @@ export default function CaseDrawer({
                     />
                   </Field>
 
-                  
-
                   <Field label="* Nguồn">
                     <Select
                       value={form.source}
@@ -653,7 +615,10 @@ export default function CaseDrawer({
                         if (selectedDoc) {
                           if (selectedDoc.defaultAgentLevel) {
                             defaultLevel = selectedDoc.defaultAgentLevel;
-                          } else if (selectedDoc.agentLevels && selectedDoc.agentLevels.length > 0) {
+                          } else if (
+                            selectedDoc.agentLevels &&
+                            selectedDoc.agentLevels.length > 0
+                          ) {
                             defaultLevel = selectedDoc.agentLevels[0];
                           }
                         }
@@ -665,9 +630,9 @@ export default function CaseDrawer({
                           agentLevel: defaultLevel, // <- Điền luôn cấp mặc định vào ca
                           agentTierLabel: selectedDoc?.agentTierLabel || "",
                         });
-                        
+
                         // Bật lại auto giá để giá cập nhật theo nguồn mới
-                        setCollectedAmountManual(false); 
+                        setCollectedAmountManual(false);
                       }}
                       items={doctors.map((d) => ({
                         label: d.fullName,
@@ -684,7 +649,7 @@ export default function CaseDrawer({
                       onChange={(v) => {
                         set({ agentLevel: v });
                         // Bật lại tính giá tự động để form nhảy số tiền ứng với cấp mới
-                        setCollectedAmountManual(false); 
+                        setCollectedAmountManual(false);
                       }}
                       items={availableLevelsForSource}
                       tone="emerald"
@@ -719,10 +684,10 @@ export default function CaseDrawer({
                 </div>
               </section>
 
-              {/* Cột 2: Bệnh nhân & Dịch vụ (Giữ nguyên) */}
+              {/* Cột 2: Khách hàng & Dịch vụ (Giữ nguyên) */}
               <section className="rounded-2xl bg-white p-3 ring-1 ring-black/5 lg:col-span-3">
                 <div className="mb-2 text-[12px] font-bold text-neutral-900">
-                  Bệnh nhân & Dịch vụ
+                  Khách hàng & Dịch vụ
                 </div>
 
                 <div className="space-y-3">
@@ -730,7 +695,7 @@ export default function CaseDrawer({
                     <Input
                       value={form.patientName}
                       onChange={(v) => set({ patientName: v })}
-                      placeholder="Nhập tên bệnh nhân"
+                      placeholder="Nhập tên Khách hàng"
                       tone="rose"
                     />
                   </Field>
@@ -759,11 +724,11 @@ export default function CaseDrawer({
                         <div className="font-semibold text-neutral-900">
                           {form.serviceName || "—"}
                         </div>
-                        {form.serviceCode && (
+                        {/* {form.serviceCode && (
                           <div className="mt-0.5 text-[11px] text-neutral-500">
                             {form.serviceCode}
                           </div>
-                        )}
+                        )} */}
                       </div>
                     </Field>
                   </div>
@@ -845,46 +810,52 @@ export default function CaseDrawer({
 
                         {/* Block 2: Giá xuất vốn (Giá Cost) - Chỉ hiển thị cho SuperAdmin, đẩy xuống dưới */}
                         {isAccountingAdmin && (
-  <div className="grid grid-cols-2 gap-3">
-    {/* Cột 1: Tiền đã nhận */}
-    <div className="rounded-xl bg-indigo-50/50 p-3 ring-1 ring-indigo-200/50">
-      <div className="mb-2 text-[11px] font-semibold text-indigo-700">
-        Tiền đã nhận
-      </div>
-      <Input
-        value={String((form as any).receivedAmount ?? 0)}
-        onChange={(v) => {
-          const n = Number(String(v).replace(/[^\d]/g, "")) || 0;
-          set({ receivedAmount: n } as any);
-        }}
-        placeholder="Nhập số tiền..."
-        tone="blue"
-      />
-      <div className="mt-1 text-[13px] font-bold text-indigo-700">
-        {fmtMoney((form as any).receivedAmount ?? 0)}
-      </div>
-    </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            {/* Cột 1: Tiền đã nhận */}
+                            <div className="rounded-xl bg-indigo-50/50 p-3 ring-1 ring-indigo-200/50">
+                              <div className="mb-2 text-[11px] font-semibold text-indigo-700">
+                                Tiền đã nhận
+                              </div>
+                              <Input
+                                value={String(
+                                  (form as any).receivedAmount ?? 0,
+                                )}
+                                onChange={(v) => {
+                                  const n =
+                                    Number(String(v).replace(/[^\d]/g, "")) ||
+                                    0;
+                                  set({ receivedAmount: n } as any);
+                                }}
+                                placeholder="Nhập số tiền..."
+                                tone="blue"
+                              />
+                              <div className="mt-1 text-[13px] font-bold text-indigo-700">
+                                {fmtMoney((form as any).receivedAmount ?? 0)}
+                              </div>
+                            </div>
 
-    {/* Cột 2: Giá xuất vốn */}
-    <div className="rounded-xl bg-rose-50/50 p-3 ring-1 ring-rose-200/50">
-      <div className="mb-2 text-[11px] font-semibold text-rose-700">
-        Giá xuất vốn (Cost)
-      </div>
-      <Input
-        value={String((form as any).costPrice ?? 0)}
-        onChange={(v) => {
-          const n = Number(String(v).replace(/[^\d]/g, "")) || 0;
-          set({ costPrice: n });
-        }}
-        placeholder="Nhập giá vốn..."
-        tone="rose"
-      />
-      <div className="mt-1 text-[13px] font-bold text-rose-700">
-        {fmtMoney((form as any).costPrice ?? 0)}
-      </div>
-    </div>
-  </div>
-)}
+                            {/* Cột 2: Giá xuất vốn */}
+                            <div className="rounded-xl bg-rose-50/50 p-3 ring-1 ring-rose-200/50">
+                              <div className="mb-2 text-[11px] font-semibold text-rose-700">
+                                Giá xuất vốn (Cost)
+                              </div>
+                              <Input
+                                value={String((form as any).costPrice ?? 0)}
+                                onChange={(v) => {
+                                  const n =
+                                    Number(String(v).replace(/[^\d]/g, "")) ||
+                                    0;
+                                  set({ costPrice: n });
+                                }}
+                                placeholder="Nhập giá vốn..."
+                                tone="rose"
+                              />
+                              <div className="mt-1 text-[13px] font-bold text-rose-700">
+                                {fmtMoney((form as any).costPrice ?? 0)}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </Field>
@@ -982,113 +953,167 @@ export default function CaseDrawer({
                       </button>
                     </div>
 
-                    <div className="mt-1 text-[11px] text-neutral-500">
-                      Trái: chọn theo ngày • Phải: lấy đúng thời điểm hiện tại.
-                    </div>
+                    
                   </Field>
 
-                  <div className="rounded-2xl bg-gradient-to-r from-slate-50 to-blue-50 p-3 ring-1 ring-black/5">
-                    <div className="text-[11px] font-semibold text-neutral-500">
-                      Ngày trả KQ (tự tính theo dịch vụ + ngày nhận)
+                  {/* --- KHU VỰC THỜI GIAN TRẢ KẾT QUẢ --- */}
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2 mt-3">
+                    {/* Cột 1: Ngày hẹn trả (Dự kiến - Tự động tính) */}
+                    <div className="flex flex-col justify-center rounded-2xl bg-gradient-to-r from-slate-50 to-blue-50 p-3 ring-1 ring-black/5">
+                      <div className="text-[11px] font-semibold text-neutral-500">
+                        Ngày trả KQ (Dự kiến)
+                      </div>
+                      <div className="mt-1 text-[12px] font-bold text-blue-900">
+                        {(form as any).dueDate
+                          ? new Date((form as any).dueDate).toLocaleString(
+                              "vi-VN",
+                              { timeZone: "Asia/Ho_Chi_Minh" },
+                            )
+                          : "—"}
+                      </div>
                     </div>
-                    <div className="mt-1 text-[12px] font-bold text-neutral-900">
-                      {(form as any).dueDate
-                        ? new Date((form as any).dueDate).toLocaleString(
-                            "vi-VN",
-                            {
-                              timeZone: "Asia/Ho_Chi_Minh",
-                            },
-                          )
-                        : "—"}
-                    </div>
+
+                    {/* Cột 2: Ngày trả thực tế (Thủ công) */}
+                    <Field label="Ngày trả KQ (Thực tế)">
+                      <div className="grid grid-cols-1 gap-2">
+                        <SingleDatePicker
+                          value={isoDateFromISODateTime((form as any).returnedAt)}
+                          onChange={(d) =>
+                            set({ returnedAt: isoDateTimeFromISODate(d) as any })
+                          }
+                          placeholder="Chọn ngày..."
+                          disabled={false}
+                          popoverWidth="lg"
+                          months={1}
+                          buttonClassName="w-full px-3 py-2 text-left text-[12px] rounded-xl border border-black/10 shadow-sm"
+                        />
+
+                        {/* <button
+                          type="button"
+                          className={cn(
+                            "w-full rounded-xl px-3 py-2 text-[12px] font-bold",
+                            "bg-white ring-1 ring-black/10 shadow-sm hover:bg-neutral-50",
+                            "focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200",
+                          )}
+                          onClick={() => {
+                            set({ returnedAt: nowVNISOString() as any });
+                          }}
+                          title="Lấy thời điểm hiện tại"
+                        >
+                          Lấy giờ hiện tại
+                        </button> */}
+                      </div>
+                    </Field>
                   </div>
 
                   <div className="mt-2 rounded-2xl bg-white p-3 ring-1 ring-black/5">
-  <div className="mb-2 text-[12px] font-bold text-neutral-900">
-    Trạng thái trả File & Thanh toán
-  </div>
+                    <div className="mb-2 text-[12px] font-bold text-neutral-900">
+                      Trạng thái trả File & Thanh toán
+                    </div>
 
-  <div className="space-y-2">
-    {/* HÀNG 1: Thanh toán & Phương thức */}
-    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
-        <input
-          type="checkbox"
-          checked={!!(form as any).paid}
-          onChange={(e) => {
-            const isPaid = e.target.checked;
-            set({
-              paid: isPaid,
-              paymentMethod: isPaid ? "Chuyển khoản" : "Chuyển khoản",
-            } as any);
-          }}
-        />
-        <span className={cn("font-bold", (form as any).paid ? "text-indigo-700" : "text-neutral-700")}>
-          Đã thanh toán
-        </span>
-      </label>
+                    <div className="space-y-2">
+                      {/* HÀNG 1: Thanh toán & Phương thức */}
+                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={!!(form as any).paid}
+                            onChange={(e) => {
+                              const isPaid = e.target.checked;
+                              set({
+                                paid: isPaid,
+                                paymentMethod: isPaid
+                                  ? "Chuyển khoản"
+                                  : "Chuyển khoản",
+                              } as any);
+                            }}
+                          />
+                          <span
+                            className={cn(
+                              "font-bold",
+                              (form as any).paid
+                                ? "text-indigo-700"
+                                : "text-neutral-700",
+                            )}
+                          >
+                            Đã thanh toán
+                          </span>
+                        </label>
 
-      {/* Box chọn phương thức chỉ hiện bên phải nếu đã tick thanh toán */}
-      {(form as any).paid ? (
-        <div className="h-full">
-          <Select
-            value={(form as any).paymentMethod || "Chuyển khoản"}
-            onChange={(v) => set({ paymentMethod: v } as any)}
-            items={[
-              { label: "Chuyển khoản", value: "Chuyển khoản" },
-              { label: "Tiền mặt", value: "Tiền mặt" },
-            ]}
-            tone="blue"
-          />
-        </div>
-      ) : (
-        <div className="hidden md:block"></div> /* Khối đệm để giữ layout */
-      )}
-    </div>
+                        {/* Box chọn phương thức chỉ hiện bên phải nếu đã tick thanh toán */}
+                        {(form as any).paid ? (
+                          <div className="h-full">
+                            <Select
+                              value={
+                                (form as any).paymentMethod || "Chuyển khoản"
+                              }
+                              onChange={(v) => set({ paymentMethod: v } as any)}
+                              items={[
+                                {
+                                  label: "Chuyển khoản",
+                                  value: "Chuyển khoản",
+                                },
+                                { label: "Tiền mặt", value: "Tiền mặt" },
+                              ]}
+                              tone="blue"
+                            />
+                          </div>
+                        ) : (
+                          <div className="hidden md:block"></div> /* Khối đệm để giữ layout */
+                        )}
+                      </div>
 
-    {/* HÀNG 2: GL Trả & GX Nhận */}
-    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
-        <input
-          type="checkbox"
-          checked={!!(form as any).glReturned}
-          onChange={(e) => set({ glReturned: e.target.checked })}
-        />
-        GL trả
-      </label>
+                      {/* HÀNG 2: GL Trả & GX Nhận */}
+                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={!!(form as any).glReturned}
+                            onChange={(e) =>
+                              set({ glReturned: e.target.checked })
+                            }
+                          />
+                          GL trả
+                        </label>
 
-      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
-        <input
-          type="checkbox"
-          checked={!!(form as any).gxReceived}
-          onChange={(e) => set({ gxReceived: e.target.checked })}
-        />
-        GX nhận
-      </label>
-    </div>
+                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={!!(form as any).gxReceived}
+                            onChange={(e) =>
+                              set({ gxReceived: e.target.checked })
+                            }
+                          />
+                          GX nhận
+                        </label>
+                      </div>
 
-    {/* HÀNG 3: Trả file mềm & cứng */}
-    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
-        <input
-          type="checkbox"
-          checked={!!(form as any).softFileDone}
-          onChange={(e) => set({ softFileDone: e.target.checked })}
-        />
-        Trả file mềm
-      </label>
+                      {/* HÀNG 3: Trả file mềm & cứng */}
+                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={!!(form as any).softFileDone}
+                            onChange={(e) =>
+                              set({ softFileDone: e.target.checked })
+                            }
+                          />
+                          Trả file mềm
+                        </label>
 
-      <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
-        <input
-          type="checkbox"
-          checked={!!(form as any).hardFileDone}
-          onChange={(e) => set({ hardFileDone: e.target.checked })}
-        />
-        Trả file cứng
-      </label>
-    </div>
-  </div>
-</div>
+                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={!!(form as any).hardFileDone}
+                            onChange={(e) =>
+                              set({ hardFileDone: e.target.checked })
+                            }
+                          />
+                          Trả file cứng
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </section>
 
@@ -1100,7 +1125,6 @@ export default function CaseDrawer({
                   Hồ sơ Ảnh & Hóa đơn
                 </div>
 
-                
                 <div className="space-y-4 ">
                   {/* --- Block Xuất Hóa Đơn --- */}
                   {/* --- Block Xuất Hóa Đơn --- */}
@@ -1118,19 +1142,21 @@ export default function CaseDrawer({
                             "rounded-md px-3 py-1 text-[11px] font-bold transition-all",
                             (form as any).invoiceType !== "personal" // Mặc định là company
                               ? "bg-white shadow text-indigo-700"
-                              : "text-neutral-500 hover:text-neutral-700"
+                              : "text-neutral-500 hover:text-neutral-700",
                           )}
                         >
                           Công ty
                         </button>
                         <button
                           type="button"
-                          onClick={() => set({ invoiceType: "personal" } as any)}
+                          onClick={() =>
+                            set({ invoiceType: "personal" } as any)
+                          }
                           className={cn(
                             "rounded-md px-3 py-1 text-[11px] font-bold transition-all",
                             (form as any).invoiceType === "personal"
                               ? "bg-white shadow text-indigo-700"
-                              : "text-neutral-500 hover:text-neutral-700"
+                              : "text-neutral-500 hover:text-neutral-700",
                           )}
                         >
                           Cá nhân
@@ -1154,7 +1180,9 @@ export default function CaseDrawer({
                             <Field label="Số CCCD/CMND">
                               <Input
                                 value={(form as any).invoiceIdCard ?? ""}
-                                onChange={(v) => set({ invoiceIdCard: v } as any)}
+                                onChange={(v) =>
+                                  set({ invoiceIdCard: v } as any)
+                                }
                                 placeholder="Nhập số CCCD..."
                                 tone="amber"
                               />
@@ -1162,7 +1190,9 @@ export default function CaseDrawer({
                             <Field label="Ngày cấp">
                               <Input
                                 value={(form as any).invoiceIssueDate ?? ""}
-                                onChange={(v) => set({ invoiceIssueDate: v } as any)}
+                                onChange={(v) =>
+                                  set({ invoiceIssueDate: v } as any)
+                                }
                                 placeholder="DD/MM/YYYY"
                                 tone="amber"
                               />
@@ -1171,7 +1201,9 @@ export default function CaseDrawer({
                           <Field label="Nơi cấp">
                             <Input
                               value={(form as any).invoiceIssuePlace ?? ""}
-                              onChange={(v) => set({ invoiceIssuePlace: v } as any)}
+                              onChange={(v) =>
+                                set({ invoiceIssuePlace: v } as any)
+                              }
                               placeholder="Nhập nơi cấp CCCD..."
                               tone="amber"
                             />
@@ -1222,130 +1254,67 @@ export default function CaseDrawer({
                   {/* --- Block Upload Ảnh --- */}
                   <div className="rounded-2xl bg-white p-3 ring-1 ring-black/5">
                     <div className="mb-2 flex items-center justify-between">
-                      <div className="text-[12px] font-bold text-neutral-900">
-                        Ảnh đã tải
-                      </div>
-                      <div className="text-[11px] text-neutral-500">
-                        1 Đơn + 2 KQ
-                      </div>
+                      <div className="text-[12px] font-bold text-neutral-900">Tài liệu đính kèm</div>
+                      <div className="text-[11px] text-neutral-500">1 Đơn • 1 HĐ • 2 KQ</div>
                     </div>
 
                     {imageUploadError && (
-                      <div className="mb-2 rounded-xl bg-rose-50 px-3 py-2 text-[12px] font-semibold text-rose-700 ring-1 ring-rose-200">
+                      <div className="mb-3 rounded-xl bg-rose-50 px-3 py-2 text-[11px] font-semibold text-rose-700 ring-1 ring-rose-200">
                         {imageUploadError}
                       </div>
                     )}
 
-                    {/* Ảnh đơn đăng ký */}
-                    <div className="mb-3">
-                      <div className="mb-1 text-[11px] font-semibold text-neutral-500">
-                        Ảnh đơn đăng ký (1 ảnh)
-                      </div>
+                    <input ref={regInputRef} type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => handleFileUpload(e, "registrationImageUrl")} />
+                    <input ref={receiptInputRef} type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => handleFileUpload(e, "receiptImageUrl")} />
+                    <input ref={resInputRef} type="file" accept="image/*,application/pdf" multiple className="hidden" onChange={(e) => handleFileUpload(e, "resultImageUrls", true)} />
 
-                      {registrationUrl ? (
-                        <div className="flex items-start gap-3">
-                          <a
-                            href={registrationUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="block"
-                          >
-                            <img
-                              src={registrationUrl}
-                              alt="registration"
-                              className="h-20 w-20 rounded-xl object-cover ring-1 ring-black/10"
-                            />
-                          </a>
-
-                          <div className="min-w-0 flex-1">
-                            <div className="truncate text-[11px] text-neutral-600">
-                              {registrationUrl}
-                            </div>
-                            <div className="mt-2 flex gap-2">
-                              <button
-                                type="button"
-                                className="rounded-xl bg-white px-3 py-2 text-[12px] font-bold ring-1 ring-black/10 hover:bg-neutral-50 disabled:opacity-60"
-                                onClick={() => regInputRef.current?.click()}
-                                disabled={isUploadingImage}
-                              >
-                                Đổi ảnh
-                              </button>
-                              <button
-                                type="button"
-                                className="rounded-xl bg-rose-600 px-3 py-2 text-[12px] font-bold text-white hover:opacity-95 disabled:opacity-60"
-                                onClick={removeRegistration}
-                                disabled={isUploadingImage}
-                              >
-                                Xoá
-                              </button>
-                            </div>
+                    <div className="space-y-4">
+                      {/* 1. ẢNH ĐƠN ĐĂNG KÝ */}
+                      <div>
+                        <div className="mb-1.5 text-[11px] font-semibold text-neutral-500">1. Ảnh đơn đăng ký</div>
+                        {registrationUrl ? (
+                          <div className="flex items-center justify-between rounded-xl bg-slate-50 p-2 ring-1 ring-black/5">
+                            <a href={registrationUrl} target="_blank" rel="noreferrer" className="truncate text-[11px] text-blue-600 hover:underline max-w-[150px]">Xem file đính kèm</a>
+                            <button type="button" disabled={isUploadingImage} onClick={() => handleRemoveFile("registrationImageUrl", registrationUrl)} className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200">Xoá</button>
                           </div>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          className="w-full rounded-xl bg-white px-3 py-2 text-[12px] font-bold ring-1 ring-black/10 hover:bg-neutral-50 disabled:opacity-60"
-                          onClick={() => regInputRef.current?.click()}
-                          disabled={isUploadingImage}
-                        >
-                          {isUploadingImage
-                            ? "Đang tải..."
-                            : "Tải ảnh đơn đăng ký"}
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Ảnh kết quả */}
-                    <div>
-                      <div className="mb-1 flex items-center justify-between text-[11px] font-semibold text-neutral-500">
-                        <span>Ảnh kết quả (tối đa 2)</span>
-                        <span>{resultUrls.length}/2</span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2">
-                        {resultUrls.map((url, idx) => (
-                          <div
-                            key={`${url}-${idx}`}
-                            className="overflow-hidden rounded-xl ring-1 ring-black/10"
-                          >
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="block"
-                            >
-                              <img
-                                src={url}
-                                alt={`result-${idx}`}
-                                className="h-24 w-full object-cover"
-                              />
-                            </a>
-                            <div className="p-2">
-                              <button
-                                type="button"
-                                className="w-full rounded-lg bg-rose-600 px-2 py-1 text-[12px] font-bold text-white hover:opacity-95 disabled:opacity-60"
-                                onClick={() => removeResultAt(idx)}
-                                disabled={isUploadingImage}
-                              >
-                                Xoá
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-
-                        {resultUrls.length < 2 && (
-                          <button
-                            type="button"
-                            className="h-24 rounded-xl bg-white px-3 py-2 text-[12px] font-bold ring-1 ring-black/10 hover:bg-neutral-50 disabled:opacity-60 flex items-center justify-center"
-                            onClick={() => resInputRef.current?.click()}
-                            disabled={isUploadingImage}
-                          >
-                            {isUploadingImage ? "Đang tải..." : "+ Thêm ảnh"}
-                          </button>
+                        ) : (
+                          <button type="button" disabled={isUploadingImage} onClick={() => regInputRef.current?.click()} className="w-full flex justify-center rounded-xl bg-slate-50 py-3 text-[11px] font-bold text-neutral-600 ring-1 ring-black/10 border border-dashed border-neutral-300 hover:bg-slate-100">+ Tải file lên</button>
                         )}
                       </div>
+
+                      {/* 2. ẢNH HÓA ĐƠN THU TIỀN */}
+                      <div>
+                        <div className="mb-1.5 text-[11px] font-semibold text-neutral-500">2. Ảnh CK / Tiền mặt</div>
+                        {receiptUrl ? (
+                          <div className="flex items-center justify-between rounded-xl bg-slate-50 p-2 ring-1 ring-black/5">
+                            <a href={receiptUrl} target="_blank" rel="noreferrer" className="truncate text-[11px] text-blue-600 hover:underline max-w-[150px]">Xem biên lai</a>
+                            <button type="button" disabled={isUploadingImage} onClick={() => handleRemoveFile("receiptImageUrl", receiptUrl)} className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200">Xoá</button>
+                          </div>
+                        ) : (
+                          <button type="button" disabled={isUploadingImage} onClick={() => receiptInputRef.current?.click()} className="w-full flex justify-center rounded-xl bg-slate-50 py-3 text-[11px] font-bold text-neutral-600 ring-1 ring-black/10 border border-dashed border-neutral-300 hover:bg-slate-100">+ Tải hóa đơn</button>
+                        )}
+                      </div>
+
+                      {/* 3. FILE TRẢ KẾT QUẢ */}
+                      <div>
+                        <div className="mb-1.5 flex justify-between text-[11px] font-semibold text-neutral-500">
+                          <span>3. File trả Kết quả</span>
+                          <span>{resultUrls.length}/2</span>
+                        </div>
+                        <div className="space-y-2">
+                          {resultUrls.map((url, idx) => (
+                            <div key={idx} className="flex items-center justify-between rounded-xl bg-slate-50 p-2 ring-1 ring-black/5">
+                              <a href={url} target="_blank" rel="noreferrer" className="truncate text-[11px] text-blue-600 hover:underline max-w-[150px]">File KQ {idx + 1}</a>
+                              <button type="button" disabled={isUploadingImage} onClick={() => handleRemoveFile("resultImageUrls", url, idx)} className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200">Xoá</button>
+                            </div>
+                          ))}
+                          {resultUrls.length < 2 && (
+                            <button type="button" disabled={isUploadingImage} onClick={() => resInputRef.current?.click()} className="w-full flex justify-center rounded-xl bg-slate-50 py-2.5 text-[11px] font-bold text-indigo-600 ring-1 ring-indigo-200 bg-indigo-50 border border-dashed hover:bg-indigo-100">+ Thêm File KQ</button>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                </div>
                 </div>
               </section>
             </div>

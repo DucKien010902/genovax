@@ -19,8 +19,8 @@ export type DoctorItem = {
   _id: string;
   fullName: string;
   // XÓA: agentLevel?: string;
-  agentLevels?: string[];        // Mảng các cấp
-  defaultAgentLevel?: string;    // Cấp mặc định
+  agentLevels?: string[]; // Mảng các cấp
+  defaultAgentLevel?: string; // Cấp mặc định
   salesOwner?: string;
   agentTierLabel?: string;
   phone?: string;
@@ -39,7 +39,6 @@ export type CaseRecord = {
 
   stt: number;
   date: string;
-
 
   caseCode: string;
   patientName: string;
@@ -66,6 +65,7 @@ export type CaseRecord = {
   paymentMethod?: string; // Thêm dòng này
   receivedAt: string | null;
   dueDate: string | null;
+  returnedAt?: string | null;
 
   doctorId: string | null;
   agentLevel: string;
@@ -87,8 +87,8 @@ export type CaseRecord = {
 
   // ✅ CẬP NHẬT THÔNG TIN HÓA ĐƠN
   invoiceType?: "company" | "personal"; // Thêm dòng này
-  invoiceName?: string; 
-  invoiceTaxCode?: string; 
+  invoiceName?: string;
+  invoiceTaxCode?: string;
   invoiceIdCard?: string; // Thêm CCCD
   invoiceIssueDate?: string; // Thêm Ngày cấp
   invoiceIssuePlace?: string; // Thêm Nơi cấp
@@ -97,6 +97,7 @@ export type CaseRecord = {
   createdBy: string;
   updatedBy: string;
   registrationImageUrl?: string;
+  receiptImageUrl?: string;
   resultImageUrls?: string[];
   changes?: ChangeLog[];
 };

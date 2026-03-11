@@ -97,6 +97,10 @@ export const api = {
       method: "DELETE",
     }).then((r) => j<{ ok: boolean }>(r)),
 
+
+  // Thêm vào object caseApi hoặc api:
+  
+
   login: (payload: { email: string; password: string }) =>
     fetch(`${API_BASE}/auth/login`, {
       method: "POST",
@@ -252,6 +256,32 @@ export const api = {
     }).then((r) => j<{ ok: true }>(r)),
 };
 export const caseApi = {
+  uploadFile: async (file: File, caseCode: string) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("caseCode", caseCode);
+
+    // Dùng token để bảo mật API upload
+    const token = getToken();
+    const headers = new Headers();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+
+    const res = await fetch(`${API_BASE}/upload`, {
+      method: "POST",
+      headers,
+      body: formData,
+    });
+    if (!res.ok) throw new Error("Upload thất bại");
+    return res.json();
+  },
+
+  deleteFileMinio: async (fileUrl: string) => {
+    return authFetch(`${API_BASE}/upload/delete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fileUrl }),
+    }).then(r => r.json());
+  },
   analytics: (params: {
     serviceType?: string;
     month?: string; // "YYYY-MM" hoặc "ALL"
@@ -263,13 +293,71 @@ export const caseApi = {
     return authFetch(`${API_BASE}/cases/analytics?${qs.toString()}`).then((r) =>
       j<{
         kpis: {
-          totalCases: number; paidCases: number; totalRevenue: number;
-          totalCost: number; totalNetRevenue: number; paidRate: number;
+          totalCases: number;
+          paidCases: number;
+          totalRevenue: number;
+          totalCost: number;
+          totalNetRevenue: number;
+          paidRate: number;
         };
-        monthlyTrend: Array<{ ym: string; revenue: number; cost: number; netRevenue: number; cases: number }>;
-        bySource: Array<{ source: string; revenue: number; cost: number; netRevenue: number; cases: number }>;
-        byService: Array<{ serviceName: string; serviceCode: string; revenue: number; cost: number; netRevenue: number; cases: number }>;
+        monthlyTrend: Array<{
+          ym: string;
+          revenue: number;
+          cost: number;
+          netRevenue: number;
+          cases: number;
+        }>;
+        bySource: Array<{
+          source: string;
+          revenue: number;
+          cost: number;
+          netRevenue: number;
+          cases: number;
+        }>;
+        byService: Array<{
+          serviceName: string;
+          serviceCode: string;
+          revenue: number;
+          cost: number;
+          netRevenue: number;
+          cases: number;
+        }>;
       }>(r),
     );
   },
+};
+export const driveApi = {
+  list: async (path: string, search: string = "") => {
+    return authFetch(`${API_BASE}/drive/list?path=${encodeURIComponent(path)}&search=${encodeURIComponent(search)}`).then(r => r.json());
+  },
+  createFolder: async (currentPath: string, folderName: string) => {
+    return authFetch(`${API_BASE}/drive/create-folder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ currentPath, folderName }),
+    }).then(r => r.json());
+  },
+  upload: async (file: File, currentPath: string) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("currentPath", currentPath);
+    
+    const token = getToken(); // Hàm getToken của bạn
+    const headers = new Headers();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+
+    const res = await fetch(`${API_BASE}/drive/upload`, {
+      method: "POST",
+      headers,
+      body: formData,
+    });
+    return res.json();
+  },
+  delete: async (path: string, type: "file" | "folder") => {
+    return authFetch(`${API_BASE}/drive/delete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path, type }),
+    }).then(r => r.json());
+  }
 };

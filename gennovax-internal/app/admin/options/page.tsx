@@ -188,7 +188,7 @@ export default function AdminOptionsPage() {
 
   return (
     <div className="min-h-[calc(100vh-96px)] bg-gradient-to-b from-neutral-50 to-white">
-      {loading && <LoadingOverlay isLoading={loading}/>}
+      {loading && <LoadingOverlay isLoading={loading} />}
       <div className="mx-auto max-w-[1400px] p-4 sm:p-6 space-y-6">
         {/* Header */}
         <div className="rounded-3xl border border-black/10 bg-white p-5 shadow-sm">

@@ -106,8 +106,11 @@ export default function CasesHeader(props: {
       // MAP DATA SANG TÊN CỘT TIẾNG VIỆT
       const excelData = data.map((item, index) => ({
         STT: item.stt || index + 1,
-        "Ngày tạo": item.date
-          ? new Date(item.date).toLocaleDateString("vi-VN")
+        // "Ngày tạo": item.date
+        //   ? new Date(item.date).toLocaleDateString("vi-VN")
+        //   : "",
+        "Ngày nhận mẫu": item.receivedAt
+          ? new Date(item.receivedAt).toLocaleString("vi-VN")
           : "",
         "Mã ca": item.caseCode || "",
         "Tên bệnh nhân": item.patientName || "",
@@ -121,22 +124,22 @@ export default function CasesHeader(props: {
         "Giá thu (VNĐ)": item.collectedAmount || 0,
         "Giá vốn/Cost (VNĐ)": item.costPrice || 0,
         "Đã thanh toán": item.paid ? "Đã thanh toán" : "Chưa thanh toán",
-        "Trạng thái chuyển Lab": item.transferStatus || "",
-        "Trạng thái tiếp nhận": item.receiveStatus || "",
-        "Trạng thái xử lý": item.processStatus || "",
-        "Trạng thái phản hồi": item.feedbackStatus || "",
-        "Ngày nhận mẫu": item.receivedAt
-          ? new Date(item.receivedAt).toLocaleString("vi-VN")
-          : "",
-        "Hẹn trả KQ": item.dueDate
-          ? new Date(item.dueDate).toLocaleString("vi-VN")
-          : "",
-        "Tên công ty (HĐ)": item.invoiceName || "",
+        // "Trạng thái chuyển Lab": item.transferStatus || "",
+        // "Trạng thái tiếp nhận": item.receiveStatus || "",
+        // "Trạng thái xử lý": item.processStatus || "",
+        // "Trạng thái phản hồi": item.feedbackStatus || "",
+        
+        // "Hẹn trả KQ": item.dueDate
+        //   ? new Date(item.dueDate).toLocaleString("vi-VN")
+        //   : "",
+        "Loại hóa đơn": item.invoiceType|| "",
+        "Tên công ty/ cá nhân (HĐ)": item.invoiceName || "",
         "Mã số thuế (HĐ)": item.invoiceTaxCode || "",
+        "Số CCCD": item.invoiceIdCard || "",
+        "Ngày cấp (nếu có)": item.invoiceIssueDate || "",
+        "Nơi cấp (nếu có)": item.invoiceIssuePlace || "",
         "Địa chỉ (HĐ)": item.invoiceAddress || "",
-        "Ghi chú chi tiết": item.detailNote || "",
       }));
-
       // TẠO FILE EXCEL VÀ TẢI XUỐNG
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
@@ -156,10 +159,10 @@ export default function CasesHeader(props: {
   return (
     <div className="border-b bg-white/80 backdrop-blur z-100">
       <div className="px-5 py-4">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-3">
             <span
-              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${meta.pill}`}
+              className={`inline-flex mt-1 items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${meta.pill}`}
             >
               {meta.title}
             </span>
@@ -167,11 +170,36 @@ export default function CasesHeader(props: {
               <div className="text-lg font-semibold text-neutral-900">
                 Danh sách ca
               </div>
-              <div className="text-sm text-neutral-500">{meta.desc}</div>
+              {/* <div className="text-sm text-neutral-500">{meta.desc}</div> */}
+              
+              {/* ✅ PHẦN CHÚ THÍCH MÀU SẮC (LEGEND) ĐƯỢC THÊM VÀO ĐÂY */}
+              <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] font-medium text-neutral-600">
+                
+                <div className="flex items-center gap-1.5" title="Còn hơn 24 giờ nữa mới đến hạn">
+                  <span className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-sm"></span>
+                  An toàn (&gt;24h)
+                </div>
+                <div className="flex items-center gap-1.5" title="Chỉ còn dưới 24 giờ">
+                  <span className="h-2.5 w-2.5 rounded-full bg-blue-500 shadow-sm"></span>
+                  &lt; 24h
+                </div>
+                <div className="flex items-center gap-1.5" title="Gấp: Chỉ còn dưới 12 giờ">
+                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-500 shadow-sm"></span>
+                  Gấp (&lt;12h)
+                </div>
+                <div className="flex items-center gap-1.5" title="Đã trễ hạn trả kết quả!">
+                  <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-sm"></span>
+                  Quá hạn
+                </div>
+                <div className="flex items-center gap-1.5" title="Trạng thái đã có kết quả">
+                  <span className="h-2.5 w-2.5 rounded-full bg-white ring-1 ring-black/15"></span>
+                  Đã có KQ
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center mt-2 lg:mt-0">
             {/* Search */}
             <div className="relative">
               <input
@@ -275,8 +303,6 @@ export default function CasesHeader(props: {
                 </div>
               )}
             </div>
-
-            {/* Nút Thêm Ca */}
           </div>
         </div>
       </div>
