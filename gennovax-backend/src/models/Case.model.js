@@ -1,29 +1,45 @@
 import mongoose from "mongoose";
-const changeLogSchema = new mongoose.Schema({
-  name: { type: String },
-  email: { type: String },
-  action: { type: String },     // VD: "Tạo mới", "Sửa thông tin"
-  changedAt: { type: Date }     // Hoặc type: String nếu bạn dùng cách lưu text +07:00 như đã bàn
-}, { _id: false });
+
+const changeLogSchema = new mongoose.Schema(
+  {
+    name: { type: String },
+    email: { type: String },
+    action: { type: String }, // VD: "Tạo mới", "Sửa thông tin"
+    changedAt: { type: Date },
+  },
+  { _id: false }
+);
+
 const CaseSchema = new mongoose.Schema(
   {
-    serviceType: { type: String, enum: ["NIPT", "ADN", "HPV","CELL"], required: true },
+    serviceType: {
+      type: String,
+      enum: ["NIPT", "ADN", "HPV", "CELL"],
+      required: true,
+    },
 
     // sheet-like
     stt: { type: Number, default: 0 },
     date: { type: Date, default: Date.now },
 
-    
     caseCode: { type: String, default: "" },
     patientName: { type: String, default: "" },
 
     // service & pricing
-    serviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Service", default: null },
-    serviceName: { type: String, default: "" }, // cache name
-    serviceCode: { type: String, default: "" }, // cache code
+    serviceId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service",
+      default: null,
+    },
+    serviceName: { type: String, default: "" },
+    serviceCode: { type: String, default: "" },
     detailNote: { type: String, default: "" },
 
-    doctorId: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor", default: null },
+    doctorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Doctor",
+      default: null,
+    },
     agentLevel: { type: String, default: "" },
     agentTierLabel: { type: String, default: "" },
     price: { type: Number, default: 0 },
@@ -43,6 +59,7 @@ const CaseSchema = new mongoose.Schema(
     sentAt: { type: Date, default: null },
     receivedAt: { type: Date, default: null },
     dueDate: { type: Date, default: null },
+    returnedAt: { type: Date, default: null },
 
     transferStatus: { type: String, default: "" },
     receiveStatus: { type: String, default: "" },
@@ -54,19 +71,24 @@ const CaseSchema = new mongoose.Schema(
     softFileDone: { type: Boolean, default: false },
     hardFileDone: { type: Boolean, default: false },
 
-invoiceType: { type: String, enum: ["company", "personal"], default: "company" }, // Thêm loại HĐ
-    invoiceName: { type: String, default: "" }, // Tên Cty / Tên Cá nhân
-    invoiceTaxCode: { type: String, default: "" }, // Chỉ dùng cho Cty
-    invoiceIdCard: { type: String, default: "" }, // CCCD - Dùng cho Cá nhân
-    invoiceIssueDate: { type: String, default: "" }, // Ngày cấp - Dùng cho Cá nhân
-    invoiceIssuePlace: { type: String, default: "" }, // Nơi cấp - Dùng cho Cá nhân
-    invoiceAddress: { type: String, default: "" }, // Dùng chung
+    invoiceType: {
+      type: String,
+      enum: ["company", "personal"],
+      default: "company",
+    },
+    invoiceName: { type: String, default: "" },
+    invoiceTaxCode: { type: String, default: "" },
+    invoiceIdCard: { type: String, default: "" },
+    invoiceIssueDate: { type: String, default: "" },
+    invoiceIssuePlace: { type: String, default: "" },
+    invoiceAddress: { type: String, default: "" },
 
     createdBy: { type: String, default: "" },
     updatedBy: { type: String, default: "" },
     registrationImageUrl: { type: String, default: "" },
-resultImageUrls: { type: [String], default: [] },
-changes: [changeLogSchema]
+    resultImageUrls: { type: [String], default: [] },
+    receiptImageUrl: { type: String, default: "" }, // ✅ để vào trong schema
+    changes: [changeLogSchema],
   },
   { timestamps: true }
 );

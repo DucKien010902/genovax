@@ -246,6 +246,7 @@ router.post("/", async (req, res, next) => {
     payload.date = payload.date ? new Date(payload.date) : new Date();
     payload.sentAt = payload.sentAt ? new Date(payload.sentAt) : null;
     payload.receivedAt = payload.receivedAt ? new Date(payload.receivedAt) : null;
+    payload.returnedAt = payload.returnedAt ? new Date(payload.returnedAt) : null;
 
     // 3. XỬ LÝ LƯU VẾT NGƯỜI DÙNG TẠO MỚI (CHANGES)
     const userName = payload.currentUserName || "Unknown";
@@ -317,6 +318,7 @@ router.patch("/:id", async (req, res, next) => {
     if ("date" in patch) patch.date = patch.date ? new Date(patch.date) : new Date();
     if ("sentAt" in patch) patch.sentAt = patch.sentAt ? new Date(patch.sentAt) : null;
     if ("receivedAt" in patch) patch.receivedAt = patch.receivedAt ? new Date(patch.receivedAt) : null;
+    if ("returnedAt" in patch) patch.returnedAt = patch.returnedAt ? new Date(patch.returnedAt) : null;
 
     // Lấy dữ liệu ca hiện tại trong DB ra để đối chiếu
     const current = await Case.findById(id).lean();

@@ -10,6 +10,8 @@ import servicesRoutes from "./routes/services.routes.js";
 import metaRoutes from "./routes/meta.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/users.routes.js";
+import uploadRoutes from "./routes/upload.routes.js";
+import driveRoutes from "./routes/drive.routes.js";
 
 import { requireAuth } from "./middlewares/auth.middleware.js";
 import { browserGate } from "./middlewares/browserGate.middleware.js";
@@ -50,6 +52,8 @@ app.use("/api/cases", browserGate(ALLOWED_ORIGINS), requireAuth, casesRoutes);
 app.use("/api/doctors", browserGate(ALLOWED_ORIGINS), requireAuth, doctorsRoutes);
 app.use("/api/services", browserGate(ALLOWED_ORIGINS), requireAuth, servicesRoutes);
 app.use("/api/meta", browserGate(ALLOWED_ORIGINS), requireAuth, metaRoutes);
+app.use("/api/upload", browserGate(ALLOWED_ORIGINS), requireAuth, uploadRoutes);
+app.use("/api/drive", browserGate(ALLOWED_ORIGINS), requireAuth, driveRoutes);
 
 // error handler
 app.use((err, req, res, next) => {
