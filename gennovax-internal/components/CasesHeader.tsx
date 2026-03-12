@@ -115,7 +115,7 @@ export default function CasesHeader(props: {
         "Mã ca": item.caseCode || "",
         "Tên bệnh nhân": item.patientName || "",
         "Nhóm dịch vụ": item.serviceType || "",
-        "Tên dịch vụ": item.serviceName || "",
+        // "Tên dịch vụ": item.serviceName || "",
         "Mã dịch vụ": item.serviceCode || "",
         "Phòng Lab": item.lab || "",
         "Nguồn khách": item.source || "",
@@ -173,7 +173,7 @@ export default function CasesHeader(props: {
               {/* <div className="text-sm text-neutral-500">{meta.desc}</div> */}
               
               {/* ✅ PHẦN CHÚ THÍCH MÀU SẮC (LEGEND) ĐƯỢC THÊM VÀO ĐÂY */}
-              <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] font-medium text-neutral-600">
+              <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] font-medium text-neutral-600 max-w-[300px]">
                 
                 <div className="flex items-center gap-1.5" title="Còn hơn 24 giờ nữa mới đến hạn">
                   <span className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-sm"></span>

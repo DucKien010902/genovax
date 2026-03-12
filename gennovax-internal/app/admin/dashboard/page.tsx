@@ -10,9 +10,9 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  LabelList, // ✅ IMPORT THÊM LabelList
+  LabelList,
 } from "recharts";
-import { caseApi } from "@/lib/api"; // Chỉnh lại path nếu cần
+import { caseApi } from "@/lib/api"; 
 import LoadingOverlay from "@/components/LoadingOverlay";
 
 function cn(...a: Array<string | false | null | undefined>) {
@@ -23,7 +23,6 @@ function money(n: number) {
   return new Intl.NumberFormat("vi-VN").format(Math.round(n || 0));
 }
 
-// ✅ Format tiền rút gọn (chia 1 triệu, thêm 'Tr')
 function moneyMil(n: number) {
   const val = (n || 0) / 1000000;
   return (
@@ -36,7 +35,6 @@ function pct(n: number) {
   return `${Math.round((n || 0) * 100)}%`;
 }
 
-// Hàm sinh danh sách 24 tháng gần nhất
 function getRecentMonths(count = 12) {
   const arr = [];
   const d = new Date();
@@ -64,8 +62,7 @@ const SERVICE_OPTIONS = [
   { label: "CELL", value: "CELL" },
 ];
 
-const COLOR_COST = "#f43f5e"; // rose
-const COLOR_NET = "#3b82f6"; // emerald
+const COLOR_NET = "#3b82f6"; // blue
 const COLOR_REV = "#3b82f6"; // blue
 
 export default function AdminDashboardPage() {
@@ -78,6 +75,9 @@ export default function AdminDashboardPage() {
   const [p2Month, setP2Month] = useState("ALL");
   const [p2Loading, setP2Loading] = useState(true);
   const [p2Data, setP2Data] = useState<any>(null);
+
+  // ✅ Thêm State để điều khiển hiển thị 6 hay 12 tháng
+  const [chartLimit, setChartLimit] = useState<number>(6);
 
   useEffect(() => {
     setP1Loading(true);
@@ -108,10 +108,19 @@ export default function AdminDashboardPage() {
   const monthlyTrend = p1Data?.monthlyTrend || [];
   const byService = p2Data?.byService || [];
 
+  // ✅ XỬ LÝ DỮ LIỆU BIỂU ĐỒ THÁNG:
+  // 1. Copy mảng để không làm hỏng data gốc
+  // 2. Sắp xếp giảm dần (localeCompare b.ym với a.ym) để tháng gần nhất lên đầu (bên trái)
+  // 3. Cắt (slice) lấy đúng số lượng chartLimit (6 hoặc 12)
+  const displayMonthlyTrend = [...monthlyTrend]
+    .sort((a, b) => b.ym.localeCompare(a.ym))
+    .slice(0, chartLimit);
+
   return (
     <>
       <LoadingOverlay isLoading={p1Loading || p2Loading} />
       <div className="min-h-screen bg-neutral-50 pb-12 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
+        
         {/* =======================
             PHẦN 1: TỔNG QUAN
         ======================= */}
@@ -143,52 +152,17 @@ export default function AdminDashboardPage() {
 
             {/* KPI Cards */}
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-              <KpiCard
-                title="Tổng Doanh thu"
-                value={money(kpis.totalRevenue)}
-                sub="Doanh thu dự kiến"
-                icon="💰"
-                theme="blue"
-              />
-              <KpiCard
-                title="Tổng Chi phí"
-                value={money(kpis.totalCost)}
-                sub="Giá vốn xuất ra"
-                icon="📉"
-                theme="rose"
-              />
-              <KpiCard
-                title="Lợi nhuận dự kiến (Net)"
-                value={money(kpis.totalNetRevenue)}
-                sub="Toàn bộ ca"
-                icon="⚖️"
-                highlight
-              />
-
-              {/* ✅ THẺ LỢI NHUẬN THỰC TẾ CẬP NHẬT THEO LOGIC MỚI */}
-              <KpiCard
-                title="Kế toán đã thu về"
-                value={money(kpis.actualNetRevenue)}
-                sub="Chỉ tính các ca đã TT"
-                icon="💎"
-                
-                theme="amber"
-              />
-
-              <KpiCard
-                title="Tỷ lệ thu tiền"
-                value={pct(kpis.paidRate)}
-                sub={`${kpis.paidCases}/${kpis.totalCases} ca đã TT`}
-                icon="✅"
-                theme="blue"
-              />
+              <KpiCard title="Tổng Doanh thu" value={money(kpis.totalRevenue)} sub="Doanh thu dự kiến" icon="💰" theme="blue" />
+              <KpiCard title="Tổng Chi phí" value={money(kpis.totalCost)} sub="Giá vốn xuất ra" icon="📉" theme="rose" />
+              <KpiCard title="Lợi nhuận dự kiến (Net)" value={money(kpis.totalNetRevenue)} sub="Toàn bộ ca" icon="⚖️" highlight />
+              <KpiCard title="Kế toán đã thu về" value={money(kpis.actualNetRevenue)} sub="Chỉ tính các ca đã TT" icon="💎" theme="amber" />
+              <KpiCard title="Tỷ lệ thu tiền" value={pct(kpis.paidRate)} sub={`${kpis.paidCases}/${kpis.totalCases} ca đã TT`} icon="✅" theme="blue" />
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+              
               {/* Bảng Xếp Hạng Nguồn */}
-              <Card
-                title={`Bảng xếp hạng Nguồn ${p1Month !== "ALL" ? `(Tháng ${p1Month})` : "(Toàn thời gian)"}`}
-              >
+              <Card title={`Bảng xếp hạng Nguồn ${p1Month !== "ALL" ? `(Tháng ${p1Month})` : "(Toàn thời gian)"}`}>
                 <div className="max-h-[350px] overflow-auto rounded-xl border border-black/5 dark:border-white/10">
                   <table className="w-full border-collapse text-sm">
                     <thead className="sticky top-0 z-10 bg-white/95 backdrop-blur dark:bg-neutral-900/90">
@@ -202,24 +176,14 @@ export default function AdminDashboardPage() {
                     <tbody>
                       {bySource.length === 0 ? (
                         <tr>
-                          <td
-                            colSpan={4}
-                            className="py-8 text-center text-neutral-500"
-                          >
-                            Không có dữ liệu
-                          </td>
+                          <td colSpan={4} className="py-8 text-center text-neutral-500">Không có dữ liệu</td>
                         </tr>
                       ) : (
                         bySource.map((x: any, i: number) => (
-                          <tr
-                            key={x.source}
-                            className="border-t border-black/5 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
-                          >
+                          <tr key={x.source} className="border-t border-black/5 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5">
                             <Td className="text-neutral-500 w-8">{i + 1}</Td>
                             <Td className="font-bold">{x.source}</Td>
-                            <Td right className="font-semibold text-blue-600">
-                              {money(x.netRevenue)}
-                            </Td>
+                            <Td right className="font-semibold text-blue-600">{money(x.netRevenue)}</Td>
                             <Td right>{x.cases}</Td>
                           </tr>
                         ))
@@ -229,14 +193,25 @@ export default function AdminDashboardPage() {
                 </div>
               </Card>
 
-              {/* ✅ Biểu đồ Tháng (Cột Dọc) có hiện số trên đỉnh */}
+              {/* ✅ Biểu đồ Tháng - Có thêm Action (Dropdown) để chọn số tháng */}
               <Card
                 title={`Biểu đồ Dòng tiền các tháng ${p1Service ? `(${p1Service})` : ""}`}
+                action={
+                  <select
+                    value={chartLimit}
+                    onChange={(e) => setChartLimit(Number(e.target.value))}
+                    className="cursor-pointer rounded-lg border border-black/10 bg-white px-2 py-1 text-xs font-semibold shadow-sm outline-none hover:bg-neutral-50"
+                  >
+                    <option value={6}>6 tháng gần nhất</option>
+                    <option value={12}>12 tháng gần nhất</option>
+                  </select>
+                }
               >
                 <div className="h-[350px] w-full pt-4">
                   <ResponsiveContainer>
+                    {/* ✅ Truyền data đã được cắt và xếp vào đây */}
                     <BarChart
-                      data={monthlyTrend}
+                      data={displayMonthlyTrend}
                       margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -259,23 +234,6 @@ export default function AdminDashboardPage() {
                       >
                         <LabelList
                           dataKey="netRevenue"
-                          position="top"
-                          formatter={(v: any) => moneyMil(v)}
-                          style={{
-                            fontSize: "10px",
-                            fill: "#525252",
-                            fontWeight: 600,
-                          }}
-                        />
-                      </Bar>
-                      <Bar
-                        dataKey="cost"
-                        name="Chi phí (Cost)"
-                        fill={COLOR_COST}
-                        radius={[4, 4, 0, 0]}
-                      >
-                        <LabelList
-                          dataKey="cost"
                           position="top"
                           formatter={(v: any) => moneyMil(v)}
                           style={{
@@ -322,10 +280,7 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* ✅ Biểu đồ Dịch vụ (Cột Ngang) có hiện số bên phải */}
-            <Card
-              title={`So sánh LN dự kiến các gói ${p2Service} ${p2Month !== "ALL" ? `(${p2Month})` : ""}`}
-            >
+            <Card title={`So sánh LN dự kiến các gói ${p2Service} ${p2Month !== "ALL" ? `(${p2Month})` : ""}`}>
               <div className="h-[500px] w-full pt-4">
                 <ResponsiveContainer>
                   <BarChart
@@ -373,15 +328,14 @@ export default function AdminDashboardPage() {
               </div>
             </Card>
 
-            {/* Bảng xếp hạng Dịch vụ */}
             <Card title={`Bảng xếp hạng gói ${p2Service}`}>
               <div className="max-h-[500px] overflow-auto rounded-xl border border-black/5 dark:border-white/10">
                 <table className="w-full border-collapse text-sm">
                   <colgroup>
-                    <col className="max-w-[60px]" /> {/* Cột 1: Mã Gói (Tăng rộng) */}
-                    <col className="w-[140px]" />    {/* Cột 2: Tên Dịch Vụ (Giảm bớt, tự co giãn phần còn lại) */}
-                    <col className="w-[120px]" /> {/* Cột 3: LN Dự kiến */}
-                    <col className="w-[70px]" />  {/* Cột 4: SL Ca */}
+                    <col className="max-w-[60px]" /> 
+                    <col className="w-[140px]" />    
+                    <col className="w-[120px]" /> 
+                    <col className="w-[70px]" />  
                   </colgroup>
                   <thead className="sticky top-0 z-10 bg-white/95 backdrop-blur dark:bg-neutral-900/90">
                     <tr className="text-xs text-neutral-500">
@@ -394,28 +348,16 @@ export default function AdminDashboardPage() {
                   <tbody>
                     {byService.length === 0 ? (
                       <tr>
-                        <td
-                          colSpan={4}
-                          className="py-8 text-center text-neutral-500"
-                        >
+                        <td colSpan={4} className="py-8 text-center text-neutral-500">
                           Không có dữ liệu
                         </td>
                       </tr>
                     ) : (
                       byService.map((x: any) => (
-                        <tr
-                          key={x.serviceCode}
-                          className="border-t border-black/5 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
-                        >
-                          <Td className="text-xs">
-                            {x.serviceCode || "—"}
-                          </Td>
-                          <Td className="text-xs">
-                            {x.serviceName || "Chưa xác định"}
-                          </Td>
-                          <Td right className="font-semibold text-blue-600">
-                            {money(x.netRevenue)}
-                          </Td>
+                        <tr key={x.serviceCode} className="border-t border-black/5 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5">
+                          <Td className="text-xs">{x.serviceCode || "—"}</Td>
+                          <Td className="text-xs">{x.serviceName || "Chưa xác định"}</Td>
+                          <Td right className="font-semibold text-blue-600">{money(x.netRevenue)}</Td>
                           <Td right>{x.cases}</Td>
                         </tr>
                       ))
@@ -433,50 +375,37 @@ export default function AdminDashboardPage() {
 
 /* ================= UI ATOMS ================= */
 
+// ✅ Đã cập nhật Card để có thể nhận thêm prop `action` bên phải title
 function Card({
   title,
+  action,
   children,
 }: {
   title: string;
+  action?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col rounded-3xl border border-black/5 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-neutral-900">
-      <div className="mb-4 text-sm font-bold text-neutral-900 dark:text-white">
-        {title}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="text-sm font-bold text-neutral-900 dark:text-white">
+          {title}
+        </div>
+        {action && <div>{action}</div>}
       </div>
       <div className="flex-1">{children}</div>
     </div>
   );
 }
 
-function KpiCard({
-  title,
-  value,
-  sub,
-  icon,
-  highlight = false,
-  theme = "default",
-}: any) {
+function KpiCard({ title, value, sub, icon, highlight = false, theme = "default" }: any) {
   const themes: any = {
-    default: {
-      iconBg: "from-neutral-500/20 to-neutral-400/20",
-      text: "text-neutral-900",
-    },
+    default: { iconBg: "from-neutral-500/20 to-neutral-400/20", text: "text-neutral-900" },
     blue: { iconBg: "from-blue-500/20 to-cyan-500/20", text: "text-blue-600" },
     rose: { iconBg: "from-rose-500/20 to-pink-500/20", text: "text-rose-600" },
-    amber: {
-      iconBg: "from-amber-500/20 to-orange-500/20",
-      text: "text-amber-600",
-    },
-    emerald: {
-      iconBg: "from-blue-500/20 to-teal-500/20",
-      text: "text-emerald-600",
-    },
-    indigo: {
-      iconBg: "from-indigo-500/20 to-fuchsia-500/20",
-      text: "text-indigo-600",
-    },
+    amber: { iconBg: "from-amber-500/20 to-orange-500/20", text: "text-amber-600" },
+    emerald: { iconBg: "from-blue-500/20 to-teal-500/20", text: "text-emerald-600" },
+    indigo: { iconBg: "from-indigo-500/20 to-fuchsia-500/20", text: "text-indigo-600" },
   };
   const t = themes[theme] || themes.default;
 
@@ -485,12 +414,8 @@ function KpiCard({
       <div className="flex flex-col justify-between rounded-3xl bg-gradient-to-br from-blue-500 to-blue-600 p-4 text-white shadow-md transition-transform hover:scale-[1.02]">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-[11px] font-bold text-emerald-50 uppercase tracking-wide">
-              {title}
-            </div>
-            <div className="mt-2 text-xl font-extrabold tabular-nums">
-              {value}
-            </div>
+            <div className="text-[11px] font-bold text-emerald-50 uppercase tracking-wide">{title}</div>
+            <div className="mt-2 text-xl font-extrabold tabular-nums">{value}</div>
             <div className="mt-1 text-xs text-emerald-100/80">{sub}</div>
           </div>
           <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white/20 ring-1 ring-white/20">
@@ -505,19 +430,10 @@ function KpiCard({
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-xs font-semibold text-neutral-500">{title}</div>
-          <div
-            className={cn("mt-2 text-xl font-extrabold tabular-nums", t.text)}
-          >
-            {value}
-          </div>
+          <div className={cn("mt-2 text-xl font-extrabold tabular-nums", t.text)}>{value}</div>
           <div className="mt-1 text-[11px] text-neutral-500">{sub}</div>
         </div>
-        <div
-          className={cn(
-            "grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br ring-1 ring-black/5",
-            t.iconBg,
-          )}
-        >
+        <div className={cn("grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br ring-1 ring-black/5", t.iconBg)}>
           <span className="text-lg">{icon}</span>
         </div>
       </div>
@@ -533,9 +449,7 @@ function SelectPill({ value, onChange, options }: any) {
       className="h-10 rounded-2xl border border-black/10 bg-white px-4 text-sm font-semibold shadow-sm outline-none focus:ring-2 focus:ring-indigo-300"
     >
       {options.map((o: any) => (
-        <option key={o.value} value={o.value}>
-          {o.label}
-        </option>
+        <option key={o.value} value={o.value}>{o.label}</option>
       ))}
     </select>
   );
@@ -543,21 +457,12 @@ function SelectPill({ value, onChange, options }: any) {
 
 function Th({ children, right }: any) {
   return (
-    <th
-      className={cn(
-        "px-4 py-3 text-left font-semibold border-b border-black/5",
-        right && "text-right",
-      )}
-    >
+    <th className={cn("px-4 py-3 text-left font-semibold border-b border-black/5", right && "text-right")}>
       {children}
     </th>
   );
 }
 
 function Td({ children, right, className }: any) {
-  return (
-    <td className={cn("px-4 py-3", right && "text-right", className)}>
-      {children}
-    </td>
-  );
+  return <td className={cn("px-4 py-3", right && "text-right", className)}>{children}</td>;
 }

@@ -2,19 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import { driveApi } from "@/lib/api";
-import { Folder, FileText, Image as ImageIcon, Trash2, Download, UploadCloud, FolderPlus, ChevronRight, X } from "lucide-react";
-import LoadingOverlay from "@/components/LoadingOverlay"; // Component của bạn
+// Đã bỏ UploadCloud và FolderPlus
+import { Folder, FileText, Image as ImageIcon, Download, ChevronRight, X } from "lucide-react";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function GennovaxDrivePage() {
-  const [currentPath, setCurrentPath] = useState(""); // "" = thư mục gốc
+  const [currentPath, setCurrentPath] = useState(""); 
   const [items, setItems] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   
-  // Trạng thái cho Preview Modal
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  // Lưu trữ toàn bộ object item thay vì chỉ URL để lấy được tên file khi tải từ Modal
+  const [previewItem, setPreviewItem] = useState<any | null>(null);
 
-  // Load data
   const loadData = async () => {
     setLoading(true);
     try {
@@ -32,37 +32,86 @@ export default function GennovaxDrivePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPath, search]);
 
-  // ✅ HÀM CHUYỂN THƯ MỤC: Vừa chuyển path, vừa tự động xóa thanh search
   const navigateTo = (newPath: string) => {
     setCurrentPath(newPath);
     setSearch(""); 
   };
 
-  // Hành động
-  const handleCreateFolder = async () => {
-    const name = prompt("Nhập tên thư mục (Ví dụ: MACA123):");
-    if (!name) return;
-    setLoading(true);
-    await driveApi.createFolder(currentPath, name);
-    loadData();
+  // ✅ HÀM MỚI: ÉP tải tệp đơn lẻ (Không mở tab mới)
+  const handleDownloadFile = async (file: any) => {
+    try {
+      setLoading(true);
+      // Fetch data trực tiếp từ URL
+      const response = await fetch(file.url);
+      const blob = await response.blob();
+      
+      // Tạo URL ảo dạng blob và ép trình duyệt tải xuống
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = file.name; // Ép tên file khi tải về
+      document.body.appendChild(link);
+      link.click();
+      
+      // Dọn dẹp
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error(`Lỗi khi tải file ${file.name}:`, error);
+      alert("Có lỗi xảy ra khi tải tệp này.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setLoading(true);
-    await driveApi.upload(file, currentPath);
-    loadData();
+  // Tải toàn bộ thư mục về máy (Tạo thư mục thật + lưu file)
+  const handleDownloadFolder = async (folderItem: any) => {
+    if (!('showDirectoryPicker' in window)) {
+      alert("Trình duyệt của bạn không hỗ trợ tải nguyên thư mục. Vui lòng sử dụng Chrome, Edge, hoặc Cốc Cốc.");
+      return;
+    }
+
+    try {
+      const localDirHandle = await (window as any).showDirectoryPicker({ mode: 'readwrite' });
+      const newFolderHandle = await localDirHandle.getDirectoryHandle(folderItem.name, { create: true });
+      
+      setLoading(true);
+      const res = await driveApi.list(folderItem.path, "");
+      if (!res.success) throw new Error("Không thể lấy danh sách file");
+      
+      const filesToDownload = res.data.filter((item: any) => item.type === "file");
+
+      if (filesToDownload.length === 0) {
+        alert("Thư mục này trống, không có tệp nào để tải.");
+        setLoading(false);
+        return;
+      }
+
+      for (const file of filesToDownload) {
+        try {
+          const fileResponse = await fetch(file.url);
+          const blob = await fileResponse.blob();
+          const fileHandle = await newFolderHandle.getFileHandle(file.name, { create: true });
+          const writable = await fileHandle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+        } catch (err) {
+          console.error(`Lỗi khi tải file ${file.name}:`, err);
+        }
+      }
+
+      alert(`Đã tải thành công thư mục: ${folderItem.name}`);
+
+    } catch (error: any) {
+      if (error.name !== 'AbortError') {
+        console.error("Lỗi khi tải thư mục:", error);
+        alert("Có lỗi xảy ra trong quá trình tải thư mục.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDelete = async (path: string, type: "file" | "folder") => {
-    if (!confirm(`Bạn có chắc chắn muốn xóa ${type === "folder" ? "thư mục này và toàn bộ nội dung bên trong" : "tệp này"}?`)) return;
-    setLoading(true);
-    await driveApi.delete(path, type);
-    loadData();
-  };
-
-  // Tính toán Breadcrumb (Đường dẫn)
   const pathParts = currentPath.split("/").filter(Boolean);
 
   return (
@@ -71,26 +120,6 @@ export default function GennovaxDrivePage() {
 
       {/* --- BREADCRUMB & TOOLBAR --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        {/* Breadcrumb Navigation */}
-        
-
-        {/* Thanh công cụ */}
-        <div className="flex items-center gap-3">
-          <input
-            type="text"
-            placeholder="Tìm trong thư mục hiện tại..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="rounded-full bg-neutral-100 px-5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-200 w-64"
-          />
-          <button onClick={handleCreateFolder} className="flex items-center gap-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 px-4 py-2.5 rounded-full text-sm font-bold transition-all">
-            <FolderPlus className="w-4 h-4" /> Mới
-          </button>
-          <label className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-full text-sm font-bold cursor-pointer transition-all shadow-md shadow-blue-500/20">
-            <UploadCloud className="w-4 h-4" /> Tải tệp lên
-            <input type="file" className="hidden" onChange={handleUpload} />
-          </label>
-        </div>
         <div className="flex items-center text-lg font-semibold text-neutral-700 flex-wrap">
           <button 
             onClick={() => navigateTo("")} 
@@ -99,7 +128,6 @@ export default function GennovaxDrivePage() {
             Toàn bộ Thư mục và File
           </button>
           {pathParts.map((part, idx) => {
-            // Tính lại đường dẫn khi click vào part ở giữa
             const pathToHere = pathParts.slice(0, idx + 1).join("/") + "/";
             return (
               <React.Fragment key={pathToHere}>
@@ -114,6 +142,18 @@ export default function GennovaxDrivePage() {
             );
           })}
         </div>      
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="Tìm trong thư mục hiện tại..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="rounded-full bg-neutral-100 px-5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-200 w-96"
+          />
+          {/* ĐÃ XÓA NÚT "MỚI" VÀ "TẢI LÊN" Ở ĐÂY */}
+        </div>
+        
+        
       </div>
 
       {/* --- KHU VỰC HIỂN THỊ (GRID VIEW) --- */}
@@ -127,13 +167,11 @@ export default function GennovaxDrivePage() {
         {items.map((item, idx) => (
           <div key={idx} className="group relative flex flex-col items-center justify-center p-4 rounded-2xl border border-transparent hover:border-black/10 hover:bg-neutral-50 transition-all cursor-pointer select-none">
             
-            {/* Click Icon/Tên để mở Folder hoặc Xem File */}
             <div 
               className="flex flex-col items-center w-full"
               onDoubleClick={() => {
-                // ✅ Gọi navigateTo thay vì setCurrentPath
                 if (item.type === "folder") navigateTo(item.path);
-                else setPreviewUrl(item.url);
+                else setPreviewItem(item); // Lưu cả object item thay vì url
               }}
             >
               {item.type === "folder" ? (
@@ -149,21 +187,33 @@ export default function GennovaxDrivePage() {
               </span>
             </div>
 
-            {/* Menu 3 chấm (Dropdown giả lập nhanh) */}
+            {/* Nút Tải xuống: Dùng API tải ngầm thay vì href */}
             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(item.path, item.type);
-                }} 
-                className="p-1.5 bg-white shadow-sm ring-1 ring-black/5 rounded-lg text-rose-600 hover:bg-rose-50"
-                title="Xóa"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
+              {item.type === "file" ? (
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDownloadFile(item); // Ép tải file đơn
+                  }} 
+                  className="p-1.5 bg-white shadow-sm ring-1 ring-black/5 rounded-lg text-blue-600 hover:bg-blue-50 block"
+                  title="Tải tệp xuống"
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+              ) : (
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDownloadFolder(item); // Tải thư mục
+                  }} 
+                  className="p-1.5 bg-white shadow-sm ring-1 ring-black/5 rounded-lg text-blue-600 hover:bg-blue-50 block"
+                  title="Tải thư mục xuống"
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+              )}
             </div>
             
-            {/* Text nhỏ ở dưới báo nháy đúp */}
             <span className="text-[10px] text-neutral-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
               Nháy đúp để mở
             </span>
@@ -172,34 +222,29 @@ export default function GennovaxDrivePage() {
       </div>
 
       {/* --- PREVIEW MODAL (Dành cho ảnh và PDF) --- */}
-      {previewUrl && (
+      {previewItem && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
           <button 
-            onClick={() => setPreviewUrl(null)} 
+            onClick={() => setPreviewItem(null)} 
             className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
           >
             <X className="w-8 h-8" />
           </button>
           
           <div className="w-full max-w-5xl h-[85vh] bg-neutral-900 rounded-3xl overflow-hidden flex items-center justify-center shadow-2xl relative ring-1 ring-white/20">
-            {/* Nếu là PDF */}
-            {previewUrl.toLowerCase().includes('.pdf') ? (
-              <iframe src={previewUrl} className="w-full h-full border-none" title="PDF Preview" />
+            {previewItem.url.toLowerCase().includes('.pdf') ? (
+              <iframe src={previewItem.url} className="w-full h-full border-none" title="PDF Preview" />
             ) : (
-              // Nếu là Ảnh
-              <img src={previewUrl} alt="Preview" className="max-w-full max-h-full object-contain" />
+              <img src={previewItem.url} alt="Preview" className="max-w-full max-h-full object-contain" />
             )}
             
-            {/* Nút tải xuống dưới góc */}
-            <a 
-              href={previewUrl} 
-              download 
-              target="_blank" 
-              rel="noreferrer"
+            {/* Nút tải xuống dùng chung hàm ép tải */}
+            <button 
+              onClick={() => handleDownloadFile(previewItem)}
               className="absolute bottom-6 right-6 flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-full font-bold shadow-lg hover:bg-blue-500 transition-transform hover:scale-105"
             >
               <Download className="w-5 h-5" /> Tải xuống
-            </a>
+            </button>
           </div>
         </div>
       )}

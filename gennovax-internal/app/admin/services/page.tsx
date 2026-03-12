@@ -154,6 +154,10 @@ export default function AdminServicesPage() {
   };
 
   const del = async (id: string) => {
+    // Thêm dòng confirm này:
+    const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa dịch vụ này không? Hành động này không thể hoàn tác.");
+    if (!isConfirmed) return; // Nếu chọn Cancel thì thoát luôn, không chạy API xóa nữa
+
     setErr(null);
     try {
       if (!isAdmin) throw new Error("Chỉ admin được phép xoá.");

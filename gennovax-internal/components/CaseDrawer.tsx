@@ -1255,7 +1255,7 @@ export default function CaseDrawer({
                   <div className="rounded-2xl bg-white p-3 ring-1 ring-black/5">
                     <div className="mb-2 flex items-center justify-between">
                       <div className="text-[12px] font-bold text-neutral-900">Tài liệu đính kèm</div>
-                      <div className="text-[11px] text-neutral-500">1 Đơn • 1 HĐ • 2 KQ</div>
+                      {/* <div className="text-[11px] text-neutral-500">1 Đơn • 1 HĐ • 2 KQ</div> */}
                     </div>
 
                     {imageUploadError && (
@@ -1299,7 +1299,7 @@ export default function CaseDrawer({
                       <div>
                         <div className="mb-1.5 flex justify-between text-[11px] font-semibold text-neutral-500">
                           <span>3. File trả Kết quả</span>
-                          <span>{resultUrls.length}/2</span>
+                          <span>{resultUrls.length}/3</span>
                         </div>
                         <div className="space-y-2">
                           {resultUrls.map((url, idx) => (
@@ -1308,7 +1308,7 @@ export default function CaseDrawer({
                               <button type="button" disabled={isUploadingImage} onClick={() => handleRemoveFile("resultImageUrls", url, idx)} className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200">Xoá</button>
                             </div>
                           ))}
-                          {resultUrls.length < 2 && (
+                          {resultUrls.length < 3 && (
                             <button type="button" disabled={isUploadingImage} onClick={() => resInputRef.current?.click()} className="w-full flex justify-center rounded-xl bg-slate-50 py-2.5 text-[11px] font-bold text-indigo-600 ring-1 ring-indigo-200 bg-indigo-50 border border-dashed hover:bg-indigo-100">+ Thêm File KQ</button>
                           )}
                         </div>
