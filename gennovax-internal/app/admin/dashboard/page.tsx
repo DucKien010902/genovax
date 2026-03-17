@@ -106,7 +106,14 @@ export default function AdminDashboardPage() {
   };
   const bySource = p1Data?.bySource || [];
   const monthlyTrend = p1Data?.monthlyTrend || [];
-  const byService = p2Data?.byService || [];
+  // Lấy dữ liệu byService và lọc bỏ những phần tử có chứa "2025" ở Tên hoặc Mã
+  const byService = (p2Data?.byService || []).filter((x: any) => {
+    const name = x.serviceName || "";
+    const code = x.serviceCode || "";
+    
+    // Trả về true (giữ lại) nếu cả tên và mã ĐỀU KHÔNG chứa "2025"
+    return !name.includes("2025") && !code.includes("2025");
+  });
 
   // ✅ XỬ LÝ DỮ LIỆU BIỂU ĐỒ THÁNG:
   // 1. Copy mảng để không làm hỏng data gốc
@@ -184,7 +191,7 @@ export default function AdminDashboardPage() {
                             <Td className="text-neutral-500 w-8">{i + 1}</Td>
                             <Td className="font-bold">{x.source}</Td>
                             <Td right className="font-semibold text-blue-600">{money(x.netRevenue)}</Td>
-                            <Td right>{x.cases}</Td>
+                            <Td right>{(x.source.includes('2025')? "#": x.cases)}</Td>
                           </tr>
                         ))
                       )}
