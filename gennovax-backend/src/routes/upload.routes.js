@@ -7,7 +7,7 @@ const router = express.Router();
 const upload = multer({ dest: "temp/" }); // Lưu tạm trước khi đẩy lên MinIO
 
 const BUCKET_NAME = "gennovax";
-const DOMAIN = "https://image.nsland.com.vn";
+const DOMAIN = process.env.URL_MINIO || "https://file.gennovax.vn";
 
 // API Upload
 router.post("/", upload.single("file"), async (req, res) => {

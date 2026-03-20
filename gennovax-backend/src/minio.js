@@ -1,7 +1,7 @@
 const Minio = require("minio");
 
 const minioClient = new Minio.Client({
-  endPoint: "localhost",
+  endPoint: "minio-server",
   port: 9000,
   useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY || "minioadmin",

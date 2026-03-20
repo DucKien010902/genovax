@@ -6,7 +6,7 @@ const minioClient = require("../minio.js");
 const router = express.Router();
 const upload = multer({ dest: "temp/" });
 const BUCKET_NAME = "gennovax";
-const DOMAIN = "https://image.nsland.com.vn";
+const DOMAIN = process.env.URL_MINIO || "https://file.gennovax.vn";
 
 // 1. LẤY DANH SÁCH FILE & THƯ MỤC
 router.get("/list", async (req, res) => {

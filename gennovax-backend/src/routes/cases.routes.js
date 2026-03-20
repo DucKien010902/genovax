@@ -264,15 +264,20 @@ router.post("/", async (req, res, next) => {
     delete payload.currentUserEmail;
 
     // 4. TÍNH TOÁN GIÁ & ĐẠI LÝ
+    // 4. TÍNH TOÁN GIÁ & ĐẠI LÝ
     const info = await computePriceAndAgent({
       serviceId: payload.serviceId,
       doctorId: payload.doctorId,
     });
+    
     payload.price = info.price;
-    payload.agentLevel = info.agentLevel;
-    payload.agentTierLabel = info.agentTierLabel;
+    
+    // ✅ ƯU TIÊN LẤY TỪ FRONTEND, NẾU KHÔNG CÓ MỚI LẤY TỪ INFO
+    payload.agentLevel = payload.agentLevel || info.agentLevel;
+    payload.agentTierLabel = payload.agentTierLabel || info.agentTierLabel;
+    
     payload.serviceCode = info.serviceCode || payload.serviceCode || "";
-    payload.serviceName = info.serviceName || payload.serviceName || "";
+    payload.serviceName = info.serviceName || payload.serviceName || ""; 
 
     // 5. TÍNH TOÁN NGÀY HẸN TRẢ KẾT QUẢ
     payload.dueDate = await computeDueDate({
@@ -355,6 +360,7 @@ router.patch("/:id", async (req, res, next) => {
     delete patch.currentUserEmail;
 
     // 4. KIỂM TRA THAY ĐỔI ĐỂ TÍNH TOÁN LẠI GIÁ VÀ HẠN TRẢ KẾT QUẢ
+    // 4. KIỂM TRA THAY ĐỔI ĐỂ TÍNH TOÁN LẠI GIÁ VÀ HẠN TRẢ KẾT QUẢ
     const nextDoc = { ...current, ...patch };
 
     const changedServiceOrDoctor = ("serviceId" in patch) || ("doctorId" in patch);
@@ -364,8 +370,11 @@ router.patch("/:id", async (req, res, next) => {
         doctorId: nextDoc.doctorId,
       });
       patch.price = info.price;
-      patch.agentLevel = info.agentLevel;
-      patch.agentTierLabel = info.agentTierLabel;
+      
+      // ✅ ƯU TIÊN LẤY TỪ GÓI UPDATE (FRONTEND), NẾU KHÔNG CÓ MỚI LẤY TỪ INFO
+      patch.agentLevel = patch.agentLevel || info.agentLevel;
+      patch.agentTierLabel = patch.agentTierLabel || info.agentTierLabel;
+      
       patch.serviceCode = info.serviceCode || nextDoc.serviceCode || "";
       patch.serviceName = info.serviceName || nextDoc.serviceName || "";
     }
