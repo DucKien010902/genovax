@@ -10,8 +10,25 @@ import type {
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000/api";
 
+// Tìm đoạn này trong file api.ts:
 async function j<T>(res: Response): Promise<T> {
   if (!res.ok) {
+    // ✅ THÊM ĐOẠN NÀY: Bắt lỗi 401 (Hết hạn token hoặc không hợp lệ)
+    if (res.status === 401) {
+      if (typeof window !== "undefined") {
+        // Xóa thông tin cũ
+        localStorage.removeItem("genno_token");
+        localStorage.removeItem("genno_user");
+        
+        // Tránh vòng lặp (redirect loop) nếu đang ở sẵn trang login
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login"; 
+        }
+      }
+      throw new Error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+    }
+
+    // Xử lý các lỗi khác (500, 400,...)
     const text = await res.text().catch(() => "");
     throw new Error(text || `HTTP ${res.status}`);
   }

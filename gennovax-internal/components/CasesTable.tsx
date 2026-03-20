@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { CaseRecord } from "@/lib/types";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
+
+// ✅ Import thêm thư viện in và Template
+import { useReactToPrint } from "react-to-print";
+import { CasePdfTemplate } from "./CasePdfTemplate"; 
 
 function Pill({
   text,
@@ -125,6 +129,25 @@ export default function CasesTable({
   // ✅ State quản lý dòng Đang được chọn (Highlight Xanh)
   const [activeRowId, setActiveRowId] = useState<string | null>(null);
 
+  // ✅ KHỞI TẠO STATE & REF CHO TÍNH NĂNG IN PDF
+  const printRef = useRef<HTMLDivElement>(null);
+  const [printData, setPrintData] = useState<CaseRecord | null>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef, // ✅ Sửa thành contentRef và truyền thẳng ref vào
+    documentTitle: `Phieu_Ca_${printData?.caseCode || "XN"}`,
+    onAfterPrint: () => setPrintData(null), 
+  });
+
+  const handleExportPDF = (e: React.MouseEvent, record: CaseRecord) => {
+    e.stopPropagation(); // Không cho nổi bọt (tránh mở Drawer chi tiết ca)
+    setPrintData(record);
+    // Timeout nhỏ để React kịp nhét dữ liệu vào component ẩn trước khi gọi hộp thoại in
+    setTimeout(() => {
+      handlePrint();
+    }, 100); 
+  };
+
   // Hàm xử lý Ghim/Bỏ ghim
   const togglePin = (e: React.MouseEvent, id: string) => {
     e.stopPropagation(); // Ngăn sự kiện click lan ra dòng (tránh mở Drawer)
@@ -180,7 +203,8 @@ export default function CasesTable({
               <col className="w-[110px]" />
               {isAccountingAdmin && <col className="w-[100px]" />}
               {isAccountingAdmin && <col className="w-[100px]" />}
-              <col className={isAdminOrSuper ? "w-[120px]" : "w-[92px]"} />
+              {/* Tăng độ rộng cột hành động lên để chứa đủ 3 nút */}
+              <col className={isAdminOrSuper ? "w-[112px]" : "w-[112px]"} />
             </colgroup>
 
             <thead className="sticky top-0 z-10">
@@ -398,11 +422,19 @@ export default function CasesTable({
                       )}
                       {/* Cột Hành động */}
                       <td className="px-3 py-2 border-r-0 text-center align-middle">
-                        <div className="flex justify-center gap-2 ">
+                        <div className="flex justify-center gap-1.5 ">
                           {isAdminOrSuper && (
                             <>
+                              {/* ✅ NÚT MỚI: XUẤT PDF */}
+                                {/* <button
+                                  className="cursor-pointer rounded-lg bg-emerald-600 px-2 py-1 text-[11px] font-bold text-white hover:bg-emerald-700 whitespace-nowrap"
+                                  onClick={(e) => handleExportPDF(e, r)}
+                                >
+                                  In PDF
+                                </button> */}
+
                               <button
-                                className="cursor-pointer rounded-lg bg-sky-600 px-2.5 py-1 text-[11px] font-bold text-white hover:opacity-95 whitespace-nowrap"
+                                className="cursor-pointer rounded-lg bg-sky-600 px-2 py-1 text-[11px] font-bold text-white hover:opacity-95 whitespace-nowrap"
                                 onClick={(e) => {
                                   e.stopPropagation();
 
@@ -424,7 +456,7 @@ export default function CasesTable({
                                 Lịch sử
                               </button>
                               <button
-                                className="cursor-pointer rounded-lg bg-rose-500 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-rose-600 whitespace-nowrap"
+                                className="cursor-pointer rounded-lg bg-rose-500 px-2 py-1 text-[11px] font-bold text-white hover:bg-rose-600 whitespace-nowrap"
                                 onClick={(e) =>
                                   handleDelete(e, r._id, r.patientName || "")
                                 }
@@ -451,6 +483,11 @@ export default function CasesTable({
             Tổng: <b className="text-neutral-900">{rows.length}</b>
           </div>
         </div>
+      </div>
+
+      {/* ✅ COMPONENT ẨN ĐỂ IN PDF CHẠY NGẦM DƯỚI NỀN */}
+      <div style={{ display: "none" }}>
+        <CasePdfTemplate ref={printRef} data={printData} />
       </div>
 
       {/* ✅ MODAL HIỂN THỊ LỊCH SỬ CHỈNH SỬA (Giữ nguyên như của bạn) */}

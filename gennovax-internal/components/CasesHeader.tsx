@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { ServiceType } from "@/lib/types";
-import { api } from "@/lib/api"; // ✅ Sửa lại đường dẫn import API của bạn nếu cần
+import { api } from "@/lib/api";
 import SingleDatePicker from "@/components/DatePicker";
 
 const serviceMeta: Record<
@@ -49,12 +49,11 @@ export default function CasesHeader(props: {
   // --- EXCEL EXPORT STATE ---
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [exportMonth, setExportMonth] = useState(
-    new Date().toISOString().slice(0, 7), // Mặc định là tháng hiện tại (YYYY-MM)
+    new Date().toISOString().slice(0, 7)
   );
   const [isExporting, setIsExporting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Click ra ngoài để đóng menu export
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -71,12 +70,9 @@ export default function CasesHeader(props: {
       let fetchFrom = undefined;
       let fetchTo = undefined;
 
-      // Nếu xuất theo tháng thì tính ngày đầu và cuối của tháng đó
       if (type === "month" && exportMonth) {
         const [year, month] = exportMonth.split("-");
-        // Ngày đầu tháng (00:00:00)
         fetchFrom = new Date(Number(year), Number(month) - 1, 1).toISOString();
-        // Ngày cuối tháng (23:59:59)
         fetchTo = new Date(
           Number(year),
           Number(month),
@@ -84,11 +80,10 @@ export default function CasesHeader(props: {
           23,
           59,
           59,
-          999,
+          999
         ).toISOString();
       }
 
-      // Gọi API lấy dữ liệu (limit 10000 để đảm bảo lấy hết thay vì chỉ 1 trang)
       const res = await api.cases({
         serviceType: "",
         from: fetchFrom,
@@ -103,19 +98,14 @@ export default function CasesHeader(props: {
         return;
       }
 
-      // MAP DATA SANG TÊN CỘT TIẾNG VIỆT
       const excelData = data.map((item, index) => ({
         STT: item.stt || index + 1,
-        // "Ngày tạo": item.date
-        //   ? new Date(item.date).toLocaleDateString("vi-VN")
-        //   : "",
         "Ngày nhận mẫu": item.receivedAt
           ? new Date(item.receivedAt).toLocaleString("vi-VN")
           : "",
         "Mã ca": item.caseCode || "",
         "Tên bệnh nhân": item.patientName || "",
         "Nhóm dịch vụ": item.serviceType || "",
-        // "Tên dịch vụ": item.serviceName || "",
         "Mã dịch vụ": item.serviceCode || "",
         "Phòng Lab": item.lab || "",
         "Nguồn khách": item.source || "",
@@ -124,15 +114,7 @@ export default function CasesHeader(props: {
         "Giá thu (VNĐ)": item.collectedAmount || 0,
         "Giá vốn/Cost (VNĐ)": item.costPrice || 0,
         "Đã thanh toán": item.paid ? "Đã thanh toán" : "Chưa thanh toán",
-        // "Trạng thái chuyển Lab": item.transferStatus || "",
-        // "Trạng thái tiếp nhận": item.receiveStatus || "",
-        // "Trạng thái xử lý": item.processStatus || "",
-        // "Trạng thái phản hồi": item.feedbackStatus || "",
-        
-        // "Hẹn trả KQ": item.dueDate
-        //   ? new Date(item.dueDate).toLocaleString("vi-VN")
-        //   : "",
-        "Loại hóa đơn": item.invoiceType|| "",
+        "Loại hóa đơn": item.invoiceType || "",
         "Tên công ty/ cá nhân (HĐ)": item.invoiceName || "",
         "Mã số thuế (HĐ)": item.invoiceTaxCode || "",
         "Số CCCD": item.invoiceIdCard || "",
@@ -140,12 +122,14 @@ export default function CasesHeader(props: {
         "Nơi cấp (nếu có)": item.invoiceIssuePlace || "",
         "Địa chỉ (HĐ)": item.invoiceAddress || "",
       }));
-      // TẠO FILE EXCEL VÀ TẢI XUỐNG
+
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachCa");
 
-      const fileName = `TongHop_TatCaDichVu_${type === "month" ? exportMonth : "TatCa"}_${new Date().getTime()}.xlsx`;
+      const fileName = `TongHop_TatCaDichVu_${
+        type === "month" ? exportMonth : "TatCa"
+      }_${new Date().getTime()}.xlsx`;
       XLSX.writeFile(workbook, fileName);
     } catch (error) {
       console.error("Lỗi xuất Excel:", error);
@@ -157,51 +141,55 @@ export default function CasesHeader(props: {
   };
 
   return (
-    <div className="border-b bg-white/80 backdrop-blur z-100">
-      <div className="px-5 py-4">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex items-start gap-3">
+    <div className="border-b border-black/5 bg-white/80 backdrop-blur sticky top-0 z-40 shadow-sm">
+      <div className="px-4 py-3">
+        {/* LAYOUT: TỰ ĐỘNG CO GIÃN */}
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+          
+          {/* ================= CỘT TRÁI: TITLE & LEGEND (Thu nhỏ lại) ================= */}
+          <div className="flex shrink-0 items-start gap-2.5">
             <span
-              className={`inline-flex mt-1 items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${meta.pill}`}
+              className={`inline-flex mt-0.5 items-center rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${meta.pill}`}
             >
               {meta.title}
             </span>
-            <div>
-              <div className="text-lg font-semibold text-neutral-900">
+            <div className="flex flex-col">
+              <h1 className="text-base font-bold text-neutral-900 leading-none mb-1.5">
                 Danh sách ca
-              </div>
-              {/* <div className="text-sm text-neutral-500">{meta.desc}</div> */}
-              
-              {/* ✅ PHẦN CHÚ THÍCH MÀU SẮC (LEGEND) ĐƯỢC THÊM VÀO ĐÂY */}
-              <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] font-medium text-neutral-600 max-w-[300px]">
-                
-                <div className="flex items-center gap-1.5" title="Còn hơn 24 giờ nữa mới đến hạn">
-                  <span className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-sm"></span>
-                  An toàn (&gt;24h)
+              </h1>
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[10px] font-medium text-neutral-500">
+                <div className="flex items-center gap-1" title="Còn hơn 24 giờ nữa mới đến hạn">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                  &gt;24h
                 </div>
-                <div className="flex items-center gap-1.5" title="Chỉ còn dưới 24 giờ">
-                  <span className="h-2.5 w-2.5 rounded-full bg-blue-500 shadow-sm"></span>
-                  &lt; 24h
+                <div className="flex items-center gap-1" title="Chỉ còn dưới 24 giờ">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                  &lt;24h
                 </div>
-                <div className="flex items-center gap-1.5" title="Gấp: Chỉ còn dưới 12 giờ">
-                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-500 shadow-sm"></span>
-                  Gấp (&lt;12h)
+                <div className="flex items-center gap-1" title="Gấp: Chỉ còn dưới 12 giờ">
+                  <span className="h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
+                  &lt;12h
                 </div>
-                <div className="flex items-center gap-1.5" title="Đã trễ hạn trả kết quả!">
-                  <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-sm"></span>
+                <div className="flex items-center gap-1" title="Đã trễ hạn trả kết quả!">
+                  <span className="h-1.5 w-1.5 rounded-full bg-red-500"></span>
                   Quá hạn
                 </div>
-                <div className="flex items-center gap-1.5" title="Trạng thái đã có kết quả">
-                  <span className="h-2.5 w-2.5 rounded-full bg-white ring-1 ring-black/15"></span>
+                <div className="flex items-center gap-1" title="Trạng thái đã có kết quả">
+                  <span className="h-1.5 w-1.5 rounded-full bg-white ring-1 ring-black/20"></span>
                   Đã có KQ
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center mt-2 lg:mt-0">
-            {/* Search */}
-            <div className="relative">
+          {/* ================= CỘT GIỮA: THANH SEARCH (Tự động co bóp) ================= */}
+          <div className="flex-1 flex justify-start xl:justify-center w-full min-w-[200px]">
+            <div className="relative w-full max-w-md group">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg className="w-3.5 h-3.5 text-neutral-400 group-focus-within:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
               <input
                 value={props.q}
                 onChange={(e) => props.setQ(e.target.value)}
@@ -211,13 +199,17 @@ export default function CasesHeader(props: {
                     if (!props.loading) props.onApply();
                   }
                 }}
-                placeholder="Tìm mã ca / tên / nguồn..."
-                className="w-full sm:w-[240px] md:w-[360px] rounded-2xl border border-black/10 bg-white px-4 py-2 text-[13px] text-black shadow-sm outline-none focus:ring-2 focus:ring-neutral-300 placeholder:text-neutral-500 antialiased"
+                placeholder="Tìm mã ca, tên, nguồn..."
+                className="w-full rounded-full border border-neutral-200 bg-neutral-50/50 pl-9 pr-3 py-1.5 text-[12px] text-neutral-800 shadow-sm outline-none transition-all placeholder:text-neutral-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
               />
             </div>
+          </div>
 
-            {/* Date Pickers */}
-            <div className="flex items-center gap-2">
+          {/* ================= CỘT PHẢI: BỘ LỌC & NÚT HÀNH ĐỘNG ================= */}
+          <div className="flex flex-wrap lg:flex-nowrap shrink-0 items-center justify-start xl:justify-end gap-2">
+            
+            {/* Lọc Ngày */}
+            <div className="flex items-center gap-1 bg-neutral-100/80 p-1 rounded-xl border border-neutral-200">
               <SingleDatePicker
                 value={props.from}
                 onChange={props.setFrom}
@@ -225,9 +217,9 @@ export default function CasesHeader(props: {
                 disabled={!!props.loading}
                 popoverWidth="lg"
                 months={1}
-                buttonClassName="w-[120px]"
+                buttonClassName="w-[85px] bg-white border-none shadow-sm text-[11px] h-7 cursor-pointer"
               />
-              <span className="text-xs text-neutral-500">→</span>
+              <span className="text-neutral-400 text-[9px] font-bold px-0.5">→</span>
               <SingleDatePicker
                 value={props.to}
                 onChange={props.setTo}
@@ -235,74 +227,78 @@ export default function CasesHeader(props: {
                 disabled={!!props.loading}
                 popoverWidth="lg"
                 months={1}
-                buttonClassName="w-[120px]"
+                buttonClassName="w-[85px] bg-white border-none shadow-sm text-[11px] h-7 cursor-pointer"
               />
+              <button
+                onClick={props.onApply}
+                className="cursor-pointer rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-3 ml-0.5 px-3 h-7 text-[11px] font-semibold text-white shadow-sm hover:bg-black transition-colors disabled:opacity-50"
+                disabled={props.loading}
+              >
+                {props.loading ? "..." : "Lọc"}
+              </button>
             </div>
 
-            {/* Nút Lọc */}
-            <button
-              onClick={props.onApply}
-              className="rounded-2xl bg-blue-900 cursor-pointer px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
-              disabled={props.loading}
-            >
-              {props.loading ? "..." : "Lọc"}
-            </button>
+            <div className="hidden xl:block w-px h-6 bg-neutral-200 mx-0.5"></div>
 
-            <button
-              onClick={props.onAdd}
-              className="rounded-2xl cursor-pointer bg-gradient-to-r from-indigo-600 to-fuchsia-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
-            >
-              + Thêm ca
-            </button>
-            {/* ✅ Nút Xuất Excel + Dropdown */}
-            <div className="relative z-50" ref={menuRef}>
+            {/* Buttons */}
+            <div className="flex items-center gap-1.5">
               <button
-                onClick={() => setShowExportMenu(!showExportMenu)}
-                disabled={isExporting}
-                className="rounded-2xl border border-emerald-600 bg-emerald-50 text-emerald-700 px-4 py-2 text-sm font-semibold shadow-sm hover:bg-emerald-100 disabled:opacity-60 flex items-center gap-1 transition-colors"
+                onClick={props.onAdd}
+                className="cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-3 h-8 text-[11px] font-semibold text-white shadow-sm hover:opacity-90 transition-opacity flex items-center gap-1"
               >
-                {isExporting ? "Đang xử lý..." : "Xuất Excel"}
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+                </svg>
+                Thêm ca
               </button>
 
-              {/* Menu Dropdown */}
-              {showExportMenu && !isExporting && (
-                <div className="z-50 cursor-pointer absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/10 z-100">
-                  <div className="text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">
-                    Tùy chọn xuất
-                  </div>
+              <div className="relative" ref={menuRef}>
+                <button
+                  onClick={() => setShowExportMenu(!showExportMenu)}
+                  disabled={isExporting}
+                  className="cursor-pointer rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 px-3 h-8 text-[11px] font-semibold shadow-sm hover:bg-emerald-100 disabled:opacity-60 flex items-center gap-1 transition-colors"
+                >
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  {isExporting ? "Đang xử lý..." : "Xuất Excel"}
+                </button>
 
-                  {/* Xuất Tất cả */}
-                  <button
-                    onClick={() => handleExport("all")}
-                    className="w-full text-left rounded-xl px-3 py-2 text-sm font-semibold text-neutral-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
-                  >
-                    Xuất toàn bộ dữ liệu
-                  </button>
-
-                  <div className="my-2 border-t border-black/5"></div>
-
-                  {/* Xuất theo tháng */}
-                  <div className="px-3">
-                    <label className="block text-[11px] font-semibold text-neutral-500 mb-1">
-                      Hoặc chọn tháng:
-                    </label>
-                    <input
-                      type="month"
-                      value={exportMonth}
-                      onChange={(e) => setExportMonth(e.target.value)}
-                      className="w-full rounded-xl border border-black/10 bg-neutral-50 px-3 py-1.5 text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-emerald-200 mb-2"
-                    />
+                {showExportMenu && !isExporting && (
+                  <div className="absolute right-0 top-full mt-1.5 w-60 rounded-xl bg-white p-2.5 shadow-xl ring-1 ring-black/5 z-[100] animate-in fade-in slide-in-from-top-2">
+                    <div className="text-[10px] font-bold text-neutral-400 mb-1.5 uppercase tracking-wider px-1">
+                      Tùy chọn xuất
+                    </div>
                     <button
-                      onClick={() => handleExport("month")}
-                      disabled={!exportMonth}
-                      className="w-full rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                      onClick={() => handleExport("all")}
+                      className="w-full text-left rounded-lg px-2.5 py-2 text-[12px] font-semibold text-neutral-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
                     >
-                      Xuất theo tháng này
+                      Xuất toàn bộ dữ liệu
                     </button>
+                    <div className="my-1.5 border-t border-neutral-100"></div>
+                    <div className="px-1">
+                      <label className="block text-[10px] font-medium text-neutral-500 mb-1">
+                        Hoặc chọn tháng:
+                      </label>
+                      <input
+                        type="month"
+                        value={exportMonth}
+                        onChange={(e) => setExportMonth(e.target.value)}
+                        className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-2.5 py-1.5 text-[12px] text-neutral-800 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 mb-2 transition-all"
+                      />
+                      <button
+                        onClick={() => handleExport("month")}
+                        disabled={!exportMonth}
+                        className="w-full rounded-lg bg-emerald-600 px-2.5 py-2 text-[12px] font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                      >
+                        Xuất theo tháng này
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
+
           </div>
         </div>
       </div>

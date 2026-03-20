@@ -19,29 +19,6 @@ import { useAuth } from "@/lib/auth";
 import { caseApi } from "@/lib/api";
 
 /** ✅ FE map nguồn -> cấp đại lý (không đụng DB) */
-const SOURCE_TO_AGENT: Record<
-  string,
-  { level: "cap1" | "cap2" | "cap3" | "ctv"; label: string }
-> = {
-  "CTV Xinh": { level: "cap3", label: "Cấp 3" },
-  "PK Âu Cơ": { level: "ctv", label: "CTV" },
-  "CTV Huyền": { level: "cap1", label: "Cấp 1" },
-  "Huyền - BVDK ngã 4 Hồ": { level: "cap1", label: "Cấp 1" },
-  "PKĐK AGAPE": { level: "cap2", label: "Cấp 2" },
-  "BS Thoa": { level: "ctv", label: "CTV" },
-  "PK Phong Dương": { level: "ctv", label: "CTV" },
-  "CTV Vân": { level: "ctv", label: "CTV" },
-  "PK SPK Minh Hòa": { level: "cap1", label: "Cấp 1" },
-  "BS Hậu - PK SPK Mẹ và Bé": { level: "ctv", label: "CTV" },
-  "Golab Hải Phòng": { level: "cap3", label: "Cấp 3" },
-  "PK Mỹ Lộc": { level: "cap3", label: "Cấp 3" },
-  "CTV Lý": { level: "cap3", label: "Cấp 3" },
-  "Golab Quảng Bình": { level: "cap2", label: "Cấp 2" },
-  "CTV Tú - Vũng Tàu": { level: "cap2", label: "Cấp 2" },
-  "Golab Thanh Hoá": { level: "cap1", label: "Cấp 1" },
-  "Golab Hà Tĩnh": { level: "cap2", label: "Cấp 2" },
-  "CTV Thảo": { level: "cap1", label: "Cấp 1" },
-};
 
 /** ✅ FE map nguồn -> NVKD phụ trách (từ ảnh bạn gửi) */
 const SOURCE_TO_SALES_OWNER: Record<string, string> = {
@@ -326,11 +303,14 @@ export default function CaseDrawer({
   }, [form, services]);
 
   // ✅ 1. Lấy ra danh sách các cấp hợp lệ của riêng Nguồn (Doctor) đang chọn
+  // ✅ 1. Lấy ra danh sách các cấp hợp lệ của riêng Nguồn (Doctor) đang chọn
   const availableLevelsForSource = useMemo(() => {
     if (!form?.source) return [];
     const doc = doctors.find((d) => d.fullName === form.source);
+    
+    // Chỉ dùng schema mới: đọc từ agentLevels
     let levels = doc?.agentLevels || [];
-    if (levels.length === 0) levels = ["cap3"]; // Fallback nếu chưa có cấp nào
+    if (levels.length === 0) levels = ["cap3"]; // Chống cháy nếu Nguồn mới tạo bị thiếu mảng
 
     const allAgentLevels = opt("agentLevels");
     return levels.map((lvl) => {
@@ -343,10 +323,11 @@ export default function CaseDrawer({
   }, [form?.source, doctors, opt]);
 
   // ✅ 2. Cập nhật lại logic lấy Cấp hiện tại (Ưu tiên cấp được chọn trong form)
+  // ✅ 2. Cập nhật lại logic lấy Cấp hiện tại (Ưu tiên cấp được chọn trong form ca)
   const agent = useMemo(() => {
     if (!form || !form.source) return { level: "", label: "" };
 
-    // Dùng cấp đang được lưu trong form
+    // 1. Dùng cấp đang được lưu trong form của Ca này
     if (form.agentLevel) {
       return {
         level: form.agentLevel,
@@ -354,12 +335,11 @@ export default function CaseDrawer({
       };
     }
 
-    // Nếu form chưa có, fallback về mặc định của Doctor
+    // 2. Nếu form chưa lưu cấp, lấy thông tin chuẩn từ Nguồn (Doctor) theo schema mới
     const foundDoc = doctors.find((d) => d.fullName === form.source);
     if (foundDoc) {
       return {
-        level:
-          foundDoc.defaultAgentLevel || foundDoc.agentLevels?.[0] || "cap3",
+        level: foundDoc.defaultAgentLevel || foundDoc.agentLevels?.[0] || "cap3",
         label: foundDoc.agentTierLabel || "Cấp 3",
       };
     }
@@ -598,49 +578,40 @@ export default function CaseDrawer({
                   </Field>
 
                   <Field label="* Nguồn">
-                    <Select
-                      value={form.source}
-                      onChange={(v) => {
-                        const selectedDoc = doctors.find(
-                          (d) => d.fullName === v,
-                        );
+  <Select
+    value={form.source}
+    onChange={(v) => {
+      const selectedDoc = doctors.find((d) => d.fullName === v);
+      const owner = (selectedDoc as any)?.salesOwner || SOURCE_TO_SALES_OWNER[v] || "";
 
-                        const owner =
-                          (selectedDoc as any)?.salesOwner ||
-                          SOURCE_TO_SALES_OWNER[v] ||
-                          "";
+      // ✅ Tự động tìm cấp mặc định của Nguồn vừa chọn (Theo DB chuẩn mới)
+      let defaultLevel = "cap3";
+      if (selectedDoc) {
+        if (selectedDoc.defaultAgentLevel) {
+          defaultLevel = selectedDoc.defaultAgentLevel;
+        } else if (selectedDoc.agentLevels && selectedDoc.agentLevels.length > 0) {
+          defaultLevel = selectedDoc.agentLevels[0];
+        }
+      }
 
-                        // ✅ Tự động tìm cấp mặc định của Nguồn vừa chọn
-                        let defaultLevel = "cap3";
-                        if (selectedDoc) {
-                          if (selectedDoc.defaultAgentLevel) {
-                            defaultLevel = selectedDoc.defaultAgentLevel;
-                          } else if (
-                            selectedDoc.agentLevels &&
-                            selectedDoc.agentLevels.length > 0
-                          ) {
-                            defaultLevel = selectedDoc.agentLevels[0];
-                          }
-                        }
+      set({
+        source: v,
+        doctorId: selectedDoc?._id || null,
+        ...(owner ? { salesOwner: owner } : {}),
+        agentLevel: defaultLevel, // Bơm cấp mặc định vào form Case
+        agentTierLabel: selectedDoc?.agentTierLabel || "",
+      });
 
-                        set({
-                          source: v,
-                          doctorId: selectedDoc?._id || null,
-                          ...(owner ? { salesOwner: owner } : {}),
-                          agentLevel: defaultLevel, // <- Điền luôn cấp mặc định vào ca
-                          agentTierLabel: selectedDoc?.agentTierLabel || "",
-                        });
-
-                        // Bật lại auto giá để giá cập nhật theo nguồn mới
-                        setCollectedAmountManual(false);
-                      }}
-                      items={doctors.map((d) => ({
-                        label: d.fullName,
-                        value: d.fullName,
-                      }))}
-                      tone="amber"
-                    />
-                  </Field>
+      // Bật lại auto giá để giá cập nhật theo nguồn mới
+      setCollectedAmountManual(false);
+    }}
+    items={doctors.map((d) => ({
+      label: d.fullName,
+      value: d.fullName,
+    }))}
+    tone="amber"
+  />
+</Field>
 
                   {/* ✅ THÊM TRƯỜNG CHỌN CẤP ĐẠI LÝ (Chỉ hiện các cấp nguồn này sở hữu) */}
                   <Field label="* Cấp áp dụng">
@@ -648,6 +619,7 @@ export default function CaseDrawer({
                       value={form.agentLevel || ""}
                       onChange={(v) => {
                         set({ agentLevel: v });
+                        console.log(v)
                         // Bật lại tính giá tự động để form nhảy số tiền ứng với cấp mới
                         setCollectedAmountManual(false);
                       }}

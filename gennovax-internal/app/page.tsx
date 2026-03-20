@@ -154,11 +154,13 @@ export default function CasesPage() {
       if (data.isDraft) {
         const created = await api.createCase(payload);
         setRows((prev) => [created, ...prev]);
+        console.log(payload)
       } else if (data._id) {
         const updated = await api.updateCase(data._id, payload);
         setRows((prev) =>
           prev.map((x) => (x._id === updated._id ? updated : x)),
         );
+        console.log(payload)
       }
       setOpen(false);
       setEditing(null);
