@@ -5,6 +5,7 @@ import SidebarService from "@/components/SidebarService";
 import CasesHeader from "@/components/CasesHeader";
 import CasesTable from "@/components/CasesTable";
 import CaseDrawer from "@/components/CaseDrawer";
+import AIChatWidget from "@/components/AIChatWidget"; // ✅ Thêm dòng này
 import LoadingOverlay from "@/components/LoadingOverlay"; // ✅ Import Loading Component
 import { api } from "@/lib/api";
 import type {
@@ -231,6 +232,7 @@ export default function CasesPage() {
           onClose={onCloseDrawer}
           onSave={onSave}
         />
+        <AIChatWidget />
       </div>
     </>
   );

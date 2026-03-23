@@ -60,6 +60,17 @@ async function authFetch(input: RequestInfo, init: RequestInit = {}) {
 }
 
 export const api = {
+  aiChat: (question: string) => {
+    return authFetch(`${API_BASE}/ai/ask`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question }),
+    }).then((r) =>
+      j<{ success: boolean; question: string; answer: string }>(r)
+    );
+  },
   options: () =>
     authFetch(`${API_BASE}/meta/options`).then((r) => j<OptionsMap>(r)),
 
