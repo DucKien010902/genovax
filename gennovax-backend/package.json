@@ -1,7 +1,6 @@
 {
   "name": "blog",
   "version": "1.0.0",
-  
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -27,6 +26,7 @@
   },
   "homepage": "https://github.com/DucKien010902/kienll#readme",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "archiver": "^7.0.1",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",

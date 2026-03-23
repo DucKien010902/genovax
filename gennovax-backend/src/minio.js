@@ -43,6 +43,6 @@ async function initMinioBucket() {
 }
 
 // Chạy hàm này ngay khi file được import
-initMinioBucket();
+// initMinioBucket();
 
 module.exports = minioClient;

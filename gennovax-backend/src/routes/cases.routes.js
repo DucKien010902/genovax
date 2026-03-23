@@ -193,27 +193,30 @@ router.get("/", async (req, res, next) => {
   try {
     const { serviceType, q = "", from = "", to = "" } = req.query;
 
-    const filter = {};
+    // Khởi tạo filter mặc định: Loại bỏ các ca có serviceName chứa "2025"
+    const filter = {
+      serviceName: { $not: /2025/ }
+    };
+
     if (serviceType) filter.serviceType = serviceType;
 
-    // ✅ Lấy mốc thời gian đã ép chuẩn múi giờ Việt Nam
     const fromD = parseVNDate(from, false); 
     const toD = parseVNDate(to, true);      
     
-    // ✅ Lọc theo `receivedAt` thay vì `date`
     if (fromD || toD) {
       filter.receivedAt = {};
       if (fromD) filter.receivedAt.$gte = fromD;
-      if (toD) filter.receivedAt.$lte = toD; // Không cần setHours thủ công nữa
+      if (toD) filter.receivedAt.$lte = toD; 
     }
 
+    // Thanh tìm kiếm chung
     if (q) {
       const s = String(q);
       filter.$or = [
         { caseCode: { $regex: s, $options: "i" } },
         { patientName: { $regex: s, $options: "i" } },
         { serviceCode: { $regex: s, $options: "i" } },
-        { serviceName: { $regex: s, $options: "i" } },
+        { serviceName: { $regex: s, $options: "i" } }, 
         { source: { $regex: s, $options: "i" } },
       ];
     }

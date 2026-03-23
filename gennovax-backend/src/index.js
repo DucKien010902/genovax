@@ -12,6 +12,8 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/users.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 import driveRoutes from "./routes/drive.routes.js";
+import inventoryRoutes from "./routes/inventory.routes.js"; 
+import aiAnalyticsRoutes from "./routes/ai-analytics.routes.js";
 
 import { requireAuth } from "./middlewares/auth.middleware.js";
 import { browserGate } from "./middlewares/browserGate.middleware.js";
@@ -54,6 +56,9 @@ app.use("/api/services", browserGate(ALLOWED_ORIGINS), requireAuth, servicesRout
 app.use("/api/meta", browserGate(ALLOWED_ORIGINS), requireAuth, metaRoutes);
 app.use("/api/upload", browserGate(ALLOWED_ORIGINS), requireAuth, uploadRoutes);
 app.use("/api/drive", browserGate(ALLOWED_ORIGINS), requireAuth, driveRoutes);
+app.use("/api/inventory", inventoryRoutes);
+app.use("/api/ai", aiAnalyticsRoutes);
+
 
 // error handler
 app.use((err, req, res, next) => {

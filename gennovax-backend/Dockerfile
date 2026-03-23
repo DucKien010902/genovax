@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Chỉ copy file package.json trước để cài thư viện cho nhanh
 COPY package*.json ./
-RUN npm install
+RUN npm install && npm cache clean --force
 
 # Copy toàn bộ code còn lại
 COPY . .
