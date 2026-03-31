@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { CaseRecord } from "@/lib/types";
+import { CaseRecord, ChangeLog } from "@/lib/types";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 
@@ -42,15 +42,6 @@ function Check({ ok }: { ok: boolean }) {
   );
 }
 
-function Dot({ ok, title }: { ok: boolean; title?: string }) {
-  return (
-    <span
-      title={title}
-      className={`inline-block h-3 w-3 rounded-full shadow-sm ring-1 ring-inset ${ok ? "bg-emerald-500 ring-emerald-600/50" : "bg-rose-500 ring-rose-600/50"}`}
-    />
-  );
-}
-
 function SttBadge({
   stt,
   dueDate,
@@ -60,7 +51,7 @@ function SttBadge({
   dueDate: string | null;
   processStatus: string | null;
 }) {
-  const now = Date.now();
+  const [now] = useState(() => Date.now());
   let cls = "bg-slate-100 text-slate-700 ring-slate-200";
 
   if (processStatus === "Đã có KQ") {
@@ -94,9 +85,9 @@ function SttBadge({
 }
 
 const thBase =
-  "px-3 py-2 text-center text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap border-r border-black/5 align-middle";
+  "px-3 py-3 text-center text-[11px] font-bold uppercase tracking-[0.08em] whitespace-nowrap border-r border-slate-200/80 align-middle text-slate-600";
 const tdBase =
-  "px-3 py-2 text-left text-[12px] leading-5 border-r border-black/5 align-middle";
+  "px-3 py-3 text-left text-[13px] leading-5 border-r border-slate-200/80 align-middle text-slate-700";
 const wrap2 = "line-clamp-2 break-words whitespace-normal";
 
 export default function CasesTable({
@@ -120,7 +111,7 @@ export default function CasesTable({
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [selectedCaseInfo, setSelectedCaseInfo] = useState<{
     patientName: string;
-    changes: any[];
+    changes: ChangeLog[];
   }>({ patientName: "", changes: [] });
 
   // ✅ State quản lý các dòng được Ghim (Highlight Vàng)
@@ -181,10 +172,10 @@ export default function CasesTable({
 
   return (
     <>
-      <div className="rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
-        <div className="min-h-[36vh] max-h-[72vh] overflow-auto">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[8px] border border-slate-200/80 bg-white shadow-[0_18px_45px_-28px_rgba(15,23,42,0.32)]">
+        <div className="min-h-0 flex-1 overflow-auto overscroll-contain bg-[linear-gradient(180deg,rgba(248,250,252,0.92),rgba(255,255,255,1))]">
           <table
-            className={`w-full table-fixed text-neutral-900 ${isAccountingAdmin ? "min-w-[1150px]" : "min-w-[1020px]"}`}
+            className={`w-full table-fixed text-slate-900 ${isAccountingAdmin ? "min-w-[1150px]" : "min-w-[1020px]"}`}
           >
             <colgroup>
               <col className="w-[56px]" />
@@ -208,53 +199,53 @@ export default function CasesTable({
             </colgroup>
 
             <thead className="sticky top-0 z-10">
-              <tr className="border-b bg-white text-neutral-600">
+              <tr className="border-b border-slate-200/90 bg-slate-50/95 text-slate-600 backdrop-blur">
                 <th
-                  className={`${thBase} sticky left-0 z-50 bg-white shadow-[1px_0_0_rgba(0,0,0,0.06)]`}
+                  className={`${thBase} sticky left-0 z-50 bg-slate-50/95 shadow-[1px_0_0_rgba(148,163,184,0.24)]`}
                 >
                   STT
                 </th>
-                <th className={`${thBase} bg-neutral-50`}>Ngày</th>
-                <th className={`${thBase} bg-white`}>Trạng thái</th>
-                <th className={`${thBase} bg-neutral-50`}>Mã ca</th>
+                <th className={`${thBase} bg-slate-50/95`}>Ngày</th>
+                <th className={`${thBase} bg-slate-100/70`}>Trạng thái</th>
+                <th className={`${thBase} bg-slate-50/95`}>Mã ca</th>
                 {isAccountingAdmin && (
-                  <th className={`${thBase} bg-white text-center`}>Xuất HĐ</th>
+                  <th className={`${thBase} bg-slate-100/70 text-center`}>Xuất HĐ</th>
                 )}
                 {isAccountingAdmin && (
-                  <th className={`${thBase} bg-neutral-50 text-center`}>
+                  <th className={`${thBase} bg-slate-50/95 text-center`}>
                     Nhập Cost
                   </th>
                 )}
-                <th className={`${thBase} bg-white`}>Họ và tên</th>
-                <th className={`${thBase} bg-white`}>Nguồn</th>
-                <th className={`${thBase} bg-neutral-50`}>NVKD</th>
-                <th className={`${thBase} bg-white`}>Dịch vụ</th>
-                <th className={`${thBase} bg-neutral-50`}>Tên dịch vụ</th>
-                <th className={`${thBase} bg-white`}>Đã TT</th>
+                <th className={`${thBase} bg-slate-100/70`}>Họ và tên</th>
+                <th className={`${thBase} bg-slate-50/95`}>Nguồn</th>
+                <th className={`${thBase} bg-slate-100/70`}>NVKD</th>
+                <th className={`${thBase} bg-slate-50/95`}>Dịch vụ</th>
+                <th className={`${thBase} bg-slate-100/70`}>Tên dịch vụ</th>
+                <th className={`${thBase} bg-slate-50/95`}>Đã TT</th>
                 {isAccountingAdmin && (
-                  <th className={`${thBase} bg-neutral-50 `}>Kiểu TT</th>
+                  <th className={`${thBase} bg-slate-100/70`}>Kiểu TT</th>
                 )}
                 {isAccountingAdmin && (
-                  <th className={`${thBase} bg-neutral-50 `}>Đã nhận TT</th>
+                  <th className={`${thBase} bg-slate-50/95`}>Đã nhận TT</th>
                 )}
                 {isAccountingAdmin && (
-                  <th className={`${thBase} bg-neutral-50 `}>Giá cost</th>
+                  <th className={`${thBase} bg-slate-100/70`}>Giá cost</th>
                 )}
-                <th className={`${thBase} bg-neutral-50 `}>Tiền thu</th>
+                <th className={`${thBase} bg-slate-50/95`}>Tiền thu</th>
 
                 {isAccountingAdmin && (
-                  <th className={`${thBase} bg-neutral-50 `}>Lợi nhuận</th>
+                  <th className={`${thBase} bg-slate-100/70`}>Lợi nhuận</th>
                 )}
 
                 {isAdminOrSuper && (
-                  <th className={`${thBase} bg-white border-r-0 `}>
+                  <th className={`${thBase} bg-slate-50/95 border-r-0`}>
                     Hành động
                   </th>
                 )}
               </tr>
             </thead>
 
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-slate-200/70">
               {loading && rows.length === 0 ? (
                 <tr>
                   <td
@@ -279,19 +270,22 @@ export default function CasesTable({
                   const isActive = activeRowId === r._id; // ✅ Kiểm tra xem dòng này có đang được Active không
                   
                   // ✅ Logic trộn màu nền cho nguyên dòng
-                  let rowBgClass = "odd:bg-white even:bg-neutral-50/40 hover:bg-sky-50";
+                  let rowBgClass =
+                    "odd:bg-white even:bg-slate-50/55 hover:bg-sky-50/80";
                   if (isActive) {
-                    rowBgClass = "bg-amber-100 hover:bg-amber-200 z-10 relative shadow-sm ring-1 ring-amber-200";
+                    rowBgClass =
+                      "relative z-10 bg-sky-100/95 shadow-[inset_0_0_0_1px_rgba(125,211,252,0.9)] hover:bg-sky-100/95";
                   } else if (isPinned) {
-                    rowBgClass = "bg-amber-100 hover:bg-amber-200";
+                    rowBgClass =
+                      "bg-sky-50/95 shadow-[inset_0_0_0_1px_rgba(186,230,253,0.95)] hover:bg-sky-100/80";
                   }
 
                   // ✅ Logic trộn màu nền riêng cho ô STT (bị dính sticky nên phải xử lý riêng)
-                  let sttBgClass = "bg-white hover:bg-neutral-100";
+                  let sttBgClass = "bg-white hover:bg-slate-50";
                   if (isActive) {
-                    sttBgClass = "bg-amber-100 hover:bg-amber-200";
+                    sttBgClass = "bg-sky-100/95 hover:bg-sky-100/95";
                   } else if (isPinned) {
-                    sttBgClass = "bg-amber-100 hover:bg-amber-200";
+                    sttBgClass = "bg-sky-50/95 hover:bg-sky-100/80";
                   }
 
                   return (
@@ -301,10 +295,10 @@ export default function CasesTable({
                         setActiveRowId(r._id); // ✅ Cập nhật ID dòng đang active
                         onRowClick(r);         // Gọi hàm mở Drawer
                       }}
-                      className={`cursor-pointer transition-colors duration-200 ${rowBgClass}`}
+                      className={`cursor-pointer transition-all duration-200 ${rowBgClass}`}
                     >
                       <td 
-                        className={`px-3 py-2 sticky left-0 z-0 border-r border-black/5 align-middle cursor-cell transition-colors duration-200 ${sttBgClass}`}
+                        className={`sticky left-0 z-0 px-3 py-3 border-r border-slate-200/80 align-middle cursor-cell transition-colors duration-200 ${sttBgClass}`}
                         onClick={(e) => togglePin(e, r._id)}
                         title="Click để Ghim / Bỏ ghim dòng này"
                       >
@@ -315,13 +309,13 @@ export default function CasesTable({
                             processStatus={r.processStatus}
                           />
                           {isPinned && (
-                            <span className="absolute -top-1 -right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-500 text-[9px] text-white shadow-sm ring-1 ring-white">
-                              ★
+                            <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-sky-500 text-[9px] text-white shadow-sm ring-2 ring-white">
+                              📌
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className={`${tdBase} text-sky-700 font-medium`}>
+                      <td className={`${tdBase} font-medium text-sky-800`}>
                         {r.receivedAt
                           ? new Date(r.receivedAt).toLocaleDateString("vi-VN")
                           : "—"}
@@ -330,7 +324,7 @@ export default function CasesTable({
                         <Pill text={r.processStatus || "—"} tone="slate" />
                       </td>
                       <td
-                        className={`${tdBase} font-extrabold text-indigo-900 whitespace-nowrap`}
+                        className={`${tdBase} whitespace-nowrap font-bold text-slate-900 tracking-[0.01em]`}
                       >
                         {r.caseCode || "—"}
                       </td>
@@ -354,17 +348,17 @@ export default function CasesTable({
                         </td>
                       )}
                       <td className={tdBase}>
-                        <div className={`${wrap2} font-semibold`}>
+                        <div className={`${wrap2} font-semibold text-slate-900`}>
                           {r.patientName || "—"}
                         </div>
                       </td>
                       <td className={tdBase}>
-                        <div className={`${wrap2} text-neutral-700`}>
+                        <div className={`${wrap2} text-slate-600`}>
                           {r.source || "—"}
                         </div>
                       </td>
                       <td className={tdBase}>
-                        <div className={`${wrap2} text-emerald-800 font-medium`}>
+                        <div className={`${wrap2} font-medium text-teal-700`}>
                           {r.salesOwner || "—"}
                         </div>
                       </td>
@@ -381,10 +375,10 @@ export default function CasesTable({
                         />
                       </td>
                       <td className={tdBase}>
-                        <div className={`${wrap2} font-semibold text-violet-900`}>
+                        <div className={`${wrap2} font-semibold text-slate-800`}>
                           {r.serviceName || "—"}
                         </div>
-                        <div className="mt-0.5 text-[11px] text-neutral-500 break-words">
+                        <div className="mt-1 text-[11px] break-words font-medium text-slate-400 tracking-[0.03em]">
                           {r.serviceCode || ""}
                         </div>
                       </td>
@@ -394,34 +388,34 @@ export default function CasesTable({
                         </div>
                       </td>
                       {isAccountingAdmin && (
-                        <td className="px-3 py-2 text-center text-[10px] font-bold tabular-nums text-green-600 border-r border-black/5 whitespace-nowrap align-middle">
+                        <td className="px-3 py-3 text-center text-[11px] font-semibold tabular-nums text-emerald-700 border-r border-slate-200/80 whitespace-nowrap align-middle">
                           {r.paymentMethod || "Không có"}
                         </td>
                       )}
                       {isAccountingAdmin && (
-                        <td className="px-3 py-2 text-center text-[12px] font-extrabold tabular-nums text-blue-900 border-r border-black/5 whitespace-nowrap align-middle">
+                        <td className="px-3 py-3 text-center text-[12px] font-bold tabular-nums text-sky-800 border-r border-slate-200/80 whitespace-nowrap align-middle">
                           {(r.receivedAmount ?? 0).toLocaleString()}
                         </td>
                       )}
                       {isAccountingAdmin && (
-                        <td className="px-3 py-2 text-center text-[12px] font-extrabold tabular-nums text-amber-900 border-r border-black/5 whitespace-nowrap align-middle">
+                        <td className="px-3 py-3 text-center text-[12px] font-bold tabular-nums text-amber-800 border-r border-slate-200/80 whitespace-nowrap align-middle">
                           {(r.costPrice ?? 0).toLocaleString()}
                         </td>
                       )}
 
-                      <td className="px-3 py-2 text-center text-[12px] font-extrabold tabular-nums text-amber-900 border-r border-black/5 whitespace-nowrap align-middle">
+                      <td className="px-3 py-3 text-center text-[12px] font-bold tabular-nums text-slate-800 border-r border-slate-200/80 whitespace-nowrap align-middle">
                         {(r.collectedAmount ?? 0).toLocaleString()}
                       </td>
 
                       {isAccountingAdmin && (
-                        <td className="px-3 py-2 text-center text-[12px] font-extrabold tabular-nums text-red-600 border-r border-black/5 whitespace-nowrap align-middle">
+                        <td className="px-3 py-3 text-center text-[12px] font-bold tabular-nums text-rose-600 border-r border-slate-200/80 whitespace-nowrap align-middle">
                           {(
                             (r.collectedAmount || 0) - (r.costPrice || 0)
                           ).toLocaleString()}
                         </td>
                       )}
                       {/* Cột Hành động */}
-                      <td className="px-3 py-2 border-r-0 text-center align-middle">
+                      <td className="px-3 py-3 border-r-0 text-center align-middle">
                         <div className="flex justify-center gap-1.5 ">
                           {isAdminOrSuper && (
                             <>
@@ -434,7 +428,7 @@ export default function CasesTable({
                                 </button> */}
 
                               <button
-                                className="cursor-pointer rounded-lg bg-sky-600 px-2 py-1 text-[11px] font-bold text-white hover:opacity-95 whitespace-nowrap"
+                                className="cursor-pointer whitespace-nowrap rounded-xl bg-sky-600 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-sm transition hover:bg-sky-700"
                                 onClick={(e) => {
                                   e.stopPropagation();
 
@@ -456,7 +450,7 @@ export default function CasesTable({
                                 Lịch sử
                               </button>
                               <button
-                                className="cursor-pointer rounded-lg bg-rose-500 px-2 py-1 text-[11px] font-bold text-white hover:bg-rose-600 whitespace-nowrap"
+                                className="cursor-pointer whitespace-nowrap rounded-xl bg-rose-500 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-sm transition hover:bg-rose-600"
                                 onClick={(e) =>
                                   handleDelete(e, r._id, r.patientName || "")
                                 }
@@ -475,12 +469,12 @@ export default function CasesTable({
           </table>
         </div>
 
-        <div className="flex items-center justify-between px-4 py-3 text-[11px] text-neutral-500 border-t bg-neutral-50">
+        <div className="flex shrink-0 items-center justify-between border-t border-slate-200/80 bg-slate-50/80 px-4 py-3 text-[11px] text-slate-500">
           <div>
-            Tip: Click vào bảng để xem ca (Dòng <b>màu xanh</b>). Click vào ô STT để <b>Ghim (★)</b>.
+            Tip: Click vào dòng để xem ca (dòng đang chọn màu <b>xanh lam nhạt</b>). Click vào ô STT để <b>ghim</b>.
           </div>
           <div>
-            Tổng: <b className="text-neutral-900">{rows.length}</b>
+            Tổng: <b className="text-slate-900">{rows.length}</b>
           </div>
         </div>
       </div>

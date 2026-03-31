@@ -523,7 +523,7 @@ export default function CaseDrawer({
                   <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-bold text-emerald-700 ring-1 ring-emerald-200">
                     {agent.level || "Chưa xác định cấp"}
                   </span>
-                  <span className="rounded-full bg-amber-50 px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200">
+                  <span className="rounded-full bg-sky-200 px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200">
                     Giá: {fmtMoney(form.collectedAmount ?? 0)}
                   </span>
                   {form.dueDate && (
@@ -531,8 +531,11 @@ export default function CaseDrawer({
                       Hạn KQ: {new Date(form.dueDate).toLocaleString()}
                     </span>
                   )}
-                  <span className="rounded-full bg-amber-50 px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200 hidden lg:flex">
+                  <span className="rounded-full  px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200 hidden lg:flex">
                     Dấu * là trường bắt buộc
+                  </span>
+                  <span className="rounded-full px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200 hidden lg:flex">
+                    Tải file cần phải án Lưu
                   </span>
                 </div>
               </div>
@@ -548,7 +551,7 @@ export default function CaseDrawer({
                   Đóng
                 </button>
                 <button
-                  className="rounded-xl bg-neutral-900 px-3 py-2 text-[12px] font-bold text-white hover:opacity-95 cursor-pointer"
+                  className="rounded-xl bg-blue-600 px-3 py-2 text-[12px] font-bold text-white hover:opacity-95 cursor-pointer"
                   onClick={() => onSave(form)}
                 >
                   Lưu
@@ -1136,7 +1139,7 @@ export default function CaseDrawer({
                       </div>
                     </div>
 
-                    <div className="space-y-3 rounded-xl bg-amber-50 p-3 ring-1 ring-amber-200">
+                    <div className="space-y-3 rounded-xl bg-sky-100/95 p-3 ring-1 ring-sky-200">
                       {(form as any).invoiceType === "personal" ? (
                         /* ============ FORM CÁ NHÂN ============ */
                         <>

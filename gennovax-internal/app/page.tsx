@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SidebarService from "@/components/SidebarService";
 import CasesHeader from "@/components/CasesHeader";
 import CasesTable from "@/components/CasesTable";
@@ -38,7 +38,7 @@ export default function CasesPage() {
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const [opt, list, svc, doc] = await Promise.all([
@@ -55,11 +55,11 @@ export default function CasesPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [serviceType, q, from, to]);
 
   useEffect(() => {
     void load();
-  }, [serviceType]);
+  }, [load]);
 
   const onApplyFilters = () => void load();
 
@@ -165,9 +165,9 @@ export default function CasesPage() {
       }
       setOpen(false);
       setEditing(null);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Lỗi khi lưu:", error);
-      alert(error?.message);
+      alert(error instanceof Error ? error.message : "Đã xảy ra lỗi khi lưu.");
     } finally {
       setLoading(false);
     }
@@ -178,14 +178,14 @@ export default function CasesPage() {
       {/* ✅ Đặt Overlay Loading ra ngoài cùng để che toàn bộ màn hình */}
       <LoadingOverlay isLoading={loading} />
 
-      <div className="min-h-screen bg-gradient-to-b from-neutral-50 via-neutral-50 to-neutral-100">
-        <div className="flex">
-          <div className="sticky top-0 h-screen hidden lg:flex">
+      <div className="h-full overflow-hidden bg-gradient-to-b from-neutral-50 via-neutral-50 to-neutral-100">
+        <div className="flex h-full overflow-hidden">
+          <div className="hidden h-full lg:flex">
             <SidebarService active={serviceType} onChange={setServiceType} />
           </div>
 
-          <div className="flex-1 min-w-0">
-            <div className="relative z-[20] hidden lg:block">
+          <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+            <div className="relative z-[20] hidden shrink-0 lg:block">
               <CasesHeader
                 serviceType={serviceType}
                 q={q}
@@ -201,7 +201,7 @@ export default function CasesPage() {
             </div>
 
             {/* MOBILE & TABLET HEADER */}
-            <div className="block lg:hidden">
+            <div className="block shrink-0 lg:hidden">
               <CasesHeaderMobile
                 serviceType={serviceType}
                 setServiceType={setServiceType}
@@ -217,7 +217,7 @@ export default function CasesPage() {
               />
             </div>
 
-            <div className="p-5 z-0">
+            <div className="z-0 min-h-0 flex-1 overflow-hidden p-2">
               <CasesTable rows={rows} loading={loading} onRowClick={onEdit} />
             </div>
           </div>

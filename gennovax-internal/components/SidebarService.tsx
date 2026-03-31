@@ -95,7 +95,7 @@ export default function SidebarService({
       className={cn(
         "shrink-0 transition-all duration-500 ease-in-out relative overflow-hidden",
         "bg-gradient-to-b from-slate-950 via-blue-950 to-slate-950 text-white",
-        "sticky top-0 h-screen",
+        "sticky top-0 h-full",
         collapsed ? "w-[80px]" : "w-[240px]",
       )}
     >

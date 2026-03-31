@@ -7,7 +7,7 @@ interface LoadingOverlayProps {
   text?: string;
 }
 
-const MIN_LOADING_MS = 500;
+const MIN_LOADING_MS = 300;
 
 export default function LoadingOverlay({
   isLoading,
@@ -57,8 +57,8 @@ export default function LoadingOverlay({
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/10 backdrop-blur-[2px] animate-in fade-in duration-500">
-      <div className="flex flex-col items-center gap-5 rounded-2xl bg-white px-8 py-6 shadow-xl animate-in zoom-in-90 duration-500">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/5 backdrop-blur-[2px] animate-in fade-in duration-500">
+      <div className="flex flex-col items-center ">
         <div className="relative h-12 w-12 animate-[spin_2.5s_linear_infinite]">
           {[...Array(12)].map((_, i) => (
             <div
