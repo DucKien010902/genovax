@@ -1,18 +1,16 @@
-# Dùng node bản 20 nhẹ (alpine)
-FROM node:20-alpine
-
-# Tạo thư mục làm việc trong hộp
+# TẦNG 1: XÂY DỰNG (Mặc kệ rác)
+FROM node:20-alpine AS builder
 WORKDIR /app
-
-# Chỉ copy file package.json trước để cài thư viện cho nhanh
 COPY package*.json ./
-RUN npm install && npm cache clean --force
-
-# Copy toàn bộ code còn lại
+RUN npm install
 COPY . .
 
-# App của bạn chạy cổng 5000
+# TẦNG 2: CHẠY THẬT (Chỉ lấy đồ sạch)
+FROM node:20-alpine
+RUN apk add --no-cache tzdata
+ENV TZ=Asia/Ho_Chi_Minh
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY . .
 EXPOSE 5000
-
-# Lệnh khởi động (sửa lại theo file của bạn, ví dụ server.js hoặc index.js)
 CMD ["npm", "start"]
