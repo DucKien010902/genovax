@@ -17,8 +17,10 @@ import DoctorsList from "@/components/home/doctorsSection";
 // Đây là component chính bạn sẽ export
 const LandingPageDongHung: React.FC = () => {
   return (
-    <div className="bg-white text-gray-800 font-sans antialiased mt-0">
-      <main>
+    <div className="relative overflow-hidden text-gray-800 font-sans antialiased">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[42rem] bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-[38rem] h-[30rem] bg-[radial-gradient(circle_at_center,rgba(14,116,144,0.08),transparent_65%)]" />
+      <main className="relative">
         <PopupBanner />
         <HeroSection />
         <PopularPackages />

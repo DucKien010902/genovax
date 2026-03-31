@@ -6,18 +6,17 @@ const HeroSection: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
-    <div className="relative w-full flex justify-center items-center bg-black">
+    <section className="relative overflow-hidden bg-black">
       <video
         ref={videoRef}
-        className="w-full aspect-[3/2] lg:aspect-[16/9] object-cover"
+        className=" w-full object-cover aspect-[16/10] lg:aspect-[16/8]"
         src="/videos/introduct.mp4"
-        // controls       // hiển thị các control play/pause/fullscreen
         autoPlay
         loop
         muted
         playsInline
       />
-    </div>
+    </section>
   );
 };
 

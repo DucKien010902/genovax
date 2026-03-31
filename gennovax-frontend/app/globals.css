@@ -1,19 +1,15 @@
-/* Import font Inter từ Google Fonts (luôn phải đứng trên cùng) */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
-
-/* Import Tailwind sau đó */
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #132238;
 }
 
-/* chỉnh lại font mặc định */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Inter", sans-serif;
+  --font-sans: "Manrope", sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -24,17 +20,51 @@
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Inter", sans-serif; /* set Inter làm font chính */
-}
 html,
 body {
   scroll-behavior: smooth !important;
 }
 
-/* Animation cuộn */
+body {
+  background:
+    radial-gradient(circle at top, rgba(127, 205, 255, 0.18), transparent 28%),
+    linear-gradient(180deg, #f9fdff 0%, #f4f9fc 46%, #ffffff 100%);
+  color: var(--foreground);
+  font-family: "Manrope", sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(14, 116, 144, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 116, 144, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2), transparent 28%);
+  z-index: -1;
+}
+
+::selection {
+  background: rgba(14, 116, 144, 0.18);
+  color: #082032;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #edf5fa;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #99cde8, #5ca8d3);
+  border: 2px solid #edf5fa;
+  border-radius: 999px;
+}
+
 @keyframes scroll-left {
   from {
     transform: translateX(0);
@@ -60,6 +90,7 @@ body {
 .animate-scroll-right {
   animation: scroll-right 40s linear infinite;
 }
+
 .bg-scale {
   position: relative;
   overflow: hidden;
@@ -72,7 +103,7 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: var(--bg-url); /* ⬅ Lấy từ biến CSS, KHÔNG dùng inherit */
+  background-image: var(--bg-url);
   transform: scale(1);
   animation: bgScaleAnim 8s ease-in-out infinite;
   z-index: -1;
@@ -83,7 +114,7 @@ body {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05); /* phóng nhẹ */
+    transform: scale(1.05);
   }
   100% {
     transform: scale(1);
