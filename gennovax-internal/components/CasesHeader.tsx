@@ -141,7 +141,7 @@ export default function CasesHeader(props: {
   };
 
   return (
-    <div className="border-b border-black/5 bg-white/80 backdrop-blur sticky top-0 z-40 shadow-sm">
+    <div className="border-b border-black/5 bg-white/80 backdrop-blur sticky top-0 z-10 shadow-sm">
       <div className="px-4 py-3">
         {/* LAYOUT: TỰ ĐỘNG CO GIÃN */}
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">

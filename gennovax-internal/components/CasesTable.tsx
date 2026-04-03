@@ -487,11 +487,11 @@ export default function CasesTable({
       {/* ✅ MODAL HIỂN THỊ LỊCH SỬ CHỈNH SỬA (Giữ nguyên như của bạn) */}
       {historyModalOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm transition-opacity"
           onClick={() => setHistoryModalOpen(false)}
         >
           <div
-            className="w-full max-w-lg flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+            className="w-full max-w-lg max-h-[50vh] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header Modal */}
