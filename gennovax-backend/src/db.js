@@ -1,10 +1,10 @@
-import "dotenv/config"; // 🌟 PHẢI CÓ DÒNG NÀY Ở TRÊN CÙNG
-import mongoose from "mongoose";
+import 'dotenv/config'; // 🌟 PHẢI CÓ DÒNG NÀY Ở TRÊN CÙNG
+import mongoose from 'mongoose';
 
 export async function connectDB(uri) {
-  mongoose.set("strictQuery", true);
+  mongoose.set('strictQuery', true);
   await mongoose.connect(uri, { autoIndex: true });
-  console.log("✅ MongoDB connected");
+  console.log('✅ MongoDB connected');
 }
 
 // Lúc này process.env.MONGO_URI_ATLAS mới có dữ liệu

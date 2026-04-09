@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const changeLogSchema = new mongoose.Schema(
   {
@@ -14,7 +14,7 @@ const CaseSchema = new mongoose.Schema(
   {
     serviceType: {
       type: String,
-      enum: ["NIPT", "ADN", "HPV", "CELL"],
+      enum: ['NIPT', 'ADN', 'HPV', 'CELL'],
       required: true,
     },
 
@@ -22,49 +22,49 @@ const CaseSchema = new mongoose.Schema(
     stt: { type: Number, default: 0 },
     date: { type: Date, default: Date.now },
 
-    caseCode: { type: String, default: "" },
-    patientName: { type: String, default: "" },
+    caseCode: { type: String, default: '' },
+    patientName: { type: String, default: '' },
 
     // service & pricing
     serviceId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Service",
+      ref: 'Service',
       default: null,
     },
-    serviceName: { type: String, default: "" },
-    serviceCode: { type: String, default: "" },
-    detailNote: { type: String, default: "" },
+    serviceName: { type: String, default: '' },
+    serviceCode: { type: String, default: '' },
+    detailNote: { type: String, default: '' },
 
     doctorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Doctor",
+      ref: 'Doctor',
       default: null,
     },
-    agentLevel: { type: String, default: "" },
-    agentTierLabel: { type: String, default: "" },
+    agentLevel: { type: String, default: '' },
+    agentTierLabel: { type: String, default: '' },
     price: { type: Number, default: 0 },
 
     paid: { type: Boolean, default: false },
-    paymentMethod: { type: String, default: "" },
+    paymentMethod: { type: String, default: '' },
     collectedAmount: { type: Number, default: 0 },
     receivedAmount: { type: Number, default: 0 },
     costPrice: { type: Number, default: 0 },
 
     // workflow
-    lab: { type: String, default: "" },
-    source: { type: String, default: "" },
-    salesOwner: { type: String, default: "" },
-    sampleCollector: { type: String, default: "" },
+    lab: { type: String, default: '' },
+    source: { type: String, default: '' },
+    salesOwner: { type: String, default: '' },
+    sampleCollector: { type: String, default: '' },
 
     sentAt: { type: Date, default: null },
     receivedAt: { type: Date, default: null },
     dueDate: { type: Date, default: null },
     returnedAt: { type: Date, default: null },
 
-    transferStatus: { type: String, default: "" },
-    receiveStatus: { type: String, default: "" },
-    processStatus: { type: String, default: "" },
-    feedbackStatus: { type: String, default: "" },
+    transferStatus: { type: String, default: '' },
+    receiveStatus: { type: String, default: '' },
+    processStatus: { type: String, default: '' },
+    feedbackStatus: { type: String, default: '' },
 
     glReturned: { type: Boolean, default: false },
     gxReceived: { type: Boolean, default: false },
@@ -73,24 +73,24 @@ const CaseSchema = new mongoose.Schema(
 
     invoiceType: {
       type: String,
-      enum: ["company", "personal"],
-      default: "company",
+      enum: ['company', 'personal'],
+      default: 'company',
     },
-    invoiceName: { type: String, default: "" },
-    invoiceTaxCode: { type: String, default: "" },
-    invoiceIdCard: { type: String, default: "" },
-    invoiceIssueDate: { type: String, default: "" },
-    invoiceIssuePlace: { type: String, default: "" },
-    invoiceAddress: { type: String, default: "" },
+    invoiceName: { type: String, default: '' },
+    invoiceTaxCode: { type: String, default: '' },
+    invoiceIdCard: { type: String, default: '' },
+    invoiceIssueDate: { type: String, default: '' },
+    invoiceIssuePlace: { type: String, default: '' },
+    invoiceAddress: { type: String, default: '' },
 
-    createdBy: { type: String, default: "" },
-    updatedBy: { type: String, default: "" },
-    registrationImageUrl: { type: String, default: "" },
+    createdBy: { type: String, default: '' },
+    updatedBy: { type: String, default: '' },
+    registrationImageUrl: { type: String, default: '' },
     resultImageUrls: { type: [String], default: [] },
-    receiptImageUrl: { type: String, default: "" }, // ✅ để vào trong schema
+    receiptImageUrl: { type: String, default: '' }, // ✅ để vào trong schema
     changes: [changeLogSchema],
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Case", CaseSchema);
+export default mongoose.model('Case', CaseSchema);

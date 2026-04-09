@@ -1,15 +1,15 @@
-import dotenv from "dotenv";
-import mongoose from "mongoose";
-import { connectDB } from "./db.js";
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import { connectDB } from './db.js';
 
 dotenv.config();
 
 async function addHistoryLog() {
   try {
     await connectDB(process.env.MONGO_URI);
-    console.log("Đang kết nối Database. Bắt đầu thêm lịch sử lưu vết...");
+    console.log('Đang kết nối Database. Bắt đầu thêm lịch sử lưu vết...');
 
-    const collection = mongoose.connection.collection("cases");
+    const collection = mongoose.connection.collection('cases');
     const allCases = await collection.find({}).toArray();
     console.log(`Tìm thấy ${allCases.length} ca. Bắt đầu xử lý...`);
 
@@ -21,33 +21,35 @@ async function addHistoryLog() {
 
       // Tạo object lịch sử đầu tiên
       const initialChange = {
-        name: "Admin GennovaX",
-        email: "superadmin@gmail.com",
-        action: "Khởi tạo dữ liệu gốc",
-        changedAt: createdAt
+        name: 'Admin GennovaX',
+        email: 'superadmin@gmail.com',
+        action: 'Khởi tạo dữ liệu gốc',
+        changedAt: createdAt,
       };
 
       // Push lệnh update vào bulkOps
       bulkOps.push({
         updateOne: {
           filter: { _id: doc._id },
-          update: { 
+          update: {
             // Dùng $set để tạo mảng changes nếu chưa có, chứa phần tử đầu tiên
-            $set: { changes: [initialChange] } 
-          }
-        }
+            $set: { changes: [initialChange] },
+          },
+        },
       });
     }
 
     if (bulkOps.length > 0) {
-      console.log("Đang tiến hành ghi vào Database...");
+      console.log('Đang tiến hành ghi vào Database...');
       const result = await collection.bulkWrite(bulkOps);
-      console.log(`✅ Hoàn tất! Đã thêm lịch sử cho ${result.modifiedCount} ca.`);
+      console.log(
+        `✅ Hoàn tất! Đã thêm lịch sử cho ${result.modifiedCount} ca.`
+      );
     }
 
     process.exit(0);
   } catch (error) {
-    console.error("❌ Lỗi khi chạy script:", error);
+    console.error('❌ Lỗi khi chạy script:', error);
     process.exit(1);
   }
 }

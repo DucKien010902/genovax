@@ -1,11 +1,11 @@
-import { Router } from "express";
-import Option from "../models/Option.model.js";
-import { requireRole } from "../middlewares/auth.middleware.js";
+import { Router } from 'express';
+import Option from '../models/Option.model.js';
+import { requireRole } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
 // GET /api/meta/options  -> map dùng cho form (chỉ active)
-router.get("/options", async (req, res, next) => {
+router.get('/options', async (req, res, next) => {
   try {
     const docs = await Option.find({}).lean();
     const map = {};
@@ -24,7 +24,7 @@ router.get("/options", async (req, res, next) => {
 // --------- ADMIN CRUD ---------
 
 // GET /api/meta/options-admin  -> full docs (kể cả inactive)
-router.get("/options-admin", async (req, res, next) => {
+router.get('/options-admin', async (req, res, next) => {
   try {
     const items = await Option.find({}).sort({ key: 1 }).lean();
     res.json({ items });
@@ -34,10 +34,10 @@ router.get("/options-admin", async (req, res, next) => {
 });
 
 // GET /api/meta/options-admin/:key
-router.get("/options-admin/:key", async (req, res, next) => {
+router.get('/options-admin/:key', async (req, res, next) => {
   try {
     const doc = await Option.findOne({ key: req.params.key }).lean();
-    if (!doc) return res.status(404).json({ message: "Not found" });
+    if (!doc) return res.status(404).json({ message: 'Not found' });
     res.json(doc);
   } catch (e) {
     next(e);
@@ -45,7 +45,7 @@ router.get("/options-admin/:key", async (req, res, next) => {
 });
 
 // PUT /api/meta/options-admin/:key  (upsert whole doc)
-router.put("/options-admin/:key",  async (req, res, next) => {
+router.put('/options-admin/:key', async (req, res, next) => {
   try {
     const { key } = req.params;
     const { items = [] } = req.body || {};
@@ -63,11 +63,12 @@ router.put("/options-admin/:key",  async (req, res, next) => {
 });
 
 // POST /api/meta/options-admin/:key/items  (add item)
-router.post("/options-admin/:key/items", async (req, res, next) => {
+router.post('/options-admin/:key/items', async (req, res, next) => {
   try {
     const { key } = req.params;
     const { label, value, order = 0, isActive = true } = req.body || {};
-    if (!label || !value) return res.status(400).json({ message: "label/value required" });
+    if (!label || !value)
+      return res.status(400).json({ message: 'label/value required' });
 
     const doc = await Option.findOneAndUpdate(
       { key },
@@ -85,21 +86,21 @@ router.post("/options-admin/:key/items", async (req, res, next) => {
 });
 
 // PATCH /api/meta/options-admin/:key/items/:value  (update item by value)
-router.patch("/options-admin/:key/items/:value",  async (req, res, next) => {
+router.patch('/options-admin/:key/items/:value', async (req, res, next) => {
   try {
     const { key, value } = req.params;
     const patch = req.body || {};
 
     const doc = await Option.findOne({ key });
-    if (!doc) return res.status(404).json({ message: "Not found" });
+    if (!doc) return res.status(404).json({ message: 'Not found' });
 
     const idx = (doc.items || []).findIndex((x) => x.value === value);
-    if (idx < 0) return res.status(404).json({ message: "Item not found" });
+    if (idx < 0) return res.status(404).json({ message: 'Item not found' });
 
     // update allowed fields
-    if ("label" in patch) doc.items[idx].label = patch.label;
-    if ("order" in patch) doc.items[idx].order = patch.order;
-    if ("isActive" in patch) doc.items[idx].isActive = patch.isActive;
+    if ('label' in patch) doc.items[idx].label = patch.label;
+    if ('order' in patch) doc.items[idx].order = patch.order;
+    if ('isActive' in patch) doc.items[idx].isActive = patch.isActive;
 
     // đổi value là nguy hiểm (break link). Nếu muốn, mở lại sau.
     await doc.save();
@@ -109,13 +110,15 @@ router.patch("/options-admin/:key/items/:value",  async (req, res, next) => {
   }
 });
 // POST /api/meta/options-admin (Tạo mới 1 danh mục hoàn toàn)
-router.post("/options-admin",  async (req, res, next) => {
+router.post('/options-admin', async (req, res, next) => {
   try {
     const { key, name } = req.body;
-    if (!key || !name) return res.status(400).json({ message: "Cần nhập đủ key và name" });
+    if (!key || !name)
+      return res.status(400).json({ message: 'Cần nhập đủ key và name' });
 
     const existing = await Option.findOne({ key });
-    if (existing) return res.status(400).json({ message: "Key này đã tồn tại!" });
+    if (existing)
+      return res.status(400).json({ message: 'Key này đã tồn tại!' });
 
     const doc = await Option.create({ key, name, items: [] });
     res.json(doc);
@@ -125,10 +128,10 @@ router.post("/options-admin",  async (req, res, next) => {
 });
 
 // PATCH /api/meta/options-admin/:key (Chỉ để sửa tên/name của danh mục)
-router.patch("/options-admin/:key",  async (req, res, next) => {
+router.patch('/options-admin/:key', async (req, res, next) => {
   try {
     const { name } = req.body;
-    if (!name) return res.status(400).json({ message: "Cần nhập tên mới" });
+    if (!name) return res.status(400).json({ message: 'Cần nhập tên mới' });
 
     const doc = await Option.findOneAndUpdate(
       { key: req.params.key },
@@ -136,14 +139,15 @@ router.patch("/options-admin/:key",  async (req, res, next) => {
       { new: true }
     ).lean();
 
-    if (!doc) return res.status(404).json({ message: "Không tìm thấy danh mục" });
+    if (!doc)
+      return res.status(404).json({ message: 'Không tìm thấy danh mục' });
     res.json(doc);
   } catch (e) {
     next(e);
   }
 });
 // DELETE /api/meta/options-admin/:key/items/:value
-router.delete("/options-admin/:key/items/:value",  async (req, res, next) => {
+router.delete('/options-admin/:key/items/:value', async (req, res, next) => {
   try {
     const { key, value } = req.params;
 
@@ -153,7 +157,7 @@ router.delete("/options-admin/:key/items/:value",  async (req, res, next) => {
       { new: true }
     ).lean();
 
-    if (!doc) return res.status(404).json({ message: "Not found" });
+    if (!doc) return res.status(404).json({ message: 'Not found' });
     res.json(doc);
   } catch (e) {
     next(e);
@@ -161,7 +165,7 @@ router.delete("/options-admin/:key/items/:value",  async (req, res, next) => {
 });
 
 // DELETE /api/meta/options-admin/:key  (xóa cả key)
-router.delete("/options-admin/:key", async (req, res, next) => {
+router.delete('/options-admin/:key', async (req, res, next) => {
   try {
     await Option.deleteOne({ key: req.params.key });
     res.json({ ok: true });

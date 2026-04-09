@@ -1,23 +1,19 @@
-import mongoose from "mongoose";
-
-const PriceByLevelSchema = new mongoose.Schema(
-  {
-    level: { type: String, required: true }, // cap1/cap2/cap3...
-    price: { type: Number, required: true },
-  },
-  { _id: false }
-);
+import mongoose from 'mongoose';
 
 const ServiceSchema = new mongoose.Schema(
   {
-    serviceType: { type: String, enum: ["NIPT", "ADN", "HPV"], required: true },
-    serviceCode: { type: String, required: true, unique: true },
-    name: { type: String, required: true },
+    serviceCode: { type: String, required: true, unique: true, trim: true },
+    name: { type: String, required: true, trim: true },
+    serviceType: {
+      type: String,
+      enum: ['NIPT', 'ADN', 'HPV', 'CELL'],
+      required: true,
+    },
     turnaroundHours: { type: Number, default: 48 },
-    pricesByLevel: { type: [PriceByLevelSchema], default: [] },
+    note: { type: String, default: '' },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Service", ServiceSchema);
+export default mongoose.model('Service', ServiceSchema);

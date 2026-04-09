@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const OptionItemSchema = new mongoose.Schema(
   {
@@ -13,10 +13,10 @@ const OptionItemSchema = new mongoose.Schema(
 const OptionSchema = new mongoose.Schema(
   {
     key: { type: String, required: true, unique: true },
-    name: { type: String, required: true, },
+    name: { type: String, required: true },
     items: { type: [OptionItemSchema], default: [] },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Option", OptionSchema);
+export default mongoose.model('Option', OptionSchema);
