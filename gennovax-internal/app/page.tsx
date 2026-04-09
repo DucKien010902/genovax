@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import SidebarService from "@/components/SidebarService";
 import CasesHeader from "@/components/CasesHeader";
 import CasesTable from "@/components/CasesTable";
@@ -21,6 +22,7 @@ import { useAuth } from "@/lib/auth";
 
 export default function CasesPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [serviceType, setServiceType] = useState<ServiceType>("NIPT");
   const [options, setOptions] = useState<OptionsMap>({});
   const [rows, setRows] = useState<CaseRecord[]>([]);
@@ -41,25 +43,46 @@ export default function CasesPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [opt, list, svc, doc] = await Promise.all([
+      const [opt, list, doc] = await Promise.all([
         api.options(),
         api.cases({ serviceType, q, from, to }),
-        api.services(serviceType),
         api.doctors(""),
       ]);
 
       setOptions(opt);
       setRows(list.items);
-      setServices(svc.items ?? []);
       setDoctors(doc.items ?? []);
+      setServices(
+        (doc.items ?? []).flatMap((doctor) =>
+          (doctor.servicePrices || [])
+            .filter((service) => service.serviceType === serviceType)
+            .map((service) => ({
+              _id: service.serviceId,
+              serviceType: service.serviceType,
+              serviceCode: service.serviceCode,
+              name: service.name,
+              turnaroundHours: service.turnaroundHours,
+              isActive: service.isActive !== false,
+            })),
+        ),
+      );
     } finally {
       setLoading(false);
     }
   }, [serviceType, q, from, to]);
 
   useEffect(() => {
+    if (user?.role === "sales") {
+      router.replace("/admin/doctors");
+      return;
+    }
+  }, [router, user?.role]);
+
+  useEffect(() => {
     void load();
   }, [load]);
+
+  if (user?.role === "sales") return null;
 
   const onApplyFilters = () => void load();
 
@@ -155,19 +178,41 @@ export default function CasesPage() {
       if (data.isDraft) {
         const created = await api.createCase(payload);
         setRows((prev) => [created, ...prev]);
-        console.log(payload)
+        console.log(payload);
       } else if (data._id) {
         const updated = await api.updateCase(data._id, payload);
         setRows((prev) =>
           prev.map((x) => (x._id === updated._id ? updated : x)),
         );
-        console.log(payload)
+        console.log(payload);
       }
       setOpen(false);
       setEditing(null);
     } catch (error: unknown) {
       console.error("Lỗi khi lưu:", error);
       alert(error instanceof Error ? error.message : "Đã xảy ra lỗi khi lưu.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const onQuickPaidChange = async (row: CaseRecord, paid: boolean) => {
+    try {
+      setLoading(true);
+
+      const updated = await api.updateCase(row._id, {
+        paid,
+        currentUserName: user?.name || "Unknown",
+        currentUserEmail: user?.email || "Unknown",
+      });
+
+      setRows((prev) => prev.map((x) => (x._id === updated._id ? updated : x)));
+    } catch (error: unknown) {
+      console.error("Lỗi cập nhật thanh toán:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Đã xảy ra lỗi khi cập nhật trạng thái thanh toán.",
+      );
     } finally {
       setLoading(false);
     }
@@ -218,7 +263,12 @@ export default function CasesPage() {
             </div>
 
             <div className="z-0 min-h-0 flex-1 overflow-hidden p-2">
-              <CasesTable rows={rows} loading={loading} onRowClick={onEdit} />
+              <CasesTable
+                rows={rows}
+                loading={loading}
+                onRowClick={onEdit}
+                onQuickPaidChange={onQuickPaidChange}
+              />
             </div>
           </div>
         </div>
@@ -232,7 +282,7 @@ export default function CasesPage() {
           onClose={onCloseDrawer}
           onSave={onSave}
         />
-        <AIChatWidget />
+        {/* <AIChatWidget /> */}
       </div>
     </>
   );

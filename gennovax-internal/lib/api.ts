@@ -3,8 +3,10 @@ import type {
   OptionsMap,
   Paginated,
   ServiceType,
-  ServiceItem,
   DoctorItem,
+  CatalogServiceItem,
+  DoctorCatalogServiceRow,
+  DoctorRevenueAnalyticsResponse,
 } from "./types";
 
 const API_BASE =
@@ -19,10 +21,10 @@ async function j<T>(res: Response): Promise<T> {
         // Xóa thông tin cũ
         localStorage.removeItem("genno_token");
         localStorage.removeItem("genno_user");
-        
+
         // Tránh vòng lặp (redirect loop) nếu đang ở sẵn trang login
         if (window.location.pathname !== "/login") {
-          window.location.href = "/login"; 
+          window.location.href = "/login";
         }
       }
       throw new Error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
@@ -35,7 +37,12 @@ async function j<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export type Role = "admin" | "staff" | "super_admin" | "accounting_admin";
+export type Role =
+  | "admin"
+  | "staff"
+  | "super_admin"
+  | "accounting_admin"
+  | "sales";
 export type LoginResponse = {
   token: string;
   user: { id: string; name: string; email: string; role: Role };
@@ -68,21 +75,16 @@ export const api = {
       },
       body: JSON.stringify({ question }),
     }).then((r) =>
-      j<{ success: boolean; question: string; answer: string }>(r)
+      j<{ success: boolean; question: string; answer: string }>(r),
     );
   },
   options: () =>
     authFetch(`${API_BASE}/meta/options`).then((r) => j<OptionsMap>(r)),
 
-  services: (serviceType: ServiceType) =>
+  doctors: (search = "", all = false) =>
     authFetch(
-      `${API_BASE}/services?serviceType=${encodeURIComponent(serviceType)}`,
-    ).then((r) => j<{ items: ServiceItem[] }>(r)),
-
-  doctors: (search = "") =>
-    authFetch(`${API_BASE}/doctors?search=${encodeURIComponent(search)}`).then(
-      (r) => j<{ items: DoctorItem[] }>(r),
-    ),
+      `${API_BASE}/doctors?search=${encodeURIComponent(search)}${all ? "&all=1" : ""}`,
+    ).then((r) => j<{ items: DoctorItem[] }>(r)),
 
   cases: (params: {
     serviceType: ServiceType | "";
@@ -125,9 +127,7 @@ export const api = {
       method: "DELETE",
     }).then((r) => j<{ ok: boolean }>(r)),
 
-
   // Thêm vào object caseApi hoặc api:
-  
 
   login: (payload: { email: string; password: string }) =>
     fetch(`${API_BASE}/auth/login`, {
@@ -192,6 +192,9 @@ export const api = {
       body: JSON.stringify(payload),
     }).then((r) => j<any>(r)),
 
+  doctorGet: (id: string) =>
+    authFetch(`${API_BASE}/doctors/${id}`).then((r) => j<any>(r)),
+
   doctorUpdate: (id: string, patch: any) =>
     authFetch(`${API_BASE}/doctors/${id}`, {
       method: "PATCH",
@@ -204,20 +207,66 @@ export const api = {
       j<{ ok: true }>(r),
     ),
 
-  // --- Services CRUD ---
+  doctorServices: (id: string) =>
+    authFetch(`${API_BASE}/doctors/${id}/services`).then((r) =>
+      j<{ items: DoctorCatalogServiceRow[] }>(r),
+    ),
+
+  doctorRevenueAnalytics: (params: {
+    month?: string;
+    serviceType?: ServiceType | "";
+    salesOwner?: string;
+    limit?: number;
+  }) => {
+    const qs = new URLSearchParams(
+      Object.entries(params).reduce(
+        (acc, [k, v]) => {
+          if (v !== undefined && v !== "") acc[k] = String(v);
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
+    ).toString();
+
+    return authFetch(`${API_BASE}/doctors/analytics/revenue?${qs}`).then((r) =>
+      j<DoctorRevenueAnalyticsResponse>(r),
+    );
+  },
+
+  doctorServiceUpsert: (
+    doctorId: string,
+    serviceId: string,
+    payload: { listPrice: number; netPrice: number },
+  ) =>
+    authFetch(`${API_BASE}/doctors/${doctorId}/services/${serviceId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).then((r) => j<any>(r)),
+
+  doctorServiceDelete: (doctorId: string, serviceId: string) =>
+    authFetch(`${API_BASE}/doctors/${doctorId}/services/${serviceId}`, {
+      method: "DELETE",
+    }).then((r) => j<{ ok: true }>(r)),
+
+  services: (search = "", all = false) =>
+    authFetch(
+      `${API_BASE}/services?search=${encodeURIComponent(search)}${all ? "&all=1" : ""}`,
+    ).then((r) => j<{ items: CatalogServiceItem[] }>(r)),
+
   serviceCreate: (payload: any) =>
     authFetch(`${API_BASE}/services`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    }).then((r) => j<any>(r)),
+    }).then((r) => j<CatalogServiceItem>(r)),
 
   serviceUpdate: (id: string, patch: any) =>
     authFetch(`${API_BASE}/services/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(patch),
-    }).then((r) => j<any>(r)),
+    }).then((r) => j<CatalogServiceItem>(r)),
 
   serviceDelete: (id: string) =>
     authFetch(`${API_BASE}/services/${id}`, { method: "DELETE" }).then((r) =>
@@ -308,7 +357,7 @@ export const caseApi = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fileUrl }),
-    }).then(r => r.json());
+    }).then((r) => r.json());
   },
   analytics: (params: {
     serviceType?: string;
@@ -356,20 +405,22 @@ export const caseApi = {
 };
 export const driveApi = {
   list: async (path: string, search: string = "") => {
-    return authFetch(`${API_BASE}/drive/list?path=${encodeURIComponent(path)}&search=${encodeURIComponent(search)}`).then(r => r.json());
+    return authFetch(
+      `${API_BASE}/drive/list?path=${encodeURIComponent(path)}&search=${encodeURIComponent(search)}`,
+    ).then((r) => r.json());
   },
   createFolder: async (currentPath: string, folderName: string) => {
     return authFetch(`${API_BASE}/drive/create-folder`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ currentPath, folderName }),
-    }).then(r => r.json());
+    }).then((r) => r.json());
   },
   upload: async (file: File, currentPath: string) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("currentPath", currentPath);
-    
+
     const token = getToken(); // Hàm getToken của bạn
     const headers = new Headers();
     if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -386,6 +437,6 @@ export const driveApi = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ path, type }),
-    }).then(r => r.json());
-  }
+    }).then((r) => r.json());
+  },
 };

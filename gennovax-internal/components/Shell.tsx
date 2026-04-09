@@ -9,7 +9,7 @@ import AppHeader from "@/components/AppHeader";
 export default function Shell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { token, loading } = useAuth();
+  const { token, user, loading } = useAuth();
 
   // ✅ các route "auth" không hiện header/sidebar
   const isAuthPage =
@@ -28,9 +28,17 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
     // đã login mà vẫn ở login/register => đá về trang chính
     if (token && isAuthPage) {
-      router.replace("/");
+      router.replace(user?.role === "sales" ? "/admin/doctors" : "/");
+      return;
     }
-  }, [loading, token, isAuthPage, router]);
+
+    const isSalesAllowedPath =
+      pathname?.startsWith("/admin/doctors") || pathname === "/profile";
+
+    if (token && user?.role === "sales" && !isSalesAllowedPath) {
+      router.replace("/admin/doctors");
+    }
+  }, [loading, token, isAuthPage, pathname, router, user?.role]);
 
   // ✅ tránh flash UI khi redirect
   if (loading) return null;

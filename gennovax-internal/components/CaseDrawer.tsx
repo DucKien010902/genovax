@@ -1,13 +1,6 @@
-"use client";
+﻿"use client";
 
-import axios from "axios";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import type {
   CaseDraft,
   OptionsMap,
@@ -17,42 +10,6 @@ import type {
 import SingleDatePicker from "./DatePicker";
 import { useAuth } from "@/lib/auth";
 import { caseApi } from "@/lib/api";
-
-/** ✅ FE map nguồn -> cấp đại lý (không đụng DB) */
-
-/** ✅ FE map nguồn -> NVKD phụ trách (từ ảnh bạn gửi) */
-const SOURCE_TO_SALES_OWNER: Record<string, string> = {
-  // Luận
-  "CTV Lý": "Luận",
-  "PKĐK AGAPE": "Luận",
-  "BS Hậu - PK SPK Mẹ và Bé": "Luận",
-  "CTV Xinh": "Luận",
-  "PK Âu Cơ": "Luận",
-  "Huyền - BVDK ngã 4 Hồ": "Luận",
-  "Golab Hải Phòng": "Luận",
-  "PK SPK Minh Hòa": "Luận",
-
-  // Phong
-  "BS Thoa": "Phong",
-  "PK Phong Dương": "Phong",
-
-  // Thảo
-  QC: "Thảo",
-
-  // Liêm
-  "PK Mỹ Lộc": "Liêm",
-  "CTV Ngoài": "Liêm",
-  "Golab Quảng Bình": "Liêm",
-  "CTV Tú - Vũng Tàu": "Liêm",
-  "CTV Vân": "Liêm",
-  "Golab Thanh Hoá": "Liêm",
-  "Golab Hà Tĩnh": "Liêm",
-  "CTV Thảo": "Liêm",
-};
-
-// ✅ Cloudinary (unsigned upload)
-const CLOUDINARY_CLOUD_NAME = "da6f4dmql";
-const CLOUDINARY_UPLOAD_PRESET = "GX-internal_unsigned_upload";
 
 function cn(...a: Array<string | false | null | undefined>) {
   return a.filter(Boolean).join(" ");
@@ -64,28 +21,32 @@ function Select({
   items,
   placeholder,
   tone = "slate",
+  disabled = false,
 }: {
   value: string;
   onChange: (v: string) => void;
   items: { label: string; value: string }[];
   placeholder?: string;
-  tone?: "slate" | "blue" | "rose" | "emerald" | "amber";
+  tone?: "slate" | "blue" | "rose" | "emerald" | "sky";
+  disabled?: boolean;
 }) {
   const toneCls: Record<typeof tone, string> = {
-    slate: "border-black/10 focus:ring-slate-200",
-    blue: "border-blue-200 focus:ring-blue-200",
-    rose: "border-rose-200 focus:ring-rose-200",
-    emerald: "border-emerald-200 focus:ring-emerald-200",
-    amber: "border-amber-200 focus:ring-amber-200",
+    slate: "border-slate-200 focus:border-sky-300 focus:ring-sky-100",
+    blue: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
+    rose: "border-rose-200 focus:border-rose-300 focus:ring-rose-100",
+    emerald: "border-emerald-200 focus:border-emerald-300 focus:ring-emerald-100",
+    sky: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
   };
 
   return (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
       className={cn(
-        "w-full rounded-xl border bg-white px-3 py-2 text-[12px] shadow-sm outline-none",
+        "w-full rounded-2xl border bg-slate-50 px-3.5 py-2.5 text-[12px] shadow-sm outline-none transition",
         "focus:ring-4 focus:ring-offset-0",
+        "disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-neutral-500",
         toneCls[tone],
       )}
     >
@@ -139,19 +100,13 @@ function Field({
   label: string;
   children: React.ReactNode;
 }) {
-  // 1. Kiểm tra xem label có chứa chuỗi "(*)" hay không
   const isRequired = label.includes("*");
-
-  // 2. Xóa chuỗi "(*)" ra khỏi label gốc để tên trường hiển thị sạch sẽ
 
   return (
     <div className="min-w-0">
-      <div className="mb-1 text-[11px] font-semibold text-neutral-500">
-        {/* 3. Nếu là trường bắt buộc thì render thêm dấu * màu đỏ (rose-500) */}
+      <div className="mb-1.5 text-[11px] font-semibold  tracking-[0.14em] text-slate-400">
         {isRequired ? (
-          <span className="ml-1 text-[11px] font-bold text-red-500">
-            {label}
-          </span>
+          <span className="text-sky-600">{label}</span>
         ) : (
           label
         )}
@@ -166,29 +121,34 @@ function Input({
   onChange,
   placeholder,
   tone = "slate",
+  disabled = false,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  tone?: "slate" | "blue" | "rose" | "emerald" | "amber";
+  tone?: "slate" | "blue" | "rose" | "emerald" | "sky";
+  disabled?: boolean;
 }) {
   const toneCls: Record<typeof tone, string> = {
-    slate: "focus:ring-slate-200",
-    blue: "focus:ring-blue-200",
-    rose: "focus:ring-rose-200",
-    emerald: "focus:ring-emerald-200",
-    amber: "focus:ring-amber-200",
+    slate: "border-slate-200 focus:border-sky-300 focus:ring-sky-100",
+    blue: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
+    rose: "border-rose-200 focus:border-rose-300 focus:ring-rose-100",
+    emerald: "border-emerald-200 focus:border-emerald-300 focus:ring-emerald-100",
+    sky: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
   };
+
   return (
     <input
       className={cn(
-        "w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm outline-none",
+        "w-full rounded-2xl border bg-slate-50 px-3.5 py-2.5 text-[12px] shadow-sm outline-none transition",
         "focus:ring-4",
+        "disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-neutral-500",
         toneCls[tone],
       )}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
+      disabled={disabled}
     />
   );
 }
@@ -203,21 +163,22 @@ function Textarea({
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  tone?: "slate" | "blue" | "rose" | "emerald" | "amber";
+  tone?: "slate" | "blue" | "rose" | "emerald" | "sky";
   rows?: number;
 }) {
   const toneCls: Record<typeof tone, string> = {
-    slate: "focus:ring-slate-200",
-    blue: "focus:ring-blue-200",
-    rose: "focus:ring-rose-200",
-    emerald: "focus:ring-emerald-200",
-    amber: "focus:ring-amber-200",
+    slate: "border-slate-200 focus:border-sky-300 focus:ring-sky-100",
+    blue: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
+    rose: "border-rose-200 focus:border-rose-300 focus:ring-rose-100",
+    emerald: "border-emerald-200 focus:border-emerald-300 focus:ring-emerald-100",
+    sky: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
   };
+
   return (
     <textarea
       rows={rows}
       className={cn(
-        "w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm outline-none",
+        "w-full rounded-2xl border bg-slate-50 px-3.5 py-2.5 text-[12px] shadow-sm outline-none transition",
         "focus:ring-4",
         toneCls[tone],
       )}
@@ -226,6 +187,29 @@ function Textarea({
       placeholder={placeholder}
     />
   );
+}
+
+type SourceServiceOption = {
+  service: ServiceItem;
+  price: number;
+};
+
+function normalizeCaseData(input: CaseDraft): CaseDraft {
+  const cloned = { ...input } as CaseDraft & Record<string, any>;
+
+  if (cloned.paid && !cloned.paymentMethod) {
+    cloned.paymentMethod = "Chuyển khoản";
+  }
+
+  if (!cloned.invoiceType) {
+    cloned.invoiceType = "company";
+  }
+
+  if (!Array.isArray(cloned.resultImageUrls)) {
+    cloned.resultImageUrls = [];
+  }
+
+  return cloned;
 }
 
 export default function CaseDrawer({
@@ -245,177 +229,236 @@ export default function CaseDrawer({
   doctors: DoctorItem[];
   onSave: (data: CaseDraft) => Promise<void>;
 }) {
-  const { user, token, logout } = useAuth();
+  const { user } = useAuth();
   const isAccountingAdmin = user?.role === "accounting_admin";
 
-  // 1. Khai báo các state cơ bản
   const [form, setForm] = useState<CaseDraft | null>(data);
   const [sampleCount, setSampleCount] = useState(1);
   const [collectedAmountManual, setCollectedAmountManual] = useState(false);
 
-  // 2. Xác định ca mới hay ca cũ dựa vào prop data truyền vào
-  const isNewCase = !data?._id; // Thay _id bằng trường ID thực tế của database nếu khác
-
-  // 3. ĐỒNG BỘ DATA: Cập nhật form và các cờ trạng thái mỗi khi mở ca
-  // 3. ĐỒNG BỘ DATA: Cập nhật form và các cờ trạng thái mỗi khi mở ca
-  // 3. ĐỒNG BỘ DATA: Cập nhật form và các cờ trạng thái mỗi khi mở ca
-  useEffect(() => {
-    if (data) {
-      const clonedData = { ...data };
-      
-      // ✅ FIX 1: Lỗi Payment Method
-      if (clonedData.paid && !clonedData.paymentMethod) {
-        clonedData.paymentMethod = "Chuyển khoản"; 
-      }
-      
-      // ✅ FIX 2: Bơm mặc định loại Hóa đơn là "company" nếu chưa có
-      if (!clonedData.invoiceType) {
-        clonedData.invoiceType = "company";
-      }
-
-      setForm(clonedData);
-    } else {
-      // Nếu là tạo mới (data = null), có thể khởi tạo các giá trị default
-      setForm(null); 
-    }
-
-    if (data && data._id) {
-      setCollectedAmountManual(true);
-    } else {
-      setCollectedAmountManual(false);
-      setSampleCount(1);
-    }
-  }, [data]);
-
-  const opt = useMemo(() => (k: string) => options[k] ?? [], [options]);
-
-  const set = (patch: Partial<CaseDraft>) =>
-    setForm((prev) => (prev ? { ...prev, ...patch } : prev));
-
-  // ===== selected service =====
-  // ===== selected service =====
-  const selectedService = useMemo(() => {
-    if (!form) return null;
-    if (form.serviceCode) {
-      return services.find((s) => s.serviceCode === form.serviceCode) ?? null;
-    }
-    return null;
-  }, [form, services]);
-
-  // ✅ 1. Lấy ra danh sách các cấp hợp lệ của riêng Nguồn (Doctor) đang chọn
-  // ✅ 1. Lấy ra danh sách các cấp hợp lệ của riêng Nguồn (Doctor) đang chọn
-  const availableLevelsForSource = useMemo(() => {
-    if (!form?.source) return [];
-    const doc = doctors.find((d) => d.fullName === form.source);
-    
-    // Chỉ dùng schema mới: đọc từ agentLevels
-    let levels = doc?.agentLevels || [];
-    if (levels.length === 0) levels = ["cap3"]; // Chống cháy nếu Nguồn mới tạo bị thiếu mảng
-
-    const allAgentLevels = opt("agentLevels");
-    return levels.map((lvl) => {
-      const found = allAgentLevels.find((x) => x.value === lvl);
-      return {
-        label: found ? found.label : lvl, // Lấy label đẹp (VD: "Đại lý Cấp 1")
-        value: lvl,
-      };
-    });
-  }, [form?.source, doctors, opt]);
-
-  // ✅ 2. Cập nhật lại logic lấy Cấp hiện tại (Ưu tiên cấp được chọn trong form)
-  // ✅ 2. Cập nhật lại logic lấy Cấp hiện tại (Ưu tiên cấp được chọn trong form ca)
-  const agent = useMemo(() => {
-    if (!form || !form.source) return { level: "", label: "" };
-
-    // 1. Dùng cấp đang được lưu trong form của Ca này
-    if (form.agentLevel) {
-      return {
-        level: form.agentLevel,
-        label: form.agentTierLabel || "",
-      };
-    }
-
-    // 2. Nếu form chưa lưu cấp, lấy thông tin chuẩn từ Nguồn (Doctor) theo schema mới
-    const foundDoc = doctors.find((d) => d.fullName === form.source);
-    if (foundDoc) {
-      return {
-        level: foundDoc.defaultAgentLevel || foundDoc.agentLevels?.[0] || "cap3",
-        label: foundDoc.agentTierLabel || "Cấp 3",
-      };
-    }
-
-    return { level: "", label: "" };
-  }, [form?.source, form?.agentLevel, form?.agentTierLabel, doctors]);
-
-  // ===== suggested price =====
-
-  // ===== suggested price =====
-  const suggestedPrice = useMemo(() => {
-    if (!selectedService || !agent.level) return 0;
-    const found = (selectedService.pricesByLevel || []).find(
-      (p) => p.level === agent.level,
-    );
-    return found?.price ?? 0;
-  }, [selectedService?.serviceCode, agent.level]);
-
-  // ===== compute price realtime -> set collectedAmount =====
-  useEffect(() => {
-    if (!form) return;
-
-    if (!selectedService || !agent.level) {
-      if (!collectedAmountManual && (form.collectedAmount ?? 0) !== 0) {
-        set({ collectedAmount: 0 });
-      }
-      return;
-    }
-
-    // ✅ 4. Tự động tính giá = Giá đề xuất * Số lượng mẫu
-    // Chỉ chạy vào đây khi mở ca mới hoặc khi người dùng cố tình ấn nút Reset
-    if (!collectedAmountManual) {
-      const autoPrice = suggestedPrice * sampleCount;
-      if ((form.collectedAmount ?? 0) !== autoPrice) {
-        set({ collectedAmount: autoPrice });
-      }
-    }
-  }, [
-    selectedService?.serviceCode,
-    agent.level,
-    suggestedPrice,
-    collectedAmountManual,
-    sampleCount, // Thêm sampleCount vào dependency để tính lại khi đổi số mẫu
-  ]);
-
-  // ===== compute due date realtime =====
-  useEffect(() => {
-    if (!form) return;
-    if (!selectedService || !form.receivedAt) return;
-
-    const hours = selectedService.turnaroundHours ?? 48;
-    const due = addHoursISO(form.receivedAt, hours);
-
-    if (due !== form.dueDate) set({ dueDate: due });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedService?.serviceCode, form?.receivedAt, form?.dueDate]);
-
-  // =========================
-  // ✅ UPLOAD FILE (MINIO VPS)
-  // =========================
   const regInputRef = useRef<HTMLInputElement | null>(null);
-  const receiptInputRef = useRef<HTMLInputElement | null>(null); // Thêm ref cho Hóa đơn
+  const receiptInputRef = useRef<HTMLInputElement | null>(null);
   const resInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [imageUploadError, setImageUploadError] = useState<string | null>(null);
 
-  // Hàm xử lý Upload chung cho cả 3 loại file
+  const isNewCase = !data?._id;
+
+  const opt = useMemo(() => (k: string) => options[k] ?? [], [options]);
+
+  const patchForm = (patch: Partial<CaseDraft>) =>
+    setForm((prev) => (prev ? { ...prev, ...patch } : prev));
+
+  useEffect(() => {
+    if (!data) {
+      setForm(null);
+      setCollectedAmountManual(false);
+      setSampleCount(1);
+      return;
+    }
+
+    const normalized = normalizeCaseData(data);
+    setForm(normalized);
+
+    // Case cũ: ưu tiên dữ liệu đã có, không auto ghi đè
+    if (normalized._id) {
+      setCollectedAmountManual(true);
+    } else {
+      setCollectedAmountManual(false);
+    }
+
+    setSampleCount(1);
+  }, [data]);
+
+  const selectedDoctor = useMemo(() => {
+    if (!form) return null;
+
+    if (form.doctorId) {
+      return doctors.find((d) => d._id === form.doctorId) ?? null;
+    }
+
+    if (form.source) {
+      return doctors.find((d) => d.fullName === form.source) ?? null;
+    }
+
+    return null;
+  }, [form, doctors]);
+
+  const availableServicesBySource = useMemo<SourceServiceOption[]>(() => {
+    if (!selectedDoctor || !form?.serviceType) return [];
+
+    return (selectedDoctor.servicePrices || [])
+      .filter((item) => item.isActive !== false)
+      .filter((item) => item.serviceType === form.serviceType)
+      .map((item) => ({
+        service: {
+          _id: String(item.serviceId),
+          serviceType: item.serviceType,
+          serviceCode: item.serviceCode,
+          name: item.name,
+          turnaroundHours: item.turnaroundHours ?? 48,
+          isActive: item.isActive !== false,
+        },
+        price: Number(item.netPrice || 0),
+      }));
+  }, [selectedDoctor, form?.serviceType]);
+
+  const selectedService = useMemo(() => {
+    if (!form) return null;
+
+    // Ưu tiên 1: tìm trong danh sách dịch vụ của nguồn hiện tại
+    if (form.serviceId) {
+      const byId = availableServicesBySource.find(
+        ({ service }) => String(service._id) === String(form.serviceId),
+      );
+      if (byId) return byId.service;
+    }
+
+    if (form.serviceCode) {
+      const byCode = availableServicesBySource.find(
+        ({ service }) => service.serviceCode === form.serviceCode,
+      );
+      if (byCode) return byCode.service;
+    }
+
+    // Ưu tiên 2: dữ liệu cũ không map được vẫn phải hiển thị ra
+    if (form.serviceCode || form.serviceName) {
+      return {
+        _id: String(form.serviceId || form.serviceCode || "legacy-service"),
+        serviceType: form.serviceType,
+        serviceCode: form.serviceCode || "",
+        name: form.serviceName || "",
+        turnaroundHours: 48,
+        isActive: true,
+      };
+    }
+
+    return null;
+  }, [form, availableServicesBySource]);
+
+  const suggestedPrice = useMemo(() => {
+    if (!form) return 0;
+
+    const found = availableServicesBySource.find(
+      ({ service }) =>
+        String(service._id) === String(form.serviceId) ||
+        service.serviceCode === form.serviceCode,
+    );
+
+    return Number(found?.price || 0);
+  }, [availableServicesBySource, form]);
+
+  const serviceItemsForSelect = useMemo(() => {
+    const baseItems = availableServicesBySource.map(({ service, price }) => ({
+      label: `${service.serviceCode} • ${service.name} `,
+      value: service.serviceCode,
+    }));
+
+    // Nếu đang mở ca cũ và mã dịch vụ cũ không còn trong source hiện tại
+    // thì vẫn thêm nó vào để select hiển thị đúng value
+    if (
+      form?.serviceCode &&
+      !baseItems.some((item) => item.value === form.serviceCode)
+    ) {
+      baseItems.unshift({
+        label: `${form.serviceCode} • ${form.serviceName || "Dữ liệu cũ"}`,
+        value: form.serviceCode,
+      });
+    }
+
+    return baseItems;
+  }, [availableServicesBySource, form?.serviceCode, form?.serviceName]);
+
+  const sourceBadge =
+    selectedDoctor?.fullName || form?.source || "Chưa chọn nguồn";
+  const agent = {
+    level: form?.agentLevel || sourceBadge,
+    label: form?.agentTierLabel || selectedDoctor?.agentTierLabel || "",
+  };
+
+  // Tạo mới: chọn nguồn => tự điền NVKD + reset dịch vụ
+  const handleSourceChange = (sourceName: string) => {
+    const doctor = doctors.find((d) => d.fullName === sourceName) ?? null;
+
+    patchForm({
+      source: sourceName,
+      doctorId: doctor?._id || null,
+      salesOwner: doctor?.salesOwner || "",
+      serviceCode: "",
+      serviceName: "",
+      serviceId: null,
+      agentTierLabel: doctor?.agentTierLabel || "",
+    });
+
+    setCollectedAmountManual(false);
+  };
+
+  const handleServiceChange = (serviceCode: string) => {
+    const found =
+      availableServicesBySource.find(
+        ({ service }) => service.serviceCode === serviceCode,
+      ) ?? null;
+
+    patchForm({
+      serviceCode,
+      serviceName: found?.service.name ?? "",
+      serviceId: found?.service._id ?? null,
+    });
+
+    setCollectedAmountManual(false);
+  };
+
+  // Chỉ auto giá cho ca mới hoặc khi user bấm reset
+  useEffect(() => {
+    if (!form) return;
+
+    if (!isNewCase) return;
+
+    if (!selectedDoctor || !selectedService) {
+      if (!collectedAmountManual && (form.collectedAmount ?? 0) !== 0) {
+        patchForm({ collectedAmount: 0 });
+      }
+      return;
+    }
+
+    if (!collectedAmountManual) {
+      const autoPrice = suggestedPrice * sampleCount;
+      if ((form.collectedAmount ?? 0) !== autoPrice) {
+        patchForm({ collectedAmount: autoPrice });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isNewCase,
+    selectedDoctor?._id,
+    selectedService?._id,
+    suggestedPrice,
+    sampleCount,
+    collectedAmountManual,
+  ]);
+
+  useEffect(() => {
+    if (!form?.receivedAt || !selectedService) return;
+
+    const hours = selectedService.turnaroundHours ?? 48;
+    const due = addHoursISO(form.receivedAt, hours);
+
+    if (due !== form.dueDate) {
+      patchForm({ dueDate: due });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form?.receivedAt, selectedService?.serviceCode]);
+
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "registrationImageUrl" | "receiptImageUrl" | "resultImageUrls",
-    isMultiple: boolean = false
+    isMultiple = false,
   ) => {
-    // Bắt buộc phải có mã ca để làm tên thư mục trên MinIO
     if (!form?.caseCode?.trim()) {
-      alert("Vui lòng nhập 'Mã ca' trước khi tải file để hệ thống tạo thư mục lưu trữ!");
+      alert(
+        "Vui lòng nhập 'Mã ca' trước khi tải file để hệ thống tạo thư mục lưu trữ.",
+      );
       e.target.value = "";
       return;
     }
@@ -428,39 +471,41 @@ export default function CaseDrawer({
 
     try {
       if (!isMultiple) {
-        // Upload 1 file (Đơn ĐK hoặc Hóa đơn)
         const res = await caseApi.uploadFile(files[0], form.caseCode);
-        set({ [field]: res.url } as any);
+        patchForm({ [field]: res.url } as any);
       } else {
-        // Upload nhiều file (Kết quả - Tối đa 2)
-        const current = Array.isArray((form as any).resultImageUrls) ? [...(form as any).resultImageUrls] : [];
-        const remain = Math.max(0, 2 - current.length);
-        if (remain <= 0) throw new Error("Chỉ được tải tối đa 2 file kết quả.");
-        
+        const current = Array.isArray((form as any).resultImageUrls)
+          ? [...(form as any).resultImageUrls]
+          : [];
+
+        const remain = Math.max(0, 3 - current.length);
+        if (remain <= 0) throw new Error("Chỉ được tải tối đa 3 file kết quả.");
+
         const picked = files.slice(0, remain);
         const uploadedUrls: string[] = [];
-        
+
         for (const f of picked) {
           const res = await caseApi.uploadFile(f, form.caseCode);
           uploadedUrls.push(res.url);
         }
-        set({ resultImageUrls: [...current, ...uploadedUrls] } as any);
+
+        patchForm({ resultImageUrls: [...current, ...uploadedUrls] } as any);
       }
     } catch (err: any) {
-      setImageUploadError(err?.message || "Tải file lên thất bại. Vui lòng thử lại.");
+      setImageUploadError(
+        err?.message || "Tải file lên thất bại. Vui lòng thử lại.",
+      );
     } finally {
       setIsUploadingImage(false);
       e.target.value = "";
     }
   };
 
-  // Hàm xử lý Xóa file chung (Xóa giao diện & Xóa thật trên MinIO)
   const handleRemoveFile = async (
     field: "registrationImageUrl" | "receiptImageUrl" | "resultImageUrls",
     urlToRemove: string,
-    idx?: number
+    idx?: number,
   ) => {
-    // 1. Gọi API xóa file vật lý trên MinIO để giải phóng dung lượng VPS
     try {
       if (caseApi.deleteFileMinio) {
         await caseApi.deleteFileMinio(urlToRemove);
@@ -469,47 +514,39 @@ export default function CaseDrawer({
       console.warn("Không thể xóa file vật lý trên MinIO", e);
     }
 
-    // 2. Cập nhật lại UI form
     if (field === "resultImageUrls" && typeof idx === "number") {
-      const current = Array.isArray((form as any).resultImageUrls) ? [...(form as any).resultImageUrls] : [];
+      const current = Array.isArray((form as any)?.resultImageUrls)
+        ? [...((form as any).resultImageUrls as string[])]
+        : [];
       current.splice(idx, 1);
-      set({ resultImageUrls: current } as any);
+      patchForm({ resultImageUrls: current } as any);
     } else {
-      set({ [field]: "" } as any);
+      patchForm({ [field]: "" } as any);
     }
   };
 
   if (!open || !form) return null;
 
-  const serviceItemsForSelect = services
-    .filter((s) => s.serviceType === form.serviceType && s.isActive)
-    .map((s) => ({
-      label: `${s.serviceCode}`,
-      value: s.serviceCode,
-    }));
-
-  const registrationUrl = (form as any).registrationImageUrl as string | undefined;
+  const registrationUrl = (form as any).registrationImageUrl as
+    | string
+    | undefined;
   const receiptUrl = (form as any).receiptImageUrl as string | undefined;
-  const resultUrls = (
-    Array.isArray((form as any).resultImageUrls)
-      ? ((form as any).resultImageUrls as string[])
-      : []
-  ) as string[];
-  return (
-    <div className="fixed inset-0 z-50 text-red">
-      {/* backdrop */}
-      <div className="absolute inset-0 bg-black/35" onClick={onClose} />
+  const resultUrls = Array.isArray((form as any).resultImageUrls)
+    ? ((form as any).resultImageUrls as string[])
+    : [];
 
-      {/* modal */}
+  return (
+    <div className="fixed inset-0 z-50">
+      <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={onClose} />
+
       <div className="absolute inset-0 flex items-center justify-center p-4">
         <div
           className={cn(
-            "w-[90vw] lg:w-[85vw]  h-[80vh] lg:h-[90vh] rounded-3xl bg-white shadow-2xl ring-1 ring-black/10",
-            "overflow-hidden",
+            "h-[80vh] w-[90vw] overflow-hidden rounded-[32px] border border-sky-100 bg-white shadow-[0_30px_120px_-48px_rgba(14,116,144,0.42)]",
+            "lg:h-[90vh] lg:w-[85vw]",
           )}
         >
-          {/* Header */}
-          <div className="border-b bg-gradient-to-r from-blue-50 via-white to-rose-50 px-4 py-3">
+          <div className="border-b border-sky-100 bg-[radial-gradient(circle_at_top_left,#e0f2fe_0,#ffffff_58%)] px-5 py-4">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-[11px] font-bold text-blue-700">
@@ -523,35 +560,32 @@ export default function CaseDrawer({
                   <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-bold text-emerald-700 ring-1 ring-emerald-200">
                     {agent.level || "Chưa xác định cấp"}
                   </span>
-                  <span className="rounded-full bg-sky-200 px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200">
+                  <span className="rounded-full bg-sky-50 px-2 py-0.5 font-bold text-sky-700 ring-1 ring-sky-200">
                     Giá: {fmtMoney(form.collectedAmount ?? 0)}
                   </span>
                   {form.dueDate && (
-                    <span className="rounded-full bg-slate-50 px-2 py-0.5 font-bold text-slate-700 ring-1 ring-black/5">
-                      Hạn KQ: {new Date(form.dueDate).toLocaleString()}
+                    <span className="rounded-full bg-sky-50 px-2.5 py-1 font-bold text-sky-700 ring-1 ring-sky-200">
+                      Hạn KQ:{" "}
+                      {new Date(form.dueDate).toLocaleString("vi-VN", {
+                        timeZone: "Asia/Ho_Chi_Minh",
+                      })}
                     </span>
                   )}
-                  <span className="rounded-full  px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200 hidden lg:flex">
+                  <span className="hidden rounded-full px-2 py-0.5 font-bold text-sky-800 ring-1 ring-sky-200 lg:flex">
                     Dấu * là trường bắt buộc
-                  </span>
-                  <span className="rounded-full px-2 py-0.5 font-bold text-amber-800 ring-1 ring-amber-200 hidden lg:flex">
-                    Tải file cần phải án Lưu
                   </span>
                 </div>
               </div>
 
               <div className="flex shrink-0 items-center gap-2">
-                {/* ✅ hidden inputs */}
-                
-
                 <button
-                  className="cursor-pointer rounded-xl px-3 py-2 text-[12px] text-black font-bold ring-1 ring-black/10 hover:bg-neutral-50"
+                  className="cursor-pointer rounded-xl px-3 py-2 text-[12px] font-bold text-black ring-1 ring-black/10 hover:bg-neutral-50"
                   onClick={onClose}
                 >
                   Đóng
                 </button>
                 <button
-                  className="rounded-xl bg-blue-600 px-3 py-2 text-[12px] font-bold text-white hover:opacity-95 cursor-pointer"
+                  className="cursor-pointer rounded-xl bg-blue-600 px-3 py-2 text-[12px] font-bold text-white hover:opacity-95"
                   onClick={() => onSave(form)}
                 >
                   Lưu
@@ -560,12 +594,9 @@ export default function CaseDrawer({
             </div>
           </div>
 
-          {/* Body */}
-          <div className="h-[calc(90vh-56px)] overflow-auto p-4 text-black bg-slate-50/50">
-            {/* Chuyển sang grid 7 cột. Cột 1 = 1 span, Cột 2,3,4 = 2 span */}
+          <div className="h-[calc(90vh-56px)] overflow-auto bg-[linear-gradient(180deg,#f8fbff_0%,#eef6ff_36%,#ffffff_100%)] p-4 text-black">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-11">
-              {/* Cột 1: Thông tin ca (Thu nhỏ bằng 1 nửa) */}
-              <section className="rounded-2xl bg-white p-3 ring-1 ring-black/5 lg:col-span-2">
+              <section className="rounded-[28px] bg-white p-4 ring-1 ring-sky-100 shadow-[0_18px_50px_-38px_rgba(14,116,144,0.32)] lg:col-span-2">
                 <div className="mb-2 text-[12px] font-bold text-neutral-900">
                   Thông tin ca
                 </div>
@@ -574,75 +605,44 @@ export default function CaseDrawer({
                   <Field label="* Mã ca">
                     <Input
                       value={form.caseCode}
-                      onChange={(v) => set({ caseCode: v })}
+                      onChange={(v) => patchForm({ caseCode: v })}
                       placeholder="Nhập mã ca"
                       tone="blue"
                     />
                   </Field>
 
                   <Field label="* Nguồn">
-  <Select
-    value={form.source}
-    onChange={(v) => {
-      const selectedDoc = doctors.find((d) => d.fullName === v);
-      const owner = (selectedDoc as any)?.salesOwner || SOURCE_TO_SALES_OWNER[v] || "";
-
-      // ✅ Tự động tìm cấp mặc định của Nguồn vừa chọn (Theo DB chuẩn mới)
-      let defaultLevel = "cap3";
-      if (selectedDoc) {
-        if (selectedDoc.defaultAgentLevel) {
-          defaultLevel = selectedDoc.defaultAgentLevel;
-        } else if (selectedDoc.agentLevels && selectedDoc.agentLevels.length > 0) {
-          defaultLevel = selectedDoc.agentLevels[0];
-        }
-      }
-
-      set({
-        source: v,
-        doctorId: selectedDoc?._id || null,
-        ...(owner ? { salesOwner: owner } : {}),
-        agentLevel: defaultLevel, // Bơm cấp mặc định vào form Case
-        agentTierLabel: selectedDoc?.agentTierLabel || "",
-      });
-
-      // Bật lại auto giá để giá cập nhật theo nguồn mới
-      setCollectedAmountManual(false);
-    }}
-    items={doctors.map((d) => ({
-      label: d.fullName,
-      value: d.fullName,
-    }))}
-    tone="amber"
-  />
-</Field>
-
-                  {/* ✅ THÊM TRƯỜNG CHỌN CẤP ĐẠI LÝ (Chỉ hiện các cấp nguồn này sở hữu) */}
-                  <Field label="* Cấp áp dụng">
                     <Select
-                      value={form.agentLevel || ""}
-                      onChange={(v) => {
-                        set({ agentLevel: v });
-                        console.log(v)
-                        // Bật lại tính giá tự động để form nhảy số tiền ứng với cấp mới
-                        setCollectedAmountManual(false);
-                      }}
-                      items={availableLevelsForSource}
-                      tone="emerald"
+                      value={form.source}
+                      onChange={handleSourceChange}
+                      items={[
+                        ...(form?.source &&
+                        !doctors.some((d) => d.fullName === form.source)
+                          ? [{ label: `${form.source}`, value: form.source }]
+                          : []),
+                        ...doctors.map((d) => ({
+                          label: d.fullName,
+                          value: d.fullName,
+                        })),
+                      ]}
+                      tone="sky"
                     />
                   </Field>
 
                   <Field label="* NVKD phụ trách">
-                    <Select
-                      value={form.salesOwner}
-                      onChange={(v) => set({ salesOwner: v })}
-                      items={opt("salesOwners")}
+                    <Input
+                      value={form.salesOwner || ""}
+                      onChange={() => {}}
+                      placeholder="Tự động theo nguồn"
                       tone="blue"
+                      disabled
                     />
                   </Field>
+
                   <Field label="Lab">
                     <Select
                       value={form.lab}
-                      onChange={(v) => set({ lab: v })}
+                      onChange={(v) => patchForm({ lab: v })}
                       items={opt("labs")}
                       tone="emerald"
                     />
@@ -651,7 +651,7 @@ export default function CaseDrawer({
                   <Field label="Thu mẫu">
                     <Select
                       value={form.sampleCollector}
-                      onChange={(v) => set({ sampleCollector: v })}
+                      onChange={(v) => patchForm({ sampleCollector: v })}
                       items={opt("sampleCollectors")}
                       tone="rose"
                     />
@@ -659,8 +659,7 @@ export default function CaseDrawer({
                 </div>
               </section>
 
-              {/* Cột 2: Khách hàng & Dịch vụ (Giữ nguyên) */}
-              <section className="rounded-2xl bg-white p-3 ring-1 ring-black/5 lg:col-span-3">
+              <section className="rounded-[28px] bg-white p-4 ring-1 ring-sky-100 shadow-[0_18px_50px_-38px_rgba(14,116,144,0.32)] lg:col-span-3">
                 <div className="mb-2 text-[12px] font-bold text-neutral-900">
                   Khách hàng & Dịch vụ
                 </div>
@@ -669,8 +668,8 @@ export default function CaseDrawer({
                   <Field label="* Họ và tên">
                     <Input
                       value={form.patientName}
-                      onChange={(v) => set({ patientName: v })}
-                      placeholder="Nhập tên Khách hàng"
+                      onChange={(v) => patchForm({ patientName: v })}
+                      placeholder="Nhập tên khách hàng"
                       tone="rose"
                     />
                   </Field>
@@ -679,56 +678,45 @@ export default function CaseDrawer({
                     <Field label="* Dịch vụ (mã)">
                       <Select
                         value={form.serviceCode}
-                        onChange={(v) => {
-                          const s =
-                            services.find((x) => x.serviceCode === v) ?? null;
-                          set({
-                            serviceCode: v,
-                            serviceName: s?.name ?? "",
-                            serviceId: (s as any)?._id ?? null,
-                          });
-                        }}
+                        onChange={handleServiceChange}
                         items={serviceItemsForSelect}
-                        placeholder="Chọn dịch vụ..."
+                        placeholder={
+                          form.source
+                            ? "Chọn dịch vụ theo nguồn..."
+                            : "Chọn nguồn trước..."
+                        }
                         tone="emerald"
                       />
                     </Field>
 
                     <Field label="Tên dịch vụ">
-                      <div className="rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm">
+                      <div className="rounded-2xl border border-sky-100 bg-sky-50/40 px-3.5 py-2.5 text-[12px] shadow-sm">
                         <div className="font-semibold text-neutral-900">
                           {form.serviceName || "—"}
                         </div>
-                        {/* {form.serviceCode && (
-                          <div className="mt-0.5 text-[11px] text-neutral-500">
-                            {form.serviceCode}
-                          </div>
-                        )} */}
                       </div>
                     </Field>
                   </div>
 
                   <Field label="* Tài chính">
-                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3">
+                    <div className="rounded-[24px] border border-sky-100 bg-sky-100 p-4">
                       <div className="mb-2 flex items-center justify-between gap-2">
                         <div className="text-[11px] font-semibold text-emerald-700">
                           Thông tin doanh thu {isAccountingAdmin && "& Giá vốn"}
                         </div>
-                        <span className="rounded-full bg-white/70 px-2 py-1 text-[11px] font-bold text-emerald-800 ring-1 ring-black/5">
+                        <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-bold text-sky-700 ring-1 ring-sky-100">
                           {collectedAmountManual ? "chỉnh tay" : "tự động"}
                         </span>
                       </div>
 
                       <div className="flex flex-col gap-3">
-                        {/* Block 1: Tiền thu (Doanh thu) - Ai cũng thấy */}
-                        <div className="rounded-xl bg-white/70 p-3 ring-1 ring-black/5">
+                        <div className="rounded-[20px] bg-white p-3 ring-1 ring-sky-100">
                           <div className="mb-2 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
                             <div className="text-[11px] font-semibold text-neutral-500">
                               Tiền thu
                             </div>
 
                             <div className="flex items-center gap-2">
-                              {/* Chỉ hiển thị chọn số lượng mẫu nếu là Ca Mới */}
                               {isNewCase && (
                                 <div className="flex items-center gap-1">
                                   <span className="text-[10px] text-neutral-500">
@@ -744,21 +732,20 @@ export default function CaseDrawer({
                                         parseInt(e.target.value) || 1,
                                       );
                                       setSampleCount(val);
-                                      setCollectedAmountManual(false); // Kích hoạt lại tính auto để nhân giá
+                                      setCollectedAmountManual(false);
                                     }}
-                                    className="w-12 rounded border border-black/10 px-1 py-0.5 text-center text-[11px] outline-none focus:ring-2 focus:ring-emerald-200"
+                                    className="w-12 rounded-lg border border-sky-200 bg-sky-50 px-1 py-0.5 text-center text-[11px] outline-none focus:ring-2 focus:ring-sky-100"
                                   />
                                 </div>
                               )}
 
                               <button
                                 type="button"
-                                className="rounded-lg bg-white px-2 py-1 text-[11px] font-bold ring-1 ring-black/10 hover:bg-neutral-50"
+                                className="rounded-lg bg-sky-50 px-2.5 py-1 text-[11px] font-bold text-sky-700 ring-1 ring-sky-200 hover:bg-sky-100"
                                 onClick={() => {
-                                  set({
+                                  patchForm({
                                     collectedAmount:
-                                      suggestedPrice *
-                                      (isNewCase ? sampleCount : 1),
+                                      suggestedPrice * sampleCount,
                                   });
                                   setCollectedAmountManual(false);
                                 }}
@@ -773,7 +760,7 @@ export default function CaseDrawer({
                             onChange={(v) => {
                               const n =
                                 Number(String(v).replace(/[^\d]/g, "")) || 0;
-                              set({ collectedAmount: n });
+                              patchForm({ collectedAmount: n });
                               setCollectedAmountManual(true);
                             }}
                             tone="emerald"
@@ -783,11 +770,9 @@ export default function CaseDrawer({
                           </div>
                         </div>
 
-                        {/* Block 2: Giá xuất vốn (Giá Cost) - Chỉ hiển thị cho SuperAdmin, đẩy xuống dưới */}
                         {isAccountingAdmin && (
                           <div className="grid grid-cols-2 gap-3">
-                            {/* Cột 1: Tiền đã nhận */}
-                            <div className="rounded-xl bg-indigo-50/50 p-3 ring-1 ring-indigo-200/50">
+                            <div className="rounded-[20px] bg-sky-50/60 p-3 ring-1 ring-sky-100">
                               <div className="mb-2 text-[11px] font-semibold text-indigo-700">
                                 Tiền đã nhận
                               </div>
@@ -799,17 +784,16 @@ export default function CaseDrawer({
                                   const n =
                                     Number(String(v).replace(/[^\d]/g, "")) ||
                                     0;
-                                  set({ receivedAmount: n } as any);
+                                  patchForm({ receivedAmount: n } as any);
                                 }}
                                 placeholder="Nhập số tiền..."
                                 tone="blue"
                               />
-                              <div className="mt-1 text-[13px] font-bold text-indigo-700">
+                              <div className="mt-1 text-[13px] font-bold text-sky-700">
                                 {fmtMoney((form as any).receivedAmount ?? 0)}
                               </div>
                             </div>
 
-                            {/* Cột 2: Giá xuất vốn */}
                             <div className="rounded-xl bg-rose-50/50 p-3 ring-1 ring-rose-200/50">
                               <div className="mb-2 text-[11px] font-semibold text-rose-700">
                                 Giá xuất vốn (Cost)
@@ -820,7 +804,7 @@ export default function CaseDrawer({
                                   const n =
                                     Number(String(v).replace(/[^\d]/g, "")) ||
                                     0;
-                                  set({ costPrice: n });
+                                  patchForm({ costPrice: n } as any);
                                 }}
                                 placeholder="Nhập giá vốn..."
                                 tone="rose"
@@ -838,7 +822,7 @@ export default function CaseDrawer({
                   <Field label="Thông tin chi tiết thêm">
                     <Textarea
                       value={form.detailNote}
-                      onChange={(v) => set({ detailNote: v })}
+                      onChange={(v) => patchForm({ detailNote: v })}
                       placeholder="Ghi chú..."
                       rows={3}
                       tone="slate"
@@ -847,8 +831,7 @@ export default function CaseDrawer({
                 </div>
               </section>
 
-              {/* Cột 3: Luồng xử lý (Giữ nguyên + Xoá phần Ảnh & Hóa đơn) */}
-              <section className="rounded-2xl bg-white p-3 ring-1 ring-black/5 lg:col-span-3">
+              <section className="rounded-[28px] bg-white p-4 ring-1 ring-sky-100 shadow-[0_18px_50px_-38px_rgba(14,116,144,0.32)] lg:col-span-3">
                 <div className="mb-2 text-[12px] font-bold text-neutral-900">
                   Luồng xử lý
                 </div>
@@ -858,16 +841,16 @@ export default function CaseDrawer({
                     <Field label="* Mức chuyển lab">
                       <Select
                         value={form.transferStatus}
-                        onChange={(v) => set({ transferStatus: v })}
+                        onChange={(v) => patchForm({ transferStatus: v })}
                         items={opt("transferStatus")}
-                        tone="amber"
+                        tone="sky"
                       />
                     </Field>
 
                     <Field label="* Tiếp nhận mẫu">
                       <Select
                         value={form.receiveStatus}
-                        onChange={(v) => set({ receiveStatus: v })}
+                        onChange={(v) => patchForm({ receiveStatus: v })}
                         items={opt("receiveStatus")}
                         tone="emerald"
                       />
@@ -878,7 +861,7 @@ export default function CaseDrawer({
                     <Field label="* Xử lý mẫu">
                       <Select
                         value={form.processStatus}
-                        onChange={(v) => set({ processStatus: v })}
+                        onChange={(v) => patchForm({ processStatus: v })}
                         items={opt("processStatus")}
                         tone="slate"
                       />
@@ -887,7 +870,7 @@ export default function CaseDrawer({
                     <Field label="Phản hồi">
                       <Select
                         value={form.feedbackStatus}
-                        onChange={(v) => set({ feedbackStatus: v })}
+                        onChange={(v) => patchForm({ feedbackStatus: v })}
                         items={opt("feedbackStatus")}
                         tone="rose"
                       />
@@ -899,42 +882,39 @@ export default function CaseDrawer({
                       <SingleDatePicker
                         value={isoDateFromISODateTime((form as any).receivedAt)}
                         onChange={(d) =>
-                          set({ receivedAt: isoDateTimeFromISODate(d) as any })
+                          patchForm({
+                            receivedAt: isoDateTimeFromISODate(d) as any,
+                          })
                         }
                         placeholder="Chọn ngày..."
                         disabled={false}
                         popoverWidth="lg"
                         months={1}
-                        buttonClassName="w-full px-3 py-2 text-left text-[12px] rounded-xl border border-black/10 shadow-sm"
+                        buttonClassName="w-full rounded-2xl border border-sky-200 bg-sky-50 px-3 py-2.5 text-left text-[12px] shadow-sm"
                       />
 
                       <button
                         type="button"
                         className={cn(
-                          "w-full rounded-xl px-3 py-2 text-[12px] font-bold",
-                          "bg-white ring-1 ring-black/10 shadow-sm hover:bg-neutral-50",
-                          "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200",
+                          "w-full rounded-2xl bg-sky-50 px-3 py-2.5 text-[12px] font-bold text-sky-700 ring-1 ring-sky-200 shadow-sm hover:bg-sky-100",
+                          "focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-100",
                         )}
                         onClick={() => {
                           const ok = window.confirm(
-                            "Xác nhận lấy thời điểm hiện tại (giờ Việt Nam) làm 'Ngày nhận'?",
+                            "Xác nhận lấy thời điểm hiện tại làm 'Ngày nhận'?",
                           );
                           if (!ok) return;
-                          set({ receivedAt: nowVNISOString() as any });
+                          patchForm({ receivedAt: nowVNISOString() as any });
                         }}
                         title="Lấy thời điểm hiện tại"
                       >
                         Lấy thời điểm hiện tại
                       </button>
                     </div>
-
-                    
                   </Field>
 
-                  {/* --- KHU VỰC THỜI GIAN TRẢ KẾT QUẢ --- */}
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2 mt-3">
-                    {/* Cột 1: Ngày hẹn trả (Dự kiến - Tự động tính) */}
-                    <div className="flex flex-col justify-center rounded-2xl bg-gradient-to-r from-slate-50 to-blue-50 p-3 ring-1 ring-black/5">
+                  <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <div className="flex flex-col justify-center rounded-[20px] bg-[linear-gradient(135deg,#f8fbff_0%,#e0f2fe_100%)] p-3 ring-1 ring-sky-100">
                       <div className="text-[11px] font-semibold text-neutral-500">
                         Ngày trả KQ (Dự kiến)
                       </div>
@@ -942,87 +922,80 @@ export default function CaseDrawer({
                         {(form as any).dueDate
                           ? new Date((form as any).dueDate).toLocaleString(
                               "vi-VN",
-                              { timeZone: "Asia/Ho_Chi_Minh" },
+                              {
+                                timeZone: "Asia/Ho_Chi_Minh",
+                              },
                             )
                           : "—"}
                       </div>
                     </div>
 
-                    {/* Cột 2: Ngày trả thực tế (Thủ công) */}
                     <Field label="Ngày trả KQ (Thực tế)">
                       <div className="grid grid-cols-1 gap-2">
                         <SingleDatePicker
-                          value={isoDateFromISODateTime((form as any).returnedAt)}
+                          value={isoDateFromISODateTime(
+                            (form as any).returnedAt,
+                          )}
                           onChange={(d) =>
-                            set({ returnedAt: isoDateTimeFromISODate(d) as any })
+                            patchForm({
+                              returnedAt: isoDateTimeFromISODate(d) as any,
+                            })
                           }
                           placeholder="Chọn ngày..."
                           disabled={false}
                           popoverWidth="lg"
                           months={1}
-                          buttonClassName="w-full px-3 py-2 text-left text-[12px] rounded-xl border border-black/10 shadow-sm"
+                        buttonClassName="w-full rounded-2xl border border-sky-200 bg-sky-50 px-3 py-2.5 text-left text-[12px] shadow-sm"
                         />
-
-                        {/* <button
-                          type="button"
-                          className={cn(
-                            "w-full rounded-xl px-3 py-2 text-[12px] font-bold",
-                            "bg-white ring-1 ring-black/10 shadow-sm hover:bg-neutral-50",
-                            "focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200",
-                          )}
-                          onClick={() => {
-                            set({ returnedAt: nowVNISOString() as any });
-                          }}
-                          title="Lấy thời điểm hiện tại"
-                        >
-                          Lấy giờ hiện tại
-                        </button> */}
                       </div>
                     </Field>
                   </div>
 
-                  <div className="mt-2 rounded-2xl bg-white p-3 ring-1 ring-black/5">
+                  <div className="mt-2 rounded-[24px] bg-white p-4 ring-1 ring-sky-100">
                     <div className="mb-2 text-[12px] font-bold text-neutral-900">
-                      Trạng thái trả File & Thanh toán
+                      Trạng thái trả file & Thanh toán
                     </div>
 
                     <div className="space-y-2">
-                      {/* HÀNG 1: Thanh toán & Phương thức */}
                       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={!!(form as any).paid}
-                            onChange={(e) => {
-                              const isPaid = e.target.checked;
-                              set({
-                                paid: isPaid,
-                                paymentMethod: isPaid
-                                  ? "Chuyển khoản"
-                                  : "Chuyển khoản",
-                              } as any);
-                            }}
-                          />
-                          <span
-                            className={cn(
-                              "font-bold",
-                              (form as any).paid
-                                ? "text-indigo-700"
-                                : "text-neutral-700",
-                            )}
-                          >
-                            Đã thanh toán
-                          </span>
+                        <label className="cursor-pointer rounded-2xl border border-sky-100 bg-sky-50/40 px-3 py-2.5 text-[12px] shadow-sm">
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={!!(form as any).paid}
+                              onChange={(e) => {
+                                const isPaid = e.target.checked;
+                                patchForm({
+                                  paid: isPaid,
+                                  paymentMethod: isPaid
+                                    ? (form as any).paymentMethod ||
+                                      "Chuyển khoản"
+                                    : "Chuyển khoản",
+                                } as any);
+                              }}
+                            />
+                            <span
+                              className={cn(
+                                "font-bold",
+                                (form as any).paid
+                                  ? "text-sky-700"
+                                  : "text-slate-700",
+                              )}
+                            >
+                              Đã thanh toán
+                            </span>
+                          </div>
                         </label>
 
-                        {/* Box chọn phương thức chỉ hiện bên phải nếu đã tick thanh toán */}
                         {(form as any).paid ? (
                           <div className="h-full">
                             <Select
                               value={
                                 (form as any).paymentMethod || "Chuyển khoản"
                               }
-                              onChange={(v) => set({ paymentMethod: v } as any)}
+                              onChange={(v) =>
+                                patchForm({ paymentMethod: v } as any)
+                              }
                               items={[
                                 {
                                   label: "Chuyển khoản",
@@ -1034,54 +1007,56 @@ export default function CaseDrawer({
                             />
                           </div>
                         ) : (
-                          <div className="hidden md:block"></div> /* Khối đệm để giữ layout */
+                          <div className="hidden md:block" />
                         )}
                       </div>
 
-                      {/* HÀNG 2: GL Trả & GX Nhận */}
                       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+                        <label className="flex cursor-pointer items-center gap-2 rounded-2xl border border-sky-100 bg-sky-50/40 px-3 py-2.5 text-[12px] shadow-sm">
                           <input
                             type="checkbox"
                             checked={!!(form as any).glReturned}
                             onChange={(e) =>
-                              set({ glReturned: e.target.checked })
+                              patchForm({ glReturned: e.target.checked } as any)
                             }
                           />
                           GL trả
                         </label>
 
-                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+                        <label className="flex cursor-pointer items-center gap-2 rounded-2xl border border-sky-100 bg-sky-50/40 px-3 py-2.5 text-[12px] shadow-sm">
                           <input
                             type="checkbox"
                             checked={!!(form as any).gxReceived}
                             onChange={(e) =>
-                              set({ gxReceived: e.target.checked })
+                              patchForm({ gxReceived: e.target.checked } as any)
                             }
                           />
                           GX nhận
                         </label>
                       </div>
 
-                      {/* HÀNG 3: Trả file mềm & cứng */}
                       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+                        <label className="flex cursor-pointer items-center gap-2 rounded-2xl border border-sky-100 bg-sky-50/40 px-3 py-2.5 text-[12px] shadow-sm">
                           <input
                             type="checkbox"
                             checked={!!(form as any).softFileDone}
                             onChange={(e) =>
-                              set({ softFileDone: e.target.checked })
+                              patchForm({
+                                softFileDone: e.target.checked,
+                              } as any)
                             }
                           />
                           Trả file mềm
                         </label>
 
-                        <label className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2 text-[12px] shadow-sm cursor-pointer">
+                        <label className="flex cursor-pointer items-center gap-2 rounded-2xl border border-sky-100 bg-sky-50/40 px-3 py-2.5 text-[12px] shadow-sm">
                           <input
                             type="checkbox"
                             checked={!!(form as any).hardFileDone}
                             onChange={(e) =>
-                              set({ hardFileDone: e.target.checked })
+                              patchForm({
+                                hardFileDone: e.target.checked,
+                              } as any)
                             }
                           />
                           Trả file cứng
@@ -1092,31 +1067,28 @@ export default function CaseDrawer({
                 </div>
               </section>
 
-              {/* Cột 4: Tài liệu ảnh & Hóa đơn (Cột mới chuyển sang) */}
-              <section
-                className={`rounded-2xl bg-white p-3 ring-1 ring-black/5 lg:col-span-3 {}`}
-              >
+              <section className="rounded-[28px] bg-white p-4 ring-1 ring-sky-100 shadow-[0_18px_50px_-38px_rgba(14,116,144,0.32)] lg:col-span-3">
                 <div className="mb-2 text-[12px] font-bold text-neutral-900">
-                  Hồ sơ Ảnh & Hóa đơn
+                  Hồ sơ ảnh & Hóa đơn
                 </div>
 
-                <div className="space-y-4 ">
-                  {/* --- Block Xuất Hóa Đơn --- */}
-                  {/* --- Block Xuất Hóa Đơn --- */}
-                  <div className="rounded-2xl bg-slate-50 p-3 ring-1 ring-black/5">
+                <div className="space-y-4">
+                  <div className="rounded-[24px] bg-sky-50/45 p-4 ring-1 ring-sky-100">
                     <div className="mb-3 flex items-center justify-between">
                       <div className="text-[12px] font-bold text-neutral-900">
                         Thông tin xuất hóa đơn
                       </div>
-                      {/* Nút Toggle Chọn Loại */}
-                      <div className="flex items-center gap-1 rounded-lg bg-black/10 p-1">
+
+                      <div className="flex items-center gap-1 rounded-xl bg-white/90 p-1 ring-1 ring-sky-100">
                         <button
                           type="button"
-                          onClick={() => set({ invoiceType: "company" } as any)}
+                          onClick={() =>
+                            patchForm({ invoiceType: "company" } as any)
+                          }
                           className={cn(
                             "rounded-md px-3 py-1 text-[11px] font-bold transition-all",
-                            (form as any).invoiceType !== "personal" // Mặc định là company
-                              ? "bg-white shadow text-indigo-700"
+                            (form as any).invoiceType !== "personal"
+                              ? "bg-sky-50 text-sky-700 shadow-sm"
                               : "text-neutral-500 hover:text-neutral-700",
                           )}
                         >
@@ -1125,12 +1097,12 @@ export default function CaseDrawer({
                         <button
                           type="button"
                           onClick={() =>
-                            set({ invoiceType: "personal" } as any)
+                            patchForm({ invoiceType: "personal" } as any)
                           }
                           className={cn(
                             "rounded-md px-3 py-1 text-[11px] font-bold transition-all",
                             (form as any).invoiceType === "personal"
-                              ? "bg-white shadow text-indigo-700"
+                              ? "bg-sky-50 text-sky-700 shadow-sm"
                               : "text-neutral-500 hover:text-neutral-700",
                           )}
                         >
@@ -1141,84 +1113,98 @@ export default function CaseDrawer({
 
                     <div className="space-y-3 rounded-xl bg-sky-100/95 p-3 ring-1 ring-sky-200">
                       {(form as any).invoiceType === "personal" ? (
-                        /* ============ FORM CÁ NHÂN ============ */
                         <>
                           <Field label="Họ tên người nhận">
                             <Input
                               value={(form as any).invoiceName ?? ""}
-                              onChange={(v) => set({ invoiceName: v })}
+                              onChange={(v) =>
+                                patchForm({ invoiceName: v } as any)
+                              }
                               placeholder="Nhập họ tên..."
-                              tone="amber"
+                              tone="sky"
                             />
                           </Field>
+
                           <div className="grid grid-cols-2 gap-2">
                             <Field label="Số CCCD/CMND">
                               <Input
                                 value={(form as any).invoiceIdCard ?? ""}
                                 onChange={(v) =>
-                                  set({ invoiceIdCard: v } as any)
+                                  patchForm({ invoiceIdCard: v } as any)
                                 }
                                 placeholder="Nhập số CCCD..."
-                                tone="amber"
+                                tone="sky"
                               />
                             </Field>
+
                             <Field label="Ngày cấp">
                               <Input
                                 value={(form as any).invoiceIssueDate ?? ""}
                                 onChange={(v) =>
-                                  set({ invoiceIssueDate: v } as any)
+                                  patchForm({ invoiceIssueDate: v } as any)
                                 }
                                 placeholder="DD/MM/YYYY"
-                                tone="amber"
+                                tone="sky"
                               />
                             </Field>
                           </div>
+
                           <Field label="Nơi cấp">
                             <Input
                               value={(form as any).invoiceIssuePlace ?? ""}
                               onChange={(v) =>
-                                set({ invoiceIssuePlace: v } as any)
+                                patchForm({ invoiceIssuePlace: v } as any)
                               }
                               placeholder="Nhập nơi cấp CCCD..."
-                              tone="amber"
+                              tone="sky"
                             />
                           </Field>
+
                           <Field label="Địa chỉ">
                             <Textarea
                               value={(form as any).invoiceAddress ?? ""}
-                              onChange={(v) => set({ invoiceAddress: v })}
+                              onChange={(v) =>
+                                patchForm({ invoiceAddress: v } as any)
+                              }
                               placeholder="Nhập địa chỉ..."
                               rows={2}
-                              tone="amber"
+                              tone="sky"
                             />
                           </Field>
                         </>
                       ) : (
-                        /* ============ FORM CÔNG TY ============ */
                         <>
                           <Field label="Tên công ty / Đơn vị">
                             <Input
                               value={(form as any).invoiceName ?? ""}
-                              onChange={(v) => set({ invoiceName: v })}
+                              onChange={(v) =>
+                                patchForm({ invoiceName: v } as any)
+                              }
                               placeholder="Nhập tên đơn vị..."
-                              tone="amber"
+                              tone="sky"
                             />
                           </Field>
+
                           <Field label="Mã số thuế">
                             <Input
                               value={(form as any).invoiceTaxCode ?? ""}
-                              onChange={(v) => set({ invoiceTaxCode: v })}
+                              onChange={(v) =>
+                                patchForm({ invoiceTaxCode: v } as any)
+                              }
                               placeholder="Nhập MST..."
-                              tone="amber"
+                              tone="sky"
                             />
                           </Field>
+
                           <Field label="Địa chỉ">
                             <Textarea
                               value={(form as any).invoiceAddress ?? ""}
-                              onChange={(v) => set({ invoiceAddress: v })}
+                              onChange={(v) =>
+                                patchForm({ invoiceAddress: v } as any)
+                              }
                               placeholder="Nhập địa chỉ..."
                               rows={2}
-                              tone="amber"
+                              tone="sky"
                             />
                           </Field>
                         </>
@@ -1226,11 +1212,11 @@ export default function CaseDrawer({
                     </div>
                   </div>
 
-                  {/* --- Block Upload Ảnh --- */}
-                  <div className="rounded-2xl bg-white p-3 ring-1 ring-black/5">
+                  <div className="rounded-[24px] bg-white p-4 ring-1 ring-sky-100">
                     <div className="mb-2 flex items-center justify-between">
-                      <div className="text-[12px] font-bold text-neutral-900">Tài liệu đính kèm</div>
-                      {/* <div className="text-[11px] text-neutral-500">1 Đơn • 1 HĐ • 2 KQ</div> */}
+                      <div className="text-[12px] font-bold text-neutral-900">
+                        Tài liệu đính kèm
+                      </div>
                     </div>
 
                     {imageUploadError && (
@@ -1239,57 +1225,158 @@ export default function CaseDrawer({
                       </div>
                     )}
 
-                    <input ref={regInputRef} type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => handleFileUpload(e, "registrationImageUrl")} />
-                    <input ref={receiptInputRef} type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => handleFileUpload(e, "receiptImageUrl")} />
-                    <input ref={resInputRef} type="file" accept="image/*,application/pdf" multiple className="hidden" onChange={(e) => handleFileUpload(e, "resultImageUrls", true)} />
+                    <input
+                      ref={regInputRef}
+                      type="file"
+                      accept="image/*,application/pdf"
+                      className="hidden"
+                      onChange={(e) =>
+                        handleFileUpload(e, "registrationImageUrl")
+                      }
+                    />
+                    <input
+                      ref={receiptInputRef}
+                      type="file"
+                      accept="image/*,application/pdf"
+                      className="hidden"
+                      onChange={(e) => handleFileUpload(e, "receiptImageUrl")}
+                    />
+                    <input
+                      ref={resInputRef}
+                      type="file"
+                      accept="image/*,application/pdf"
+                      multiple
+                      className="hidden"
+                      onChange={(e) =>
+                        handleFileUpload(e, "resultImageUrls", true)
+                      }
+                    />
 
                     <div className="space-y-4">
-                      {/* 1. ẢNH ĐƠN ĐĂNG KÝ */}
                       <div>
-                        <div className="mb-1.5 text-[11px] font-semibold text-neutral-500">1. Ảnh đơn đăng ký</div>
+                        <div className="mb-1.5 text-[11px] font-semibold text-neutral-500">
+                          1. Ảnh đơn đăng ký
+                        </div>
                         {registrationUrl ? (
-                          <div className="flex items-center justify-between rounded-xl bg-slate-50 p-2 ring-1 ring-black/5">
-                            <a href={registrationUrl} target="_blank" rel="noreferrer" className="truncate text-[11px] text-blue-600 hover:underline max-w-[150px]">Xem file đính kèm</a>
-                            <button type="button" disabled={isUploadingImage} onClick={() => handleRemoveFile("registrationImageUrl", registrationUrl)} className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200">Xoá</button>
+                          <div className="flex items-center justify-between rounded-2xl bg-sky-50/50 p-2.5 ring-1 ring-sky-100">
+                            <a
+                              href={registrationUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="max-w-[150px] truncate text-[11px] text-blue-600 hover:underline"
+                            >
+                              Xem file đính kèm
+                            </a>
+                            <button
+                              type="button"
+                              disabled={isUploadingImage}
+                              onClick={() =>
+                                handleRemoveFile(
+                                  "registrationImageUrl",
+                                  registrationUrl,
+                                )
+                              }
+                              className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200"
+                            >
+                              Xóa
+                            </button>
                           </div>
                         ) : (
-                          <button type="button" disabled={isUploadingImage} onClick={() => regInputRef.current?.click()} className="w-full flex justify-center rounded-xl bg-slate-50 py-3 text-[11px] font-bold text-neutral-600 ring-1 ring-black/10 border border-dashed border-neutral-300 hover:bg-slate-100">+ Tải file lên</button>
+                          <button
+                            type="button"
+                            disabled={isUploadingImage}
+                            onClick={() => regInputRef.current?.click()}
+                            className="flex w-full justify-center rounded-2xl border border-dashed border-sky-200 bg-sky-50 py-3 text-[11px] font-bold text-sky-700 ring-1 ring-sky-100 hover:bg-sky-100"
+                          >
+                            + Tải file lên
+                          </button>
                         )}
                       </div>
 
-                      {/* 2. ẢNH HÓA ĐƠN THU TIỀN */}
                       <div>
-                        <div className="mb-1.5 text-[11px] font-semibold text-neutral-500">2. Ảnh CK / Tiền mặt</div>
+                        <div className="mb-1.5 text-[11px] font-semibold text-neutral-500">
+                          2. Ảnh CK / Tiền mặt
+                        </div>
                         {receiptUrl ? (
-                          <div className="flex items-center justify-between rounded-xl bg-slate-50 p-2 ring-1 ring-black/5">
-                            <a href={receiptUrl} target="_blank" rel="noreferrer" className="truncate text-[11px] text-blue-600 hover:underline max-w-[150px]">Xem biên lai</a>
-                            <button type="button" disabled={isUploadingImage} onClick={() => handleRemoveFile("receiptImageUrl", receiptUrl)} className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200">Xoá</button>
+                          <div className="flex items-center justify-between rounded-2xl bg-sky-50/50 p-2.5 ring-1 ring-sky-100">
+                            <a
+                              href={receiptUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="max-w-[150px] truncate text-[11px] text-blue-600 hover:underline"
+                            >
+                              Xem biên lai
+                            </a>
+                            <button
+                              type="button"
+                              disabled={isUploadingImage}
+                              onClick={() =>
+                                handleRemoveFile("receiptImageUrl", receiptUrl)
+                              }
+                              className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200"
+                            >
+                              Xóa
+                            </button>
                           </div>
                         ) : (
-                          <button type="button" disabled={isUploadingImage} onClick={() => receiptInputRef.current?.click()} className="w-full flex justify-center rounded-xl bg-slate-50 py-3 text-[11px] font-bold text-neutral-600 ring-1 ring-black/10 border border-dashed border-neutral-300 hover:bg-slate-100">+ Tải hóa đơn</button>
+                          <button
+                            type="button"
+                            disabled={isUploadingImage}
+                            onClick={() => receiptInputRef.current?.click()}
+                            className="flex w-full justify-center rounded-2xl border border-dashed border-sky-200 bg-sky-50 py-3 text-[11px] font-bold text-sky-700 ring-1 ring-sky-100 hover:bg-sky-100"
+                          >
+                            + Tải hóa đơn
+                          </button>
                         )}
                       </div>
 
-                      {/* 3. FILE TRẢ KẾT QUẢ */}
                       <div>
                         <div className="mb-1.5 flex justify-between text-[11px] font-semibold text-neutral-500">
-                          <span>3. File trả Kết quả</span>
+                          <span>3. File trả kết quả</span>
                           <span>{resultUrls.length}/3</span>
                         </div>
+
                         <div className="space-y-2">
                           {resultUrls.map((url, idx) => (
-                            <div key={idx} className="flex items-center justify-between rounded-xl bg-slate-50 p-2 ring-1 ring-black/5">
-                              <a href={url} target="_blank" rel="noreferrer" className="truncate text-[11px] text-blue-600 hover:underline max-w-[150px]">File KQ {idx + 1}</a>
-                              <button type="button" disabled={isUploadingImage} onClick={() => handleRemoveFile("resultImageUrls", url, idx)} className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200">Xoá</button>
+                            <div
+                              key={idx}
+                              className="flex items-center justify-between rounded-2xl bg-sky-50/50 p-2.5 ring-1 ring-sky-100"
+                            >
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="max-w-[150px] truncate text-[11px] text-blue-600 hover:underline"
+                              >
+                                File KQ {idx + 1}
+                              </a>
+                              <button
+                                type="button"
+                                disabled={isUploadingImage}
+                                onClick={() =>
+                                  handleRemoveFile("resultImageUrls", url, idx)
+                                }
+                                className="rounded-lg bg-rose-100 px-2 py-1 text-[11px] font-bold text-rose-700 hover:bg-rose-200"
+                              >
+                                Xóa
+                              </button>
                             </div>
                           ))}
+
                           {resultUrls.length < 3 && (
-                            <button type="button" disabled={isUploadingImage} onClick={() => resInputRef.current?.click()} className="w-full flex justify-center rounded-xl bg-slate-50 py-2.5 text-[11px] font-bold text-indigo-600 ring-1 ring-indigo-200 bg-indigo-50 border border-dashed hover:bg-indigo-100">+ Thêm File KQ</button>
+                            <button
+                              type="button"
+                              disabled={isUploadingImage}
+                              onClick={() => resInputRef.current?.click()}
+                              className="w-full rounded-xl border border-dashed bg-indigo-50 py-2.5 text-[11px] font-bold text-indigo-600 ring-1 ring-indigo-200 hover:bg-indigo-100"
+                            >
+                              + Thêm File KQ
+                            </button>
                           )}
                         </div>
                       </div>
                     </div>
-                </div>
+                  </div>
                 </div>
               </section>
             </div>

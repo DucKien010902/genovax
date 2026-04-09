@@ -17,6 +17,7 @@ type AuthState = {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAdmin: boolean;
+  canManageClinics: boolean;
 };
 
 const Ctx = createContext<AuthState | null>(null);
@@ -65,6 +66,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       logout,
       isAdmin: user?.role === "admin" || user?.role === "super_admin",
+      canManageClinics:
+        user?.role === "admin" ||
+        user?.role === "super_admin" ||
+        user?.role === "sales",
     }),
     [token, user, loading],
   );

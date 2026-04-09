@@ -49,7 +49,7 @@ export default function CasesHeader(props: {
   // --- EXCEL EXPORT STATE ---
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [exportMonth, setExportMonth] = useState(
-    new Date().toISOString().slice(0, 7)
+    new Date().toISOString().slice(0, 7),
   );
   const [isExporting, setIsExporting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -80,7 +80,7 @@ export default function CasesHeader(props: {
           23,
           59,
           59,
-          999
+          999,
         ).toISOString();
       }
 
@@ -145,7 +145,6 @@ export default function CasesHeader(props: {
       <div className="px-4 py-3">
         {/* LAYOUT: TỰ ĐỘNG CO GIÃN */}
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
-          
           {/* ================= CỘT TRÁI: TITLE & LEGEND (Thu nhỏ lại) ================= */}
           <div className="flex shrink-0 items-start gap-2.5">
             <span
@@ -158,23 +157,38 @@ export default function CasesHeader(props: {
                 Danh sách ca
               </h1>
               <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[10px] font-medium text-neutral-500">
-                <div className="flex items-center gap-1" title="Còn hơn 24 giờ nữa mới đến hạn">
+                <div
+                  className="flex items-center gap-1"
+                  title="Còn hơn 24 giờ nữa mới đến hạn"
+                >
                   <span className="h-1.5 w-1.5 rounded-full bg-green-500"></span>
                   &gt;24h
                 </div>
-                <div className="flex items-center gap-1" title="Chỉ còn dưới 24 giờ">
+                <div
+                  className="flex items-center gap-1"
+                  title="Chỉ còn dưới 24 giờ"
+                >
                   <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
                   &lt;24h
                 </div>
-                <div className="flex items-center gap-1" title="Gấp: Chỉ còn dưới 12 giờ">
+                <div
+                  className="flex items-center gap-1"
+                  title="Gấp: Chỉ còn dưới 12 giờ"
+                >
                   <span className="h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
                   &lt;12h
                 </div>
-                <div className="flex items-center gap-1" title="Đã trễ hạn trả kết quả!">
+                <div
+                  className="flex items-center gap-1"
+                  title="Đã trễ hạn trả kết quả!"
+                >
                   <span className="h-1.5 w-1.5 rounded-full bg-red-500"></span>
                   Quá hạn
                 </div>
-                <div className="flex items-center gap-1" title="Trạng thái đã có kết quả">
+                <div
+                  className="flex items-center gap-1"
+                  title="Trạng thái đã có kết quả"
+                >
                   <span className="h-1.5 w-1.5 rounded-full bg-white ring-1 ring-black/20"></span>
                   Đã có KQ
                 </div>
@@ -186,8 +200,18 @@ export default function CasesHeader(props: {
           <div className="flex-1 flex justify-start xl:justify-center w-full min-w-[200px]">
             <div className="relative w-full max-w-md group">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg className="w-3.5 h-3.5 text-neutral-400 group-focus-within:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg
+                  className="w-3.5 h-3.5 text-neutral-400 group-focus-within:text-blue-500 transition-colors"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </div>
               <input
@@ -207,7 +231,6 @@ export default function CasesHeader(props: {
 
           {/* ================= CỘT PHẢI: BỘ LỌC & NÚT HÀNH ĐỘNG ================= */}
           <div className="flex flex-wrap lg:flex-nowrap shrink-0 items-center justify-start xl:justify-end gap-2">
-            
             {/* Lọc Ngày */}
             <div className="flex items-center gap-1 bg-neutral-100/80 p-1 rounded-xl border border-neutral-200">
               <SingleDatePicker
@@ -219,7 +242,9 @@ export default function CasesHeader(props: {
                 months={1}
                 buttonClassName="w-[85px] bg-white border-none shadow-sm text-[11px] h-7 cursor-pointer"
               />
-              <span className="text-neutral-400 text-[9px] font-bold px-0.5">→</span>
+              <span className="text-neutral-400 text-[9px] font-bold px-0.5">
+                →
+              </span>
               <SingleDatePicker
                 value={props.to}
                 onChange={props.setTo}
@@ -231,7 +256,7 @@ export default function CasesHeader(props: {
               />
               <button
                 onClick={props.onApply}
-                className="cursor-pointer rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-3 ml-0.5 px-3 h-7 text-[11px] font-semibold text-white shadow-sm hover:bg-black transition-colors disabled:opacity-50"
+                className="cursor-pointer rounded-lg bg-sky-600 hover:bg-sky-500 px-3 ml-0.5 px-3 h-7 text-[11px] font-semibold text-white shadow-sm hover:bg-black transition-colors disabled:opacity-50"
                 disabled={props.loading}
               >
                 {props.loading ? "..." : "Lọc"}
@@ -244,10 +269,20 @@ export default function CasesHeader(props: {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={props.onAdd}
-                className="cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-3 h-8 text-[11px] font-semibold text-white shadow-sm hover:opacity-90 transition-opacity flex items-center gap-1"
+                className="cursor-pointer rounded-xl bg-sky-600 hover:bg-sky-500 px-3 h-8 text-[11px] font-semibold text-white shadow-sm hover:opacity-90 transition-opacity flex items-center gap-1"
               >
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2.5"
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
                 Thêm ca
               </button>
@@ -258,8 +293,18 @@ export default function CasesHeader(props: {
                   disabled={isExporting}
                   className="cursor-pointer rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 px-3 h-8 text-[11px] font-semibold shadow-sm hover:bg-emerald-100 disabled:opacity-60 flex items-center gap-1 transition-colors"
                 >
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
                   </svg>
                   {isExporting ? "Đang xử lý..." : "Xuất Excel"}
                 </button>
@@ -298,7 +343,6 @@ export default function CasesHeader(props: {
                 )}
               </div>
             </div>
-
           </div>
         </div>
       </div>

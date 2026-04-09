@@ -4,566 +4,395 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import type { CatalogServiceItem, ServiceType } from "@/lib/types";
 
-type PriceByLevel = { level: string; price: number };
-type Service = {
-  _id: string;
-  serviceType: "NIPT" | "ADN" | "HPV" | "CELL";
+const SERVICE_TYPES: ServiceType[] = ["NIPT", "ADN", "HPV", "CELL"];
+
+type FormState = {
   serviceCode: string;
   name: string;
-  turnaroundHours?: number;
-  pricesByLevel?: PriceByLevel[];
-  isActive?: boolean;
+  serviceType: ServiceType;
+  turnaroundHours: string;
+  note: string;
+  isActive: boolean;
+};
+
+const defaultForm: FormState = {
+  serviceCode: "",
+  name: "",
+  serviceType: "ADN",
+  turnaroundHours: "48",
+  note: "",
+  isActive: true,
 };
 
 function cn(...a: Array<string | false | null | undefined>) {
   return a.filter(Boolean).join(" ");
 }
 
-function toneByType(t: Service["serviceType"]) {
-  if (t === "NIPT") return "bg-rose-50 text-rose-700 ring-rose-200";
-  if (t === "HPV") return "bg-emerald-50 text-emerald-700 ring-emerald-200";
-  if (t === "CELL") return "bg-orange-50 text-emerald-700 ring-emerald-200";
-  return "bg-blue-50 text-blue-700 ring-blue-200"; // ADN
+function statusTone(active: boolean) {
+  return active
+    ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+    : "bg-slate-100 text-slate-500 ring-slate-200";
 }
 
-function formatVND(n: number) {
-  // nếu bạn đã có helper formatVND riêng thì dùng cái đó
-  try {
-    return new Intl.NumberFormat("vi-VN").format(n) + "đ";
-  } catch {
-    return String(n) + "đ";
-  }
+function typeTone(type: ServiceType) {
+  if (type === "NIPT") return "bg-rose-50 text-rose-700 ring-rose-200";
+  if (type === "HPV") return "bg-emerald-50 text-emerald-700 ring-emerald-200";
+  if (type === "CELL") return "bg-amber-50 text-amber-700 ring-amber-200";
+  return "bg-sky-50 text-sky-700 ring-sky-200";
 }
 
 export default function AdminServicesPage() {
   const { user, isAdmin } = useAuth();
-  const [items, setItems] = useState<Service[]>([]);
-  const [serviceType, setServiceType] = useState<Service["serviceType"]>("ADN");
+  const [items, setItems] = useState<CatalogServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [agentLevels, setAgentLevels] = useState<
-    { label: string; value: string }[]
-  >([]);
-
+  const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<Partial<Service>>({
-    serviceType: "ADN",
-    serviceCode: "",
-    name: "",
-    turnaroundHours: 48,
-    pricesByLevel: [{ level: "cap3", price: 0 }],
-    isActive: true,
-  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState<FormState>(defaultForm);
 
-  const pageTitle = useMemo(() => {
-    if (serviceType === "NIPT") return "Quản lý dịch vụ và bảng giá • NIPT";
-    if (serviceType === "CELL") return "Quản lý dịch vụ và bảng giá • CELL";
-    if (serviceType === "HPV") return "Quản lý dịch vụ và bảng giá • HPV";
-    return "Quản lý dịch vụ và bảng giá • ADN";
-  }, [serviceType]);
+  const filteredItems = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+    return items.filter((item) => {
+      if (!keyword) return true;
+      return (
+        item.serviceCode.toLowerCase().includes(keyword) ||
+        item.name.toLowerCase().includes(keyword)
+      );
+    });
+  }, [items, search]);
 
   const load = async () => {
     setErr(null);
     setLoading(true);
     try {
-      const res = await api.services(serviceType as any);
-      setItems(res.items as any);
-    } catch (e: any) {
-      setErr(e?.message || "Load failed");
+      const res = await api.services("", true);
+      setItems(res.items || []);
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Load failed");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serviceType]);
-  useEffect(() => {
-    // Lấy danh sách Level từ cấu hình Options
-    api
-      .optionsAdminGetKey("agentLevels")
-      .then((res) => {
-        if (res && res.items) {
-          setAgentLevels(res.items);
-        }
-      })
-      .catch((err) => {
-        console.warn("Chưa có cấu hình agentLevels hoặc lỗi load:", err);
-      });
+    void load();
   }, []);
 
-  const startCreate = () => {
+  const resetForm = () => {
     setEditingId(null);
-    setForm({
-      serviceType,
-      serviceCode: "",
-      name: "",
-      turnaroundHours: 48,
-      // Lấy level đầu tiên làm mặc định, nếu không có thì fallback về "cap3"
-      pricesByLevel: [{ level: agentLevels[0]?.value || "cap3", price: 0 }],
-      isActive: true,
-    });
+    setForm(defaultForm);
+    setIsModalOpen(false);
   };
 
-  const startEdit = (s: Service) => {
-    setEditingId(s._id);
+  const startEdit = (item: CatalogServiceItem) => {
+    setEditingId(item._id);
     setForm({
-      ...s,
-      pricesByLevel: (s.pricesByLevel || []).map((x) => ({ ...x })),
+      serviceCode: item.serviceCode,
+      name: item.name,
+      serviceType: item.serviceType,
+      turnaroundHours: String(item.turnaroundHours ?? 48),
+      note: item.note || "",
+      isActive: item.isActive !== false,
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsModalOpen(true);
   };
 
   const submit = async () => {
-    setErr(null);
     try {
-      if (!isAdmin) throw new Error("Chỉ admin được phép chỉnh.");
-      if (!form.serviceType) throw new Error("serviceType required");
-      if (!form.serviceCode?.trim()) throw new Error("serviceCode required");
-      if (!form.name?.trim()) throw new Error("name required");
+      if (!isAdmin) throw new Error("Chỉ admin được quản lý danh mục dịch vụ.");
+      setSaving(true);
+      setErr(null);
 
       const payload = {
-        ...form,
         serviceCode: form.serviceCode.trim(),
         name: form.name.trim(),
+        serviceType: form.serviceType,
         turnaroundHours: Number(form.turnaroundHours || 48),
-        pricesByLevel: (form.pricesByLevel || [])
-          .map((x) => ({
-            level: String(x.level || "").trim(),
-            price: Number(x.price || 0),
-          }))
-          .filter((x) => x.level),
-        isActive: form.isActive !== false,
+        note: form.note.trim(),
+        isActive: form.isActive,
       };
 
       if (editingId) {
         const updated = await api.serviceUpdate(editingId, payload);
-        setItems((prev) =>
-          prev.map((x) => (x._id === editingId ? updated : x)),
-        );
+        setItems((prev) => prev.map((item) => (item._id === editingId ? updated : item)));
       } else {
         const created = await api.serviceCreate(payload);
         setItems((prev) => [created, ...prev]);
       }
-      startCreate();
-    } catch (e: any) {
-      setErr(e?.message || "Save failed");
+
+      resetForm();
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setSaving(false);
     }
   };
 
   const del = async (id: string) => {
-    // Thêm dòng confirm này:
-    const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa dịch vụ này không? Hành động này không thể hoàn tác.");
-    if (!isConfirmed) return; // Nếu chọn Cancel thì thoát luôn, không chạy API xóa nữa
+    if (!window.confirm("Xóa dịch vụ này khỏi danh mục tổng?")) return;
 
-    setErr(null);
     try {
-      if (!isAdmin) throw new Error("Chỉ admin được phép xoá.");
+      setSaving(true);
+      setErr(null);
       await api.serviceDelete(id);
-      setItems((prev) => prev.filter((x) => x._id !== id));
-      if (editingId === id) startCreate();
-    } catch (e: any) {
-      setErr(e?.message || "Delete failed");
+      setItems((prev) => prev.filter((item) => item._id !== id));
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Delete failed");
+    } finally {
+      setSaving(false);
     }
   };
 
-  const addPriceRow = () => {
-    setForm((p) => ({
-      ...p,
-      pricesByLevel: [
-        ...(p.pricesByLevel || []),
-        { level: agentLevels[0]?.value || "", price: 0 },
-      ],
-    }));
-  };
-
-  const updatePriceRow = (idx: number, patch: Partial<PriceByLevel>) => {
-    setForm((p) => {
-      const arr = [...(p.pricesByLevel || [])];
-      arr[idx] = { ...(arr[idx] || { level: "", price: 0 }), ...patch };
-      return { ...p, pricesByLevel: arr };
-    });
-  };
-
-  const removePriceRow = (idx: number) => {
-    setForm((p) => {
-      const arr = [...(p.pricesByLevel || [])];
-      arr.splice(idx, 1);
-      return { ...p, pricesByLevel: arr };
-    });
-  };
-
   if (!user) return <div className="p-6">Bạn chưa đăng nhập.</div>;
+  if (!isAdmin) return <div className="p-6">Bạn không có quyền truy cập.</div>;
 
   return (
-    <div className="min-h-[calc(100vh-96px)] bg-gradient-to-b from-neutral-50 to-white">
-      {loading && <LoadingOverlay isLoading={loading} />}
-      <div className="mx-auto max-w-[1400px] p-4 sm:p-6 space-y-6">
-        {/* Header */}
-        <div className="rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <div className="text-2xl font-bold tracking-tight text-neutral-900">
-                  {pageTitle}
-                </div>
-                <span
-                  className={cn(
-                    "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1",
-                    toneByType(serviceType),
-                  )}
-                >
-                  {serviceType}
-                </span>
-                {isAdmin ? (
-                  <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-200">
-                    Admin
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-600 ring-1 ring-black/5">
-                    Read-only
-                  </span>
-                )}
+    <div className="min-h-[calc(100vh-96px)] bg-[linear-gradient(180deg,#f8fbff_0%,#eef6ff_36%,#ffffff_100%)]">
+      {(loading || saving) && <LoadingOverlay isLoading={loading || saving} />}
+
+      <div className="mx-auto max-w-[90%] space-y-6 p-4 sm:p-6">
+        <section className="overflow-hidden rounded-[28px] border border-sky-100 bg-white shadow-[0_24px_80px_-48px_rgba(14,116,144,0.45)]">
+          <div className="flex flex-col gap-5 bg-[radial-gradient(circle_at_top_left,#e0f2fe_0,#ffffff_50%)] p-5 sm:p-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="space-y-3">
+              <span className="inline-flex rounded-full bg-sky-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-700">
+                Service Catalog
+              </span>
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                  Danh mục dịch vụ tổng
+                </h1>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
+                  Bảng hiển thị lại theo kiểu gọn, sáng và dễ quét hơn: tách riêng STT,
+                  mã dịch vụ, tên, nhóm, TAT và trạng thái; ghi chú chỉ giữ ở dạng mô tả ngắn.
+                </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <SelectPill
-                value={serviceType}
-                onChange={(v) => setServiceType(v as any)}
-              />
-              <button
-                onClick={startCreate}
-                className="rounded-2xl bg-blue-900 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-neutral-800 active:scale-[0.99]"
-              >
-                + Tạo mới
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                resetForm();
+                setIsModalOpen(true);
+              }}
+              className="inline-flex h-11 items-center justify-center rounded-2xl bg-sky-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500"
+            >
+              Thêm dịch vụ
+            </button>
           </div>
 
           {err && (
-            <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
+            <div className="border-t border-rose-100 bg-rose-50/80 px-5 py-3 text-sm font-medium text-rose-700 sm:px-6">
               {err}
             </div>
           )}
-        </div>
+        </section>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Form */}
-          <div className="rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-bold text-neutral-900">
-                  {editingId ? "Sửa Service" : "Tạo dịch vụ mới"}
-                </div>
-                <div className="mt-1 text-xs text-neutral-500">
-                  Điền thông tin cơ bản + bảng giá theo level
-                </div>
+        <section className="rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-[0_18px_50px_-38px_rgba(15,23,42,0.35)] sm:p-6">
+          <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="text-sm font-semibold text-slate-900">Bảng dịch vụ</div>
+              <div className="mt-1 text-xs text-slate-500">
+                {filteredItems.length} dịch vụ trong danh mục hiện tại
               </div>
-
-              {editingId && (
-                <span className="inline-flex items-center rounded-full bg-fuchsia-50 px-2.5 py-1 text-xs font-semibold text-fuchsia-700 ring-1 ring-fuchsia-200">
-                  Editing
-                </span>
-              )}
             </div>
 
-            <div className="mt-4 space-y-4">
-              <Row label="Loại dịch vụ">
-                <select
-                  value={serviceType}
-                  onChange={(e) =>
-                    setForm((p) => ({
-                      ...p,
-                      serviceType: e.target.value as any,
-                    }))
-                  }
-                  className="w-full rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
-                >
-                  <option value="NIPT">NIPT</option>
-                  <option value="ADN">ADN</option>
-                  <option value="HPV">HPV</option>
-                  <option value="CELL">CELL</option>
-                </select>
-              </Row>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Tìm mã hoặc tên dịch vụ..."
+              className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:bg-white focus:ring-4 focus:ring-sky-100 sm:w-[320px]"
+            />
+          </div>
 
+          <div className="overflow-x-auto rounded-[24px] border border-slate-200">
+            <table className="w-full min-w-[980px] text-left text-sm text-slate-600">
+              <thead className="bg-slate-50/90 text-xs uppercase tracking-[0.16em] text-slate-500">
+                <tr>
+                  <th className="px-4 py-4 text-center">STT</th>
+                  <th className="px-4 py-4">Mã DV</th>
+                  <th className="px-4 py-4">Tên dịch vụ</th>
+                  <th className="px-4 py-4">Nhóm</th>
+                  <th className="px-4 py-4 text-center">TAT</th>
+                  <th className="px-4 py-4 text-center">Trạng thái</th>
+                  <th className="px-4 py-4 text-right">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 bg-white">
+                {filteredItems.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center text-sm text-slate-400">
+                      Không có dịch vụ phù hợp.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredItems.map((item, index) => (
+                    <tr key={item._id} className="transition hover:bg-sky-50/40">
+                      <td className="px-4 py-4 text-center font-medium text-slate-400">
+                        {index + 1}
+                      </td>
+                      <td className="px-4 py-4 font-semibold text-slate-900">{item.serviceCode}</td>
+                      <td className="px-4 py-4">
+                        <div className="font-medium text-slate-900">{item.name}</div>
+                        {item.note && (
+                          <div className="mt-1 max-w-[260px] truncate text-xs text-slate-400">
+                            {item.note}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-4">
+                        <span
+                          className={cn(
+                            "inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1",
+                            typeTone(item.serviceType),
+                          )}
+                        >
+                          {item.serviceType}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-center">{item.turnaroundHours}h</td>
+                      <td className="px-4 py-4 text-center">
+                        <span
+                          className={cn(
+                            "inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1",
+                            statusTone(item.isActive !== false),
+                          )}
+                        >
+                          {item.isActive !== false ? "Đang dùng" : "Tạm ẩn"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => startEdit(item)}
+                            className="inline-flex h-9 items-center rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                          >
+                            Sửa
+                          </button>
+                          <button
+                            onClick={() => del(item._id)}
+                            className="inline-flex h-9 items-center rounded-xl bg-rose-500 px-3 text-xs font-semibold text-white transition hover:bg-rose-400"
+                          >
+                            Xóa
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_40px_120px_-48px_rgba(15,23,42,0.55)]">
+            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+              <div>
+                <div className="text-lg font-semibold text-slate-900">
+                  {editingId ? "Cập nhật dịch vụ" : "Thêm dịch vụ"}
+                </div>
+                <div className="mt-1 text-xs text-slate-400">
+                  Form ngắn gọn, ưu tiên đúng dữ liệu vận hành.
+                </div>
+              </div>
+              <button
+                onClick={resetForm}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-500 transition hover:bg-slate-200 hover:text-slate-700"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 px-6 py-6 md:grid-cols-2">
               <Field
                 label="Mã dịch vụ"
-                placeholder="VD: ADN001"
-                value={form.serviceCode || ""}
-                onChange={(v) => setForm((p) => ({ ...p, serviceCode: v }))}
+                value={form.serviceCode}
+                onChange={(v) => setForm((prev) => ({ ...prev, serviceCode: v }))}
               />
               <Field
                 label="Tên dịch vụ"
-                placeholder="Tên dịch vụ"
-                value={form.name || ""}
-                onChange={(v) => setForm((p) => ({ ...p, name: v }))}
-              />
-              <Field
-                label="Thời gian trả mẫu"
-                placeholder="48"
-                value={String(form.turnaroundHours ?? 48)}
-                onChange={(v) =>
-                  setForm((p) => ({ ...p, turnaroundHours: Number(v || 0) }))
-                }
-                rightHint="giờ"
-                inputMode="numeric"
+                value={form.name}
+                onChange={(v) => setForm((prev) => ({ ...prev, name: v }))}
               />
 
-              {/* Prices */}
-              <div className="rounded-3xl border border-black/10 bg-neutral-50 p-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-bold text-neutral-900">
-                      Bảng giá theo level
-                    </div>
-                    <div className="text-xs text-neutral-500">
-                      VD: cap1/cap2/cap3…
-                    </div>
-                  </div>
-                  <button
-                    onClick={addPriceRow}
-                    className="rounded-2xl bg-white px-3 py-2 text-xs font-bold text-neutral-900 ring-1 ring-black/10 shadow-sm hover:bg-neutral-50"
-                  >
-                    + Thêm dòng
-                  </button>
+              <div>
+                <div className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                  Nhóm dịch vụ
                 </div>
-
-                <div className="mt-3 space-y-2">
-                  {(form.pricesByLevel || []).map((x, idx) => (
-                    <div key={idx} className="grid grid-cols-12 gap-2">
-                      <select
-                        value={x.level}
-                        onChange={(e) =>
-                          updatePriceRow(idx, { level: e.target.value })
-                        }
-                        className="col-span-5 rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
-                      >
-                        <option value="" disabled>
-                          Chọn cấp đại lý
-                        </option>
-                        {agentLevels.map((lvl) => (
-                          <option key={lvl.value} value={lvl.value}>
-                            {lvl.label} ({lvl.value})
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        value={String(x.price)}
-                        onChange={(e) =>
-                          updatePriceRow(idx, {
-                            price: Number(e.target.value || 0),
-                          })
-                        }
-                        placeholder="1000000"
-                        inputMode="numeric"
-                        className="col-span-5 rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-4 focus:ring-indigo-200"
-                      />
-                      <button
-                        onClick={() => removePriceRow(idx)}
-                        className="col-span-2 rounded-2xl bg-rose-600 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-rose-500 active:scale-[0.99]"
-                        title="Xoá dòng"
-                      >
-                        Xoá
-                      </button>
-                    </div>
+                <select
+                  value={form.serviceType}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, serviceType: e.target.value as ServiceType }))
+                  }
+                  className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition focus:border-sky-300 focus:bg-white focus:ring-4 focus:ring-sky-100"
+                >
+                  {SERVICE_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
 
-              {/* Active */}
-              <label className="flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 shadow-sm">
-                <div>
-                  <div className="text-sm font-semibold text-neutral-900">
-                    Trạng thái
-                  </div>
-                  <div className="text-xs text-neutral-500">
-                    Bật/tắt hiển thị service
-                  </div>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={form.isActive !== false}
-                  onChange={(e) =>
-                    setForm((p) => ({ ...p, isActive: e.target.checked }))
-                  }
-                  className="h-5 w-5 accent-indigo-600"
+              <Field
+                label="TAT (giờ)"
+                value={form.turnaroundHours}
+                onChange={(v) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    turnaroundHours: v.replace(/[^\d]/g, ""),
+                  }))
+                }
+              />
+
+              <div className="md:col-span-2">
+                <Field
+                  label="Ghi chú ngắn"
+                  value={form.note}
+                  onChange={(v) => setForm((prev) => ({ ...prev, note: v }))}
                 />
-              </label>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <div>
+                    <div className="text-sm font-semibold text-slate-900">Trạng thái hiển thị</div>
+                    <div className="text-xs text-slate-400">
+                      Dùng để bật hoặc ẩn dịch vụ trong danh mục tổng.
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={form.isActive}
+                    onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.checked }))}
+                    className="h-5 w-5 cursor-pointer accent-sky-600"
+                  />
+                </label>
+              </div>
             </div>
 
-            <div className="mt-5 flex gap-2">
+            <div className="flex gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
               <button
                 onClick={submit}
-                className="flex-1 cursor-pointer rounded-2xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-95 active:scale-[0.99]"
+                className="inline-flex h-11 flex-1 items-center justify-center rounded-2xl bg-sky-600 px-4 text-sm font-semibold text-white transition hover:bg-sky-500"
               >
-                {editingId ? "Lưu thay đổi" : "Tạo dịch vụ mới"}
+                {editingId ? "Lưu thay đổi" : "Tạo dịch vụ"}
               </button>
-
               <button
-                onClick={startCreate}
-                className="rounded-2xl border border-black/10 bg-white px-4 py-2.5 text-sm font-bold text-neutral-900 shadow-sm hover:bg-neutral-50"
+                onClick={resetForm}
+                className="inline-flex h-11 items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
               >
-                Reset
+                Hủy
               </button>
             </div>
-          </div>
-
-          {/* List */}
-          <div className="lg:col-span-2 rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="text-sm font-bold text-neutral-900">
-                  Danh sách Services
-                </div>
-                <div className="mt-1 text-xs text-neutral-500">
-                  {loading ? "Đang tải dữ liệu…" : `${items.length} mục`}
-                </div>
-              </div>
-
-              <span
-                className={cn(
-                  "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1",
-                  toneByType(serviceType),
-                )}
-              >
-                {serviceType}
-              </span>
-            </div>
-
-            {/* ✅ không fix cứng: trang vẫn scroll bình thường
-                Nếu bạn muốn list dài thì cuộn trong card, bật max-h ở dưới */}
-            <div className="mt-4 space-y-3">
-              {loading ? (
-                <SkeletonList />
-              ) : items.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-black/10 bg-neutral-50 p-6 text-sm text-neutral-600">
-                  Không có dữ liệu.
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {items.map((s) => {
-                    const active = s.isActive !== false;
-                    return (
-                      <div
-                        key={s._id}
-                        className={cn(
-                          "rounded-3xl border border-black/10 bg-white p-4 shadow-sm transition",
-                          "hover:shadow-md",
-                        )}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <div className="truncate text-base font-bold text-neutral-900">
-                                {s.serviceCode} • {s.name}
-                              </div>
-
-                              <span
-                                className={cn(
-                                  "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1",
-                                  toneByType(s.serviceType),
-                                )}
-                              >
-                                {s.serviceType}
-                              </span>
-
-                              <span
-                                className={cn(
-                                  "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ring-1",
-                                  active
-                                    ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-                                    : "bg-rose-50 text-rose-700 ring-rose-200",
-                                )}
-                              >
-                                {active ? "Active" : "Inactive"}
-                              </span>
-
-                              <span className="inline-flex items-center rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-semibold text-neutral-700 ring-1 ring-black/5">
-                                TAT {s.turnaroundHours ?? 48}h
-                              </span>
-                            </div>
-
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              {(s.pricesByLevel || []).length ? (
-                                (s.pricesByLevel || []).map((p, i) => (
-                                  <span
-                                    key={i}
-                                    className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-200"
-                                  >
-                                    {p.level}
-                                    <span className="text-indigo-500">•</span>
-                                    {formatVND(p.price)}
-                                  </span>
-                                ))
-                              ) : (
-                                <span className="text-xs text-neutral-500">
-                                  —
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="flex shrink-0 gap-2">
-                            <button
-                              onClick={() => startEdit(s)}
-                              className="rounded-2xl cursor-pointer border border-black/10 bg-white px-3 py-2 text-xs font-bold text-neutral-900 shadow-sm hover:bg-neutral-50"
-                            >
-                              Sửa
-                            </button>
-                            <button
-                              onClick={() => del(s._id)}
-                              className="rounded-2xl cursor-pointer bg-rose-600 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-rose-500 active:scale-[0.99]"
-                            >
-                              Xoá
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Nếu bạn muốn LIST CUỘN TRONG CARD (khi quá dài), bật cái này:
-                - bọc phần list bằng div className="mt-4 max-h-[70vh] overflow-auto pr-1"
-                - và thêm scrollbar mảnh nếu bạn thích */}
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------- UI bits ---------- */
-
-function SelectPill(props: { value: string; onChange: (v: string) => void }) {
-  return (
-    <div className="rounded-2xl border border-black/10 bg-white px-3 py-2 shadow-sm">
-      <select
-        value={props.value}
-        onChange={(e) => props.onChange(e.target.value)}
-        className="bg-transparent text-sm font-semibold outline-none"
-      >
-        <option value="NIPT">NIPT</option>
-        <option value="ADN">ADN</option>
-        <option value="HPV">HPV</option>
-        <option value="CELL">CELL</option>
-      </select>
-    </div>
-  );
-}
-
-function Row(props: { label: string; children: any }) {
-  return (
-    <div>
-      <div className="mb-1 text-xs font-semibold text-neutral-700">
-        {props.label}
-      </div>
-      {props.children}
+      )}
     </div>
   );
 }
@@ -572,52 +401,17 @@ function Field(props: {
   label: string;
   value: string;
   onChange: (v: string) => void;
-  placeholder?: string;
-  rightHint?: string;
-  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
 }) {
   return (
     <div>
-      <div className="mb-1 text-xs font-semibold text-neutral-700">
+      <div className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
         {props.label}
       </div>
-      <div className="relative">
-        <input
-          value={props.value}
-          onChange={(e) => props.onChange(e.target.value)}
-          placeholder={props.placeholder}
-          inputMode={props.inputMode}
-          className={cn(
-            "w-full rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm shadow-sm outline-none",
-            "focus:ring-4 focus:ring-indigo-200",
-          )}
-        />
-        {props.rightHint && (
-          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-neutral-400">
-            {props.rightHint}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function SkeletonList() {
-  return (
-    <div className="space-y-3">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div
-          key={i}
-          className="rounded-3xl border border-black/10 bg-white p-4"
-        >
-          <div className="h-4 w-2/3 rounded bg-neutral-100" />
-          <div className="mt-3 h-3 w-1/3 rounded bg-neutral-100" />
-          <div className="mt-3 flex gap-2">
-            <div className="h-7 w-24 rounded-full bg-neutral-100" />
-            <div className="h-7 w-28 rounded-full bg-neutral-100" />
-          </div>
-        </div>
-      ))}
+      <input
+        value={props.value}
+        onChange={(e) => props.onChange(e.target.value)}
+        className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition focus:border-sky-300 focus:bg-white focus:ring-4 focus:ring-sky-100"
+      />
     </div>
   );
 }

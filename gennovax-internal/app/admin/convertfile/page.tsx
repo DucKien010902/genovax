@@ -153,7 +153,11 @@ async function getPdfJsLib() {
   return pdfjs;
 }
 
-async function renderPdfPageToCanvas(file: File, pageNumber = 1, scale = 3): Promise<PdfCanvasResult> {
+async function renderPdfPageToCanvas(
+  file: File,
+  pageNumber = 1,
+  scale = 3,
+): Promise<PdfCanvasResult> {
   const pdfjs = await getPdfJsLib();
   const buffer = await file.arrayBuffer();
   const bytes = new Uint8Array(buffer);
@@ -195,7 +199,13 @@ function toPngBytes(canvas: HTMLCanvasElement): Promise<Uint8Array> {
   });
 }
 
-function sliceCanvas(source: HTMLCanvasElement, sx: number, sy: number, sw: number, sh: number): HTMLCanvasElement {
+function sliceCanvas(
+  source: HTMLCanvasElement,
+  sx: number,
+  sy: number,
+  sw: number,
+  sh: number,
+): HTMLCanvasElement {
   const target = document.createElement("canvas");
   target.width = Math.max(1, Math.floor(sw));
   target.height = Math.max(1, Math.floor(sh));
@@ -211,11 +221,18 @@ function ptsToPx(value: number, canvasSize: number, pageSizePts: number) {
   return Math.round((value / pageSizePts) * canvasSize);
 }
 
-function ptsToPxPrecise(value: number, canvasSize: number, pageSizePts: number) {
+function ptsToPxPrecise(
+  value: number,
+  canvasSize: number,
+  pageSizePts: number,
+) {
   return (value / pageSizePts) * canvasSize;
 }
 
-async function extractPdfTextItems(file: File, pageNumber = 1): Promise<PdfTextItem[]> {
+async function extractPdfTextItems(
+  file: File,
+  pageNumber = 1,
+): Promise<PdfTextItem[]> {
   const pdfjs = await getPdfJsLib();
   const buffer = await file.arrayBuffer();
   const bytes = new Uint8Array(buffer);
@@ -228,7 +245,10 @@ async function extractPdfTextItems(file: File, pageNumber = 1): Promise<PdfTextI
   return (textContent.items as Array<any>)
     .filter((item) => typeof item?.str === "string")
     .map((item) => {
-      const transform = pdfjs.Util.transform(viewport.transform, item.transform);
+      const transform = pdfjs.Util.transform(
+        viewport.transform,
+        item.transform,
+      );
       const x = transform[4];
       const yBottom = transform[5];
       const height = Math.abs(transform[3]) || item.height || 0;
@@ -252,16 +272,25 @@ function collectPdfTextInRect(
   const filtered = items
     .filter((item) => {
       const yMid = (item.yTop + item.yBottom) / 2;
-      return item.x >= colLeftPts - 2 && item.x <= colRightPts + 2 && yMid >= rowTopPts && yMid <= rowBottomPts;
+      return (
+        item.x >= colLeftPts - 2 &&
+        item.x <= colRightPts + 2 &&
+        yMid >= rowTopPts &&
+        yMid <= rowBottomPts
+      );
     })
-    .sort((a, b) => (Math.abs(a.yTop - b.yTop) > 2.5 ? a.yTop - b.yTop : a.x - b.x));
+    .sort((a, b) =>
+      Math.abs(a.yTop - b.yTop) > 2.5 ? a.yTop - b.yTop : a.x - b.x,
+    );
 
   const lines: Array<{ y: number; text: string }> = [];
 
   filtered.forEach((item) => {
     if (!item.text.length) return;
 
-    let line = lines.find((candidate) => Math.abs(candidate.y - item.yTop) <= 2.5);
+    let line = lines.find(
+      (candidate) => Math.abs(candidate.y - item.yTop) <= 2.5,
+    );
     if (!line) {
       line = { y: item.yTop, text: "" };
       lines.push(line);
@@ -295,14 +324,22 @@ function looksLikeNormalGenotype(value: string) {
   return normalizeCompareText(value).includes("binh thuong");
 }
 
-function buildCarrierAbnormalDetail(row: { gene: string }, variantText: string, genotypeText: string) {
+function buildCarrierAbnormalDetail(
+  row: { gene: string },
+  variantText: string,
+  genotypeText: string,
+) {
   const abnormalPieces = [
     looksLikeNormalVariant(variantText) ? "" : variantText.trim(),
     looksLikeNormalGenotype(genotypeText) ? "" : genotypeText.trim(),
   ].filter(Boolean);
 
-  const fallbackPieces = [variantText.trim(), genotypeText.trim()].filter(Boolean);
-  const detail = (abnormalPieces.length ? abnormalPieces : fallbackPieces).join(" - ");
+  const fallbackPieces = [variantText.trim(), genotypeText.trim()].filter(
+    Boolean,
+  );
+  const detail = (abnormalPieces.length ? abnormalPieces : fallbackPieces).join(
+    " - ",
+  );
 
   return detail ? `${row.gene}: ${detail}` : row.gene;
 }
@@ -331,7 +368,8 @@ async function analyzeCarrierRows(file: File): Promise<CarrierRowAnalysis[]> {
 
     const hasAnyResultText = Boolean(variantText.trim() || genotypeText.trim());
     const isNormal = hasAnyResultText
-      ? looksLikeNormalVariant(variantText) && looksLikeNormalGenotype(genotypeText)
+      ? looksLikeNormalVariant(variantText) &&
+        looksLikeNormalGenotype(genotypeText)
       : true;
 
     return {
@@ -341,12 +379,18 @@ async function analyzeCarrierRows(file: File): Promise<CarrierRowAnalysis[]> {
       variantText,
       genotypeText,
       abnormal: !isNormal,
-      abnormalDetail: !isNormal ? buildCarrierAbnormalDetail(rowMeta, variantText, genotypeText) : null,
+      abnormalDetail: !isNormal
+        ? buildCarrierAbnormalDetail(rowMeta, variantText, genotypeText)
+        : null,
     };
   });
 }
 
-function wrapCanvasText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
+function wrapCanvasText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+) {
   const paragraphs = text
     .split(/\n+/)
     .map((paragraph) => paragraph.trim())
@@ -377,7 +421,11 @@ function wrapCanvasText(ctx: CanvasRenderingContext2D, text: string, maxWidth: n
   return lines.length ? lines : [""];
 }
 
-async function buildPdfFromSingleCanvas(canvas: HTMLCanvasElement, pageWidthPts: number, pageHeightPts: number) {
+async function buildPdfFromSingleCanvas(
+  canvas: HTMLCanvasElement,
+  pageWidthPts: number,
+  pageHeightPts: number,
+) {
   const outPdf = await PDFDocument.create();
   const page = outPdf.addPage([pageWidthPts, pageHeightPts]);
   const pngBytes = await toPngBytes(canvas);
@@ -413,7 +461,10 @@ async function buildPdfFromCanvasPlusRemainingPages(
   const originalPdf = await PDFDocument.load(originalBytes);
 
   if (originalPdf.getPageCount() > 1) {
-    const indices = Array.from({ length: originalPdf.getPageCount() - 1 }, (_, i) => i + 1);
+    const indices = Array.from(
+      { length: originalPdf.getPageCount() - 1 },
+      (_, i) => i + 1,
+    );
     const copiedPages = await outPdf.copyPages(originalPdf, indices);
     copiedPages.forEach((page) => outPdf.addPage(page));
   }
@@ -421,21 +472,46 @@ async function buildPdfFromCanvasPlusRemainingPages(
   return await outPdf.save();
 }
 
-async function transformNiptPdf(file: File, pushLog: (msg: string) => void): Promise<Uint8Array> {
+async function transformNiptPdf(
+  file: File,
+  pushLog: (msg: string) => void,
+): Promise<Uint8Array> {
   const firstPage = await renderPdfPageToCanvas(file, 1, 3);
 
   pushLog(`Đọc xong PDF NIPT: ${firstPage.pageCount} trang.`);
-  pushLog("Cắt đúng phần trang 1: từ tiêu đề phiếu kết quả đến trước mục KẾT LUẬN.");
+  pushLog(
+    "Cắt đúng phần trang 1: từ tiêu đề phiếu kết quả đến trước mục KẾT LUẬN.",
+  );
 
-  const cropTopPx = ptsToPx(NIPT_TEMPLATE.cropTop, firstPage.canvas.height, firstPage.pageHeightPts);
-  const cropBottomPx = ptsToPx(NIPT_TEMPLATE.cropBottom, firstPage.canvas.height, firstPage.pageHeightPts);
+  const cropTopPx = ptsToPx(
+    NIPT_TEMPLATE.cropTop,
+    firstPage.canvas.height,
+    firstPage.pageHeightPts,
+  );
+  const cropBottomPx = ptsToPx(
+    NIPT_TEMPLATE.cropBottom,
+    firstPage.canvas.height,
+    firstPage.pageHeightPts,
+  );
 
-  const croppedCanvas = sliceCanvas(firstPage.canvas, 0, cropTopPx, firstPage.canvas.width, cropBottomPx - cropTopPx);
+  const croppedCanvas = sliceCanvas(
+    firstPage.canvas,
+    0,
+    cropTopPx,
+    firstPage.canvas.width,
+    cropBottomPx - cropTopPx,
+  );
   const cropHeightPts = NIPT_TEMPLATE.cropBottom - NIPT_TEMPLATE.cropTop;
 
-  pushLog("Đã bỏ phần KẾT LUẬN và toàn bộ các trang sau. File đích còn 1 trang.");
+  pushLog(
+    "Đã bỏ phần KẾT LUẬN và toàn bộ các trang sau. File đích còn 1 trang.",
+  );
 
-  return await buildPdfFromSingleCanvas(croppedCanvas, firstPage.pageWidthPts, cropHeightPts);
+  return await buildPdfFromSingleCanvas(
+    croppedCanvas,
+    firstPage.pageWidthPts,
+    cropHeightPts,
+  );
 }
 
 function drawCarrierTableGrid(
@@ -454,8 +530,13 @@ function drawCarrierTableGrid(
 
   const tableTopPx = CARRIER_TEMPLATE.tableTop * scaleY;
   const headerBottomPx = CARRIER_TEMPLATE.headerBottom * scaleY;
-  const lineWidth = Math.max(1, CARRIER_TEMPLATE.gridLineWidthPts * Math.min(scaleX, scaleY));
-  const tableBottomPx = rowBottoms.length ? rowBottoms[rowBottoms.length - 1] : headerBottomPx;
+  const lineWidth = Math.max(
+    1,
+    CARRIER_TEMPLATE.gridLineWidthPts * Math.min(scaleX, scaleY),
+  );
+  const tableBottomPx = rowBottoms.length
+    ? rowBottoms[rowBottoms.length - 1]
+    : headerBottomPx;
 
   ctx.save();
   ctx.strokeStyle = CARRIER_TEMPLATE.tableGridColor;
@@ -492,7 +573,8 @@ function drawCarrierConclusion(
   const top = currentYpx + CARRIER_TEMPLATE.conclusionTopGap * scaleY;
   const fontSize = CARRIER_TEMPLATE.conclusionFontSize * scaleY;
   const baseline = top + fontSize;
-  const maxWidth = canvasWidth - valueX - CARRIER_TEMPLATE.conclusionMaxRightMargin * scaleX;
+  const maxWidth =
+    canvasWidth - valueX - CARRIER_TEMPLATE.conclusionMaxRightMargin * scaleX;
   const lineHeight = fontSize * CARRIER_TEMPLATE.conclusionLineHeight;
 
   ctx.save();
@@ -512,7 +594,10 @@ function drawCarrierConclusion(
   ctx.restore();
 }
 
-function buildCarrierFirstPageCanvas(source: HTMLCanvasElement, rowAnalyses: CarrierRowAnalysis[]) {
+function buildCarrierFirstPageCanvas(
+  source: HTMLCanvasElement,
+  rowAnalyses: CarrierRowAnalysis[],
+) {
   const output = document.createElement("canvas");
   output.width = source.width;
   output.height = source.height;
@@ -526,12 +611,28 @@ function buildCarrierFirstPageCanvas(source: HTMLCanvasElement, rowAnalyses: Car
   const scaleX = output.width / CARRIER_TEMPLATE.pageWidth;
   const scaleY = output.height / CARRIER_TEMPLATE.pageHeight;
 
-  const headerBottomPx = ptsToPxPrecise(CARRIER_TEMPLATE.headerBottom, output.height, CARRIER_TEMPLATE.pageHeight);
-  ctx.drawImage(source, 0, 0, source.width, headerBottomPx, 0, 0, output.width, headerBottomPx);
+  const headerBottomPx = ptsToPxPrecise(
+    CARRIER_TEMPLATE.headerBottom,
+    output.height,
+    CARRIER_TEMPLATE.pageHeight,
+  );
+  ctx.drawImage(
+    source,
+    0,
+    0,
+    source.width,
+    headerBottomPx,
+    0,
+    0,
+    output.width,
+    headerBottomPx,
+  );
 
   const keptGenes = rowAnalyses.map((row) => row.gene);
   const removedGenes = CARRIER_TEMPLATE.allRows
-    .filter((_, rowIndex) => !CARRIER_TEMPLATE.keepRowIndices.includes(rowIndex))
+    .filter(
+      (_, rowIndex) => !CARRIER_TEMPLATE.keepRowIndices.includes(rowIndex),
+    )
     .map((row) => row.gene);
   const abnormalRows = rowAnalyses.filter((row) => row.abnormal);
 
@@ -540,11 +641,29 @@ function buildCarrierFirstPageCanvas(source: HTMLCanvasElement, rowAnalyses: Car
 
   CARRIER_TEMPLATE.keepRowIndices.forEach((rowIndex) => {
     const [rowTopPts, rowBottomPts] = CARRIER_TEMPLATE.rowBounds[rowIndex];
-    const rowTopPx = ptsToPxPrecise(rowTopPts, output.height, CARRIER_TEMPLATE.pageHeight);
-    const rowBottomPx = ptsToPxPrecise(rowBottomPts, output.height, CARRIER_TEMPLATE.pageHeight);
+    const rowTopPx = ptsToPxPrecise(
+      rowTopPts,
+      output.height,
+      CARRIER_TEMPLATE.pageHeight,
+    );
+    const rowBottomPx = ptsToPxPrecise(
+      rowBottomPts,
+      output.height,
+      CARRIER_TEMPLATE.pageHeight,
+    );
     const rowHeightPx = rowBottomPx - rowTopPx;
 
-    ctx.drawImage(source, 0, rowTopPx, source.width, rowHeightPx, 0, currentY, output.width, rowHeightPx);
+    ctx.drawImage(
+      source,
+      0,
+      rowTopPx,
+      source.width,
+      rowHeightPx,
+      0,
+      currentY,
+      output.width,
+      rowHeightPx,
+    );
 
     currentY += rowHeightPx;
     rowBottoms.push(currentY);
@@ -552,11 +671,23 @@ function buildCarrierFirstPageCanvas(source: HTMLCanvasElement, rowAnalyses: Car
 
   drawCarrierTableGrid(ctx, rowBottoms, scaleX, scaleY);
 
-  const conclusionText = abnormalRows.length > 0
-    ? abnormalRows.map((row) => row.abnormalDetail).filter(Boolean).join("\n")
-    : "Bình thường";
+  const conclusionText =
+    abnormalRows.length > 0
+      ? abnormalRows
+          .map((row) => row.abnormalDetail)
+          .filter(Boolean)
+          .join("\n")
+      : "Bình thường";
 
-  drawCarrierConclusion(ctx, currentY, conclusionText, abnormalRows.length > 0, scaleX, scaleY, output.width);
+  drawCarrierConclusion(
+    ctx,
+    currentY,
+    conclusionText,
+    abnormalRows.length > 0,
+    scaleX,
+    scaleY,
+    output.width,
+  );
 
   const bottomSegmentStartPx = ptsToPxPrecise(
     CARRIER_TEMPLATE.bottomSegmentStart,
@@ -588,40 +719,68 @@ function buildCarrierFirstPageCanvas(source: HTMLCanvasElement, rowAnalyses: Car
   };
 }
 
-async function transformCarrierPdf(file: File, pushLog: (msg: string) => void): Promise<Uint8Array> {
+async function transformCarrierPdf(
+  file: File,
+  pushLog: (msg: string) => void,
+): Promise<Uint8Array> {
   const firstPage = await renderPdfPageToCanvas(file, 1, 3);
   const rowAnalyses = await analyzeCarrierRows(file);
 
   pushLog(`Đọc xong PDF bệnh di truyền lặn: ${firstPage.pageCount} trang.`);
   pushLog("Giữ nguyên phần đầu mẫu phiếu + trang 2 trở đi, chỉ thay trang 1.");
 
-  const { canvas, detection } = buildCarrierFirstPageCanvas(firstPage.canvas, rowAnalyses);
+  const { canvas, detection } = buildCarrierFirstPageCanvas(
+    firstPage.canvas,
+    rowAnalyses,
+  );
 
-  pushLog(`Giữ lại ${detection.keptGenes.length}/21 hàng: ${detection.keptGenes.join(", ")}.`);
-  pushLog(`Cắt bỏ 6 hàng ngoài danh sách: ${detection.removedGenes.join(", ")}.`);
-  pushLog("Đã kẻ lại đường viền ngang/dọc cho bảng 15 hàng và bổ sung viền cuối bảng.");
+  pushLog(
+    `Giữ lại ${detection.keptGenes.length}/21 hàng: ${detection.keptGenes.join(", ")}.`,
+  );
+  pushLog(
+    `Cắt bỏ 6 hàng ngoài danh sách: ${detection.removedGenes.join(", ")}.`,
+  );
+  pushLog(
+    "Đã kẻ lại đường viền ngang/dọc cho bảng 15 hàng và bổ sung viền cuối bảng.",
+  );
 
   if (detection.abnormal) {
-    pushLog(`Phát hiện ${detection.abnormalRows.length} hàng bất thường trong 15 hàng giữ lại.`);
+    pushLog(
+      `Phát hiện ${detection.abnormalRows.length} hàng bất thường trong 15 hàng giữ lại.`,
+    );
     detection.abnormalRows.forEach((row) => {
       if (row.abnormalDetail) pushLog(`→ ${row.abnormalDetail}`);
     });
   } else {
-    pushLog("Trong 15 hàng được giữ không có kết quả bất thường. Kết luận mới: Bình thường.");
+    pushLog(
+      "Trong 15 hàng được giữ không có kết quả bất thường. Kết luận mới: Bình thường.",
+    );
   }
 
-  return await buildPdfFromCanvasPlusRemainingPages(canvas, firstPage.pageWidthPts, firstPage.pageHeightPts, file);
+  return await buildPdfFromCanvasPlusRemainingPages(
+    canvas,
+    firstPage.pageWidthPts,
+    firstPage.pageHeightPts,
+    file,
+  );
 }
 
 function bytesToObjectUrl(bytes: Uint8Array, mime = "application/pdf") {
-  const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+  const buffer = bytes.buffer.slice(
+    bytes.byteOffset,
+    bytes.byteOffset + bytes.byteLength,
+  ) as ArrayBuffer;
   return URL.createObjectURL(new Blob([buffer], { type: mime }));
 }
 
 function PdfPreview({ url }: { url: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden shadow-sm">
-      <iframe src={url} title="PDF preview" className="h-[720px] w-full bg-white" />
+      <iframe
+        src={url}
+        title="PDF preview"
+        className="h-[720px] w-full bg-white"
+      />
     </div>
   );
 }
@@ -678,7 +837,9 @@ function ToolPanel({
 
           <label className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 transition hover:border-blue-400 hover:bg-blue-50/50 cursor-pointer">
             <Upload className="h-6 w-6 text-slate-400 mb-2" />
-            <span className="text-sm font-medium text-slate-700">Nhấp để chọn file PDF</span>
+            <span className="text-sm font-medium text-slate-700">
+              Nhấp để chọn file PDF
+            </span>
             <span className="mt-1 text-xs text-slate-500">
               {state.file?.name ?? "Chưa có file nào được chọn"}
             </span>
@@ -686,7 +847,9 @@ function ToolPanel({
               className="hidden"
               type="file"
               accept="application/pdf,.pdf"
-              onChange={(event) => onFileChange(event.target.files?.[0] ?? null)}
+              onChange={(event) =>
+                onFileChange(event.target.files?.[0] ?? null)
+              }
             />
           </label>
 
@@ -695,7 +858,11 @@ function ToolPanel({
             disabled={!state.file || state.busy}
             className="mt-4 w-full inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {state.busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <FlaskConical className="h-4 w-4" />}
+            {state.busy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <FlaskConical className="h-4 w-4" />
+            )}
             {buttonText}
           </button>
 
@@ -768,11 +935,23 @@ export default function PdfTransformPage() {
     };
   }, []);
 
-  const setResultUrl = (tool: ToolKey, url: string, fileName: string, logs: string[]) => {
+  const setResultUrl = (
+    tool: ToolKey,
+    url: string,
+    fileName: string,
+    logs: string[],
+  ) => {
     currentUrls.current.push(url);
     const updater = (prev: ToolState): ToolState => {
       if (prev.resultUrl) URL.revokeObjectURL(prev.resultUrl);
-      return { ...prev, busy: false, error: null, logs, resultUrl: url, resultName: fileName };
+      return {
+        ...prev,
+        busy: false,
+        error: null,
+        logs,
+        resultUrl: url,
+        resultName: fileName,
+      };
     };
     if (tool === "nipt") setNiptState(updater);
     else setCarrierState(updater);
@@ -781,7 +960,14 @@ export default function PdfTransformPage() {
   const setFileForTool = (tool: ToolKey, file: File | null) => {
     const updater = (prev: ToolState): ToolState => {
       if (prev.resultUrl) URL.revokeObjectURL(prev.resultUrl);
-      return { ...prev, file, error: null, logs: [], resultUrl: null, resultName: null };
+      return {
+        ...prev,
+        file,
+        error: null,
+        logs: [],
+        resultUrl: null,
+        resultName: null,
+      };
     };
     if (tool === "nipt") setNiptState(updater);
     else setCarrierState(updater);
@@ -805,19 +991,26 @@ export default function PdfTransformPage() {
     else setCarrierState(setBusy);
 
     try {
-      const outputBytes = tool === "nipt"
-        ? await transformNiptPdf(sourceState.file, pushLog)
-        : await transformCarrierPdf(sourceState.file, pushLog);
+      const outputBytes =
+        tool === "nipt"
+          ? await transformNiptPdf(sourceState.file, pushLog)
+          : await transformCarrierPdf(sourceState.file, pushLog);
 
       const safeBaseName = sourceState.file.name.replace(/\.pdf$/i, "");
-      const outputName = tool === "nipt"
-        ? `${safeBaseName}__nipt-cat-truoc-ket-luan.pdf`
-        : `${safeBaseName}__carrier-15-gen.pdf`;
+      const outputName =
+        tool === "nipt"
+          ? `${safeBaseName}__nipt-cat-truoc-ket-luan.pdf`
+          : `${safeBaseName}__carrier-15-gen.pdf`;
 
       const url = bytesToObjectUrl(outputBytes);
-      setResultUrl(tool, url, outputName, ["Bắt đầu xử lý...", ...logs, "Hoàn tất."]);
+      setResultUrl(tool, url, outputName, [
+        "Bắt đầu xử lý...",
+        ...logs,
+        "Hoàn tất.",
+      ]);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Đã có lỗi không xác định.";
+      const message =
+        error instanceof Error ? error.message : "Đã có lỗi không xác định.";
       const updater = (prev: ToolState): ToolState => ({
         ...prev,
         busy: false,
@@ -835,23 +1028,31 @@ export default function PdfTransformPage() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex flex-col items-start gap-4 border-b border-slate-200 pb-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Xử lý PDF Xét nghiệm</h1>
-            <p className="text-sm text-slate-500">Công cụ cắt và format chuẩn kết quả</p>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Xử lý PDF Xét nghiệm
+            </h1>
+            <p className="text-sm text-slate-500">
+              Công cụ cắt và format chuẩn kết quả
+            </p>
           </div>
-          
+
           <div className="flex gap-2 rounded-lg bg-slate-200/50 p-1">
             <button
               onClick={() => setActiveTool("nipt")}
               className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
-                activeTool === "nipt" ? "bg-white text-blue-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
+                activeTool === "nipt"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
-             PHIẾU KQ NIPT 
+              PHIẾU KQ NIPT
             </button>
             <button
               onClick={() => setActiveTool("carrier")}
               className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
-                activeTool === "carrier" ? "bg-white text-blue-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
+                activeTool === "carrier"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               LỌC 15 GEN LẶN
