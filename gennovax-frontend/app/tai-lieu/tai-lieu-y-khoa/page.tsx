@@ -15,7 +15,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 p-8 font-sans">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-gray-800">
-          Medical Documentation Library
+          Tài Liệu Y Khoa
         </h1>
 
         {/* Ô Tìm kiếm */}

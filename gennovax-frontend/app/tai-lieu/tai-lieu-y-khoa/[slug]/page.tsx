@@ -32,7 +32,7 @@ export default function DetailPage() {
           href="/tai-lieu/tai-lieu-y-khoa"
           className="text-blue-600 hover:underline mb-6 inline-block"
         >
-          &larr; Back to Library
+          &larr; Quay lại trang trước
         </Link>
 
         {/* Title */}

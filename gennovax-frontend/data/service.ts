@@ -81,7 +81,7 @@ export const ServicesData: PackageDetails[] = [
     description:
       "Áp dụng khi thai phụ xét nghiệm NIPT Dương Tính với 1 trong 21 gen lặn. Dùng để xét nghiệm cho chồng.",
     returnTime: "5-7 ngày làm việc",
-    price: 900000,
+    price: 1000000,
     category: "GENE",
   },
   // === HPV ===

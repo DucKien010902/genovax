@@ -22,6 +22,7 @@ export const menuData: MenuItem[] = [
       { label: "Các gói xét nghiệm", href: "/dich-vu" },
       { label: "Xét nghiệm NIPT", href: "/dich-vu/NIPT" },
       { label: "Xét nghiệm ADN", href: "/dich-vu/DNA" },
+      { label: "Xét nghiệm HPV", href: "/dich-vu/HPV" },
     ],
   },
   {

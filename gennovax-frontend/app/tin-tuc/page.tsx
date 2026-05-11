@@ -70,7 +70,9 @@ const NewsCard = ({ item }: { item: ArticleItem }) => {
 
         {/* CONTENT */}
         <div className="w-full md:w-[55%] p-5 flex flex-col justify-between">
-          <div>
+          <div
+          onClick={() => router.push(`/tin-tuc/${item.slug}`)}
+          >
             <div className="hidden md:flex items-center gap-1 text-sm text-gray-500 mb-2">
               <Tag className="w-4 h-4" />
               <span className="line-clamp-1">{item.tags.join(", ")}</span>

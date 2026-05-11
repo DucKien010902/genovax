@@ -170,4 +170,159 @@ export const patauArticle = [
       },
     ],
   },
+  {
+    id: "dau-hieu-nhiem-hpv-o-phu-nu",
+    slug: "dau-hieu-nhiem-hpv-o-phu-nu-dung-doi-den-khi-co-trieu-chung-moi-tam-soat",
+
+    // --- Dữ liệu cho Card (Trang danh sách) ---
+    title:
+      "Dấu hiệu nhiễm HPV ở phụ nữ: Đừng đợi đến khi có triệu chứng mới tầm soát!",
+    date: "Ngày 27/11/2025",
+    author: "GennovaX Medical Team",
+    tags: ["Y học thường thức", "HPV", "Ung thư cổ tử cung", "Tầm soát phụ khoa"],
+    imageMain:
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1778139116/HPV_l9a8ob.png",
+    imageBgr: "https://img.freepik.com/vector-mien-phi/hinh-anh-minh-hoa-nen-gradient-xanh-duong_53876-116696.jpg?semt=ais_hybrid&w=740&q=80",
+    excerpt:
+      "Virus HPV là nguyên nhân hàng đầu gây ra hơn 99% các ca ung thư cổ tử cung. Tuy nhiên, hầu hết các trường hợp nhiễm HPV giai đoạn đầu đều không có triệu chứng rõ ràng. Bài viết giúp phụ nữ nhận diện những dấu hiệu thầm lặng và chủ động tầm soát để bảo vệ sức khỏe.",
+
+    // --- Dữ liệu chi tiết (Trang chi tiết) ---
+    content: [
+      {
+        heading: "Dấu hiệu nhiễm HPV ở phụ nữ: đừng đợi đến khi có triệu chứng mới tầm soát!",
+        body: `Virus HPV (Human Papillomavirus) là nguyên nhân hàng đầu gây ra hơn 99% các ca ung thư cổ tử cung. Tuy nhiên, một sự thật đáng lo ngại là hầu hết các trường hợp nhiễm HPV giai đoạn đầu đều không có triệu chứng rõ ràng.
+
+Cùng GennovaX nhận diện những dấu hiệu thầm lặng và cách bảo vệ bản thân chủ động nhất trong bài viết dưới đây.`,
+      },
+      {
+        heading: "1. Tại sao nhiễm HPV thường \"vô hình\"?",
+        body: `Phần lớn các chủng HPV, đặc biệt là các chủng nguy cơ cao như HPV 16 và HPV 18, thường chung sống hòa bình trong cơ thể mà không gây ra bất kỳ đau đớn hay biểu hiện lạ nào.
+
+Hệ miễn dịch có thể tự loại bỏ virus. Tuy nhiên, nếu virus tồn tại dai dẳng, chúng có thể âm thầm biến đổi tế bào biểu mô cổ tử cung thành tế bào ung thư sau 5-10 năm.`,
+      },
+      {
+        heading: "2. Những dấu hiệu nhận biết HPV phổ biến",
+        body: `Mặc dù giai đoạn đầu thường thầm lặng, bạn cần đi kiểm tra ngay nếu xuất hiện các dấu hiệu sau:
+
+**Mụn cóc sinh dục (Sùi mào gà)**
+
+Đây là biểu hiện đặc trưng của các chủng HPV nhóm nguy cơ thấp, như chủng HPV 6 và HPV 11.
+
+- **Hình dạng:** Các u nhú nhỏ, nốt sần sùi hoặc phẳng, mọc đơn lẻ hoặc tập trung thành cụm có hình dạng như súp lơ hoặc mào gà.
+- **Vị trí:** Xuất hiện tại âm hộ, thành âm đạo, khu vực xung quanh cơ quan sinh dục hoặc hậu môn.
+- **Cảm giác:** Thường không đau nhưng có thể gây ngứa, khó chịu hoặc chảy máu nhẹ khi quan hệ.
+
+**Các dấu hiệu bất thường tại vùng kín**
+
+Khi virus HPV bắt đầu gây ra những biến đổi nghiêm trọng tại cổ tử cung, cơ thể có thể phát đi các tín hiệu:
+
+- **Khí hư bất thường:** Dịch tiết âm đạo ra nhiều, có mùi hôi hoặc màu sắc lạ như vàng, xanh, hoặc có lẫn máu.
+- **Chảy máu âm đạo bất thường:** Chảy máu giữa chu kỳ kinh nguyệt, sau khi quan hệ tình dục hoặc sau khi mãn kinh.
+- **Đau vùng chậu:** Cảm giác đau âm ỉ hoặc đau rát khi quan hệ tình dục mà không rõ nguyên nhân.`,
+      },
+      {
+        heading: "3. Đối tượng nào có nguy cơ cao nhiễm HPV?",
+        body: `Bất kỳ ai đã từng có quan hệ tình dục đều có nguy cơ nhiễm HPV ít nhất một lần trong đời. Tuy nhiên, nguy cơ sẽ cao hơn nếu:
+
+- Có nhiều bạn tình hoặc bạn tình có đời sống tình dục phức tạp.
+- Quan hệ tình dục sớm khi cơ quan sinh sản chưa hoàn thiện.
+- Hệ miễn dịch suy yếu.`,
+      },
+      {
+        heading: "4. Giải pháp từ GennovaX: Tầm soát hiện đại - An tâm tuyệt đối",
+        body: `Vì triệu chứng thường chỉ xuất hiện khi bệnh đã tiến triển, việc chủ động tầm soát là "chìa khóa vàng" để bảo vệ sức khỏe.
+
+GennovaX mang đến giải pháp định danh chính xác 40 chủng HPV. Không chỉ dừng lại ở các chủng phổ biến, công nghệ Real-time PCR tại GennovaX cho phép quét sạch và định danh tới 40 chủng HPV, bao gồm cả nhóm nguy cơ cao và nguy cơ thấp, giúp bạn nắm rõ tình trạng sức khỏe của chính mình.
+
+Đừng đợi đến khi cơ thể lên tiếng mới bắt đầu hành động. Hãy liên hệ ngay với GennovaX để bảo vệ bản thân trước nguy cơ HPV.
+
+GennovaX
+
+5 phút tầm soát - 5 năm an tâm`,
+      },
+    ],
+  },
+  {
+    id: "tam-soat-ung-thu-co-tu-cung",
+    slug: "tam-soat-ung-thu-co-tu-cung-chia-khoa-bao-ve-phu-nu-trong-ky-nguyen-moi",
+
+    // --- Dữ liệu cho Card (Trang danh sách) ---
+    title:
+      "Tầm soát Ung thư Cổ tử cung: Chìa khóa bảo vệ phụ nữ trong kỷ nguyên mới.",
+    date: "Ngày 27/11/2025",
+    author: "GennovaX Medical Team",
+    tags: ["Y học thường thức", "Ung thư cổ tử cung", "HPV DNA", "Tầm soát phụ khoa"],
+    imageMain:
+      "https://res.cloudinary.com/da6f4dmql/image/upload/v1778139188/tim-hieu-qua-trinh-tam-soat-ung-thu-co-tu-cung-co-dau-khong-2_prqvq8.jpg",
+    imageBgr: "https://img.freepik.com/vector-mien-phi/hinh-anh-minh-hoa-nen-gradient-xanh-duong_53876-116696.jpg?semt=ais_hybrid&w=740&q=80",
+    excerpt:
+      "Ung thư cổ tử cung không phải là án tử nếu được phát hiện sớm. Đây là loại ung thư có thể phòng ngừa và loại bỏ gần như hoàn toàn nhờ tầm soát định kỳ. Bài viết cung cấp thông tin về lý do cần tầm soát, các phương pháp phổ biến, thời điểm nên bắt đầu và giải pháp tầm soát hiện đại tại GennovaX.",
+
+    // --- Dữ liệu chi tiết (Trang chi tiết) ---
+    content: [
+      {
+        heading:
+          "Tầm Soát Ung Thư Cổ Tử Cung: \"Chìa Khóa\" Bảo Vệ Phụ Nữ Trong Kỷ Nguyên Mới",
+        body: `Ung thư cổ tử cung (UTCTC) không phải là "án tử" nếu được phát hiện sớm. Thực tế, đây là loại ung thư duy nhất có thể phòng ngừa và loại bỏ gần như hoàn toàn nhờ vào việc tầm soát định kỳ.
+
+Tuy nhiên, nên tầm soát khi nào? Phương pháp nào là tối ưu nhất?
+
+Hãy cùng GennovaX tìm hiểu tất cả những điều cần biết về tầm soát UTCTC trong bài viết dưới đây.`,
+      },
+      {
+        heading: "1. Tại sao phải tầm soát ung thư cổ tử cung?",
+        body: `Hơn 99% ca ung thư cổ tử cung có liên quan đến nhiễm virus HPV dai dẳng. Loại ung thư này diễn tiến rất thầm lặng, thường mất từ 5 đến 10 năm để các tế bào bình thường biến đổi thành ác tính.
+
+- **Giai đoạn sớm:** Hầu như không có triệu chứng.
+- **Giai đoạn muộn:** Xuất hiện tình trạng chảy máu, đau đớn, việc điều trị cực kỳ tốn kém và tỷ lệ sống sót thấp.
+
+Tầm soát chính là cách để "chặn đứng" virus ngay từ khi chúng chưa kịp gây ra tổn thương.`,
+      },
+      {
+        heading: "2. Các phương pháp tầm soát phổ biến hiện nay",
+        body: `Hiện nay y khoa có 3 phương pháp chính, mỗi phương pháp có ưu và nhược điểm riêng:
+
+**A. Xét nghiệm tế bào học (Pap Smear/ThinPrep)**
+
+- **Cách làm:** Bác sĩ lấy tế bào bề mặt cổ tử cung để soi dưới kính hiển vi tìm tế bào biến đổi.
+- **Hạn chế:** Chỉ phát hiện khi tế bào đã có biến đổi. Tỷ lệ bỏ sót, hay âm tính giả, có thể lên đến 30-40%.
+
+**B. Xét nghiệm HPV DNA (Phương pháp hiện đại nhất)**
+
+- **Cách làm:** Sử dụng công nghệ Real-time PCR để tìm trực tiếp vật chất di truyền (DNA) của virus HPV.
+- **Ưu điểm:** Độ nhạy cực cao, khoảng 95-99%. Phát hiện virus ngay cả khi tế bào chưa bị tổn thương. Đây được coi là phương pháp dự báo nguy cơ trong tương lai.
+
+**C. Phương pháp kết hợp (Co-testing)**
+
+Sử dụng cả tế bào học và HPV DNA để tăng tối đa độ chính xác.`,
+      },
+      {
+        heading: "3. Khi nào bạn cần bắt đầu tầm soát?",
+        body: `Theo hướng dẫn của Bộ Y tế và các tổ chức y tế thế giới như WHO/ASCCP:
+
+- **Phụ nữ từ 21 tuổi hoặc sau khi có quan hệ tình dục:** Nên bắt đầu thực hiện tầm soát.
+- **Phụ nữ từ 25 - 65 tuổi:** Ưu tiên xét nghiệm HPV DNA mỗi 3-5 năm một lần.
+- **Sau 65 tuổi:** Có thể ngừng tầm soát nếu các kết quả trước đó đều âm tính liên tục.`,
+      },
+      {
+        heading:
+          "4. GennovaX - Định nghĩa lại tiêu chuẩn tầm soát ung thư cổ tử cung",
+        body: `Trong bối cảnh tỷ lệ mắc ung thư cổ tử cung tại Việt Nam vẫn ở mức cao, GennovaX thực hiện sứ mệnh chuẩn hóa quy trình tầm soát thông qua việc ứng dụng công nghệ sinh học phân tử tiên tiến.
+
+Chúng tôi không chỉ cung cấp một xét nghiệm, mà cung cấp một giải pháp chẩn đoán toàn diện, thay đổi cách tiếp cận truyền thống vốn còn nhiều hạn chế.
+
+Khác biệt cốt lõi của GennovaX nằm ở việc sử dụng hệ thống Real-time PCR (Phản ứng chuỗi Polymerase thời gian thực). Đây là kỹ thuật cho phép nhân bản và phát hiện các đoạn DNA đặc hiệu của virus HPV với độ nhạy lâm sàng lên đến 95-99%.
+
+Kết hợp với công nghệ Cell và Thin giúp tạo nên quy trình "Co-testing" hoàn hảo: trong khi xét nghiệm HPV DNA của GennovaX truy tìm nguyên nhân, tức sự hiện diện của virus, thì công nghệ Cell và Thin giúp xác định hậu quả, tức các tổn thương thực thể trên tế bào.
+
+Điều này không chỉ nâng cao độ nhạy lâm sàng, giảm thiểu tối đa tỷ lệ âm tính giả mà còn giúp bác sĩ phân tầng nguy cơ chính xác, từ đó đưa ra lộ trình theo dõi hoặc can thiệp phù hợp nhất cho từng bệnh nhân.
+
+Đừng đợi đến khi cơ thể lên tiếng mới bắt đầu hành động. Hãy liên hệ ngay với GennovaX để bảo vệ bản thân trước nguy cơ HPV.
+
+GennovaX
+
+5 phút tầm soát - 5 năm an tâm`,
+      },
+    ],
+  },
 ];

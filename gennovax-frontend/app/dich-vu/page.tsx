@@ -1,4 +1,3 @@
-// src/components/Services.tsx
 "use client";
 
 import React, { useMemo, useState } from "react";
@@ -55,11 +54,7 @@ function cn(...s: Array<string | false | undefined>) {
 }
 
 /* =======================
-2) Card (Medical-clean)
-- FIX: Button luôn thẳng hàng trong cùng row:
-  + <article> => flex flex-col
-  + Body => flex-1
-  + Footer => mt-auto shrink-0
+2) Card
 ======================= */
 const PackageCard: React.FC<{
   pkg: PackageDetails;
@@ -74,60 +69,52 @@ const PackageCard: React.FC<{
         flex flex-col
       "
     >
-      {/* Accent line */}
       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500" />
 
-      {/* Header */}
-      <div className="p-5 sm:p-6 bg-gradient-to-b from-blue-50/60 to-white border-b border-blue-900/5">
-        <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug line-clamp-2 min-h-[2.75rem]">
+      <div className="border-b border-blue-900/5 bg-gradient-to-b from-blue-50/60 to-white p-5 sm:p-6">
+        <h3 className="min-h-[2.75rem] line-clamp-2 text-base font-bold leading-snug text-slate-900 sm:text-lg">
           {pkg.name}
         </h3>
 
         <div className="mt-3 flex items-center justify-between gap-3">
-          <div className="inline-flex items-center gap-2 rounded-2xl bg-white px-3 py-2 ring-1 ring-blue-900/10 shadow-sm">
+          <div className="inline-flex items-center gap-2 rounded-2xl bg-white px-3 py-2 shadow-sm ring-1 ring-blue-900/10">
             <CashCoin className="text-blue-700" />
-            <span className="text-sm sm:text-base font-extrabold text-blue-800">
+            <span className="text-sm font-extrabold text-blue-800 sm:text-base">
               {formatCurrency(pkg.price)}
             </span>
           </div>
 
-          <span className="hidden sm:inline-flex rounded-full bg-blue-600/10 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-900/10">
+          <span className="hidden rounded-full bg-blue-600/10 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-900/10 sm:inline-flex">
             Dịch vụ xét nghiệm
           </span>
         </div>
       </div>
 
-      {/* Body */}
-      <div className="p-5 sm:p-6 flex flex-col gap-4 flex-1">
-        {/* Meta chips */}
+      <div className="flex flex-1 flex-col gap-4 p-5 sm:p-6">
         <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 text-xs sm:text-sm text-slate-700 ring-1 ring-slate-900/5">
+          <span className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 text-xs text-slate-700 ring-1 ring-slate-900/5 sm:text-sm">
             <ClockFill className="text-blue-600" />
             <span className="font-medium">{pkg.returnTime}</span>
           </span>
 
           {pkg.targetAudience && (
-            <span className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 text-xs sm:text-sm text-slate-700 ring-1 ring-slate-900/5">
+            <span className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 text-xs text-slate-700 ring-1 ring-slate-900/5 sm:text-sm">
               <PersonFill className="text-emerald-600" />
-              <span className="font-medium line-clamp-1">
-                {pkg.targetAudience}
-              </span>
+              <span className="line-clamp-1 font-medium">{pkg.targetAudience}</span>
             </span>
           )}
         </div>
 
-        {/* Description */}
         <div className="flex items-start gap-2.5">
-          <CheckCircleFill className="mt-0.5 text-emerald-600 shrink-0" />
-          <p className="text-sm sm:text-[15px] text-slate-600 leading-relaxed line-clamp-3">
+          <CheckCircleFill className="mt-0.5 shrink-0 text-emerald-600" />
+          <p className="line-clamp-3 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
             {pkg.description}
           </p>
         </div>
 
-        {/* Options */}
         {pkg.options && pkg.options.length > 0 && (
-          <div className="rounded-2xl bg-blue-50/50 ring-1 ring-blue-900/10 overflow-hidden">
-            <div className="px-4 py-3 flex items-center gap-2 bg-white/70">
+          <div className="overflow-hidden rounded-2xl bg-blue-50/50 ring-1 ring-blue-900/10">
+            <div className="flex items-center gap-2 bg-white/70 px-4 py-3">
               <PlusCircleFill className="text-blue-700" />
               <span className="text-sm font-semibold text-slate-900">
                 Tuỳ chọn dịch vụ
@@ -138,12 +125,12 @@ const PackageCard: React.FC<{
               {pkg.options.map((opt) => (
                 <div
                   key={opt.name}
-                  className="px-4 py-3 flex items-start justify-between gap-3"
+                  className="flex items-start justify-between gap-3 px-4 py-3"
                 >
-                  <div className="text-sm text-slate-700 font-medium leading-snug">
+                  <div className="text-sm font-medium leading-snug text-slate-700">
                     {opt.name}
                   </div>
-                  <div className="text-sm font-extrabold text-orange-600 whitespace-nowrap">
+                  <div className="whitespace-nowrap text-sm font-extrabold text-orange-600">
                     {formatCurrency(opt.price)}
                   </div>
                 </div>
@@ -153,27 +140,21 @@ const PackageCard: React.FC<{
         )}
       </div>
 
-      {/* Footer */}
-      <div className="mt-auto shrink-0 p-5 sm:p-6 bg-slate-50/70 border-t border-blue-900/5">
+      <div className="mt-auto shrink-0 border-t border-blue-900/5 bg-slate-50/70 p-5 sm:p-6">
         <button
           onClick={() => onBook(pkg)}
           type="button"
           className="
-            w-full inline-flex items-center justify-center gap-2
-            rounded-2xl px-4 py-3 text-sm font-semibold
-            text-white shadow-sm
-            bg-gradient-to-r from-blue-600 to-blue-800
-            hover:from-blue-700 hover:to-blue-900
+            inline-flex w-full items-center justify-center gap-2 rounded-2xl
+            bg-gradient-to-r from-blue-600 to-blue-800 px-4 py-3 text-sm font-semibold text-white shadow-sm
+            transition hover:from-blue-700 hover:to-blue-900
             focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-2
-            transition
           "
         >
           <CalendarCheckFill className="shrink-0" />
           Đặt hẹn tư vấn
         </button>
 
-        {/* Nếu vẫn lệch do dòng này xuống 2 dòng ở card khác nhau,
-            có thể thêm: min-h-[1rem] hoặc line-clamp-1 */}
         <p className="mt-3 text-center text-xs text-slate-500">
           Tư vấn nhanh • Bảo mật thông tin • Hỗ trợ chuyên môn
         </p>
@@ -192,6 +173,7 @@ const Services: React.FC = () => {
 
   const filteredPackages = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
+
     return ServicesData.filter((pkg) => {
       if (category !== "ALL" && pkg.category !== category) return false;
       if (q && !pkg.name.toLowerCase().includes(q)) return false;
@@ -202,99 +184,133 @@ const Services: React.FC = () => {
   return (
     <section className="bg-white">
       {/* HERO */}
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden bg-[#1E3A8A]">
+  {/* Base gradient */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.16),transparent_28%),radial-gradient(circle_at_85%_20%,rgba(191,219,254,0.10),transparent_22%),linear-gradient(135deg,#172554_0%,#1E3A8A_45%,#1E40AF_100%)]" />
+
+  {/* Modern grid */}
+  <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(rgba(255,255,255,0.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.18)_1px,transparent_1px)] [background-size:42px_42px]" />
+
+  {/* Glow blobs */}
+  <div className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-blue-400/20 blur-3xl" />
+  <div className="absolute right-[-80px] top-[-20px] h-80 w-80 rounded-full bg-blue-300/18 blur-3xl" />
+  <div className="absolute bottom-[-100px] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/20 blur-3xl" />
+
+  {/* Decorative glass cards */}
+  {/* <div className="pointer-events-none absolute left-[8%] top-[20%] hidden h-24 w-24 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl lg:block" />
+  <div className="pointer-events-none absolute right-[12%] top-[24%] hidden h-16 w-40 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl lg:block" />
+  <div className="pointer-events-none absolute bottom-[18%] right-[18%] hidden h-20 w-20 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl lg:block" /> */}
+
+  <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
+    <div className="mx-auto max-w-4xl text-center">
+      <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 shadow-sm backdrop-blur-md">
+        <span className="h-2 w-2 rounded-full bg-blue-200 shadow-[0_0_16px_rgba(191,219,254,0.9)]" />
+        <span className="text-xs font-semibold text-white/85 sm:text-sm">
+          Dịch vụ xét nghiệm • Y tế di truyền
+        </span>
+      </div>
+
+      <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-6xl">
+        Dịch vụ xét nghiệm
+      </h1>
+
+      <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/75 sm:text-base lg:text-lg">
+        Chọn gói phù hợp, tra cứu nhanh dịch vụ và nhận tư vấn chuyên môn
+        theo cách trực quan, hiện đại và dễ sử dụng hơn.
+      </p>
+
+      {/* Search panel */}
+      <div className="mt-8 sm:mt-10">
         <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://res.cloudinary.com/da6f4dmql/image/upload/v1765357565/dna-strand_1_1_1_1_icogbd.png')",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-950/70 via-blue-950/50 to-blue-950/70" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_55%)]" />
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 ring-1 ring-white/20 backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-cyan-300" />
-              <span className="text-xs sm:text-sm font-semibold text-white/90">
-                Dịch vụ xét nghiệm • Y tế di truyền
-              </span>
+          className="
+            mx-auto max-w-4xl rounded-[32px]
+            border border-blue-300/20
+            bg-[linear-gradient(135deg,#1E3A8A_0%,#1E40AF_42%,#1D4ED8_100%)]
+            p-3 sm:p-4
+            shadow-[0_24px_80px_rgba(37,99,235,0.30)]
+          "
+        >
+          <div className="relative">
+            <div className="absolute inset-0 rounded-[24px] bg-gradient-to-r from-blue-300/12 via-sky-200/10 to-white/10 blur-2xl" />
+            <div className="relative">
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                size={18}
+              />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Tìm kiếm dịch vụ (ví dụ: NIPT, ADN, HPV...)"
+                className="
+                  h-14 w-full rounded-2xl border border-white/80 bg-white
+                  pl-12 pr-4 text-sm text-slate-800
+                  shadow-[0_10px_30px_rgba(15,23,42,0.12)]
+                  outline-none
+                  placeholder:text-slate-400
+                  transition-all duration-300
+                  focus:border-blue-200 focus:bg-white focus:ring-4 focus:ring-blue-200/35
+                  sm:h-16 sm:text-base
+                "
+              />
             </div>
+          </div>
 
-            <h1 className="mt-4 text-2xl sm:text-3xl lg:text-5xl font-extrabold tracking-tight text-white">
-              Dịch vụ xét nghiệm
-            </h1>
+          <div className="mt-4 flex flex-wrap justify-center gap-2.5">
+            {categories.map((cat) => {
+              const active = category === cat.key;
 
-            <p className="mt-3 text-sm sm:text-base lg:text-lg text-white/85 leading-relaxed">
-              Chọn gói phù hợp, nhận tư vấn chuyên môn nhanh chóng và bảo mật.
-            </p>
-
-            {/* Search */}
-            <div className="mt-7 sm:mt-8">
-              <div className="relative mx-auto max-w-3xl">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Tìm kiếm (ví dụ: NIPT, ADN, HPV...)"
-                  className="
-                    w-full pl-12 pr-4 py-4 rounded-2xl
-                    bg-white/10 text-white placeholder-white/70
-                    ring-1 ring-white/25 shadow-sm backdrop-blur
-                    focus:outline-none focus:ring-2 focus:ring-cyan-200/70
-                    text-sm sm:text-base
-                  "
-                />
-                <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/85"
-                  size={18}
-                />
-              </div>
-
-              {/* Category chips */}
-              <div className="mt-5 flex flex-wrap justify-center gap-2">
-                {categories.map((cat) => {
-                  const active = category === cat.key;
-                  return (
-                    <button
-                      key={cat.key}
-                      onClick={() => setCategory(cat.key)}
-                      type="button"
-                      className={cn(
-                        "inline-flex items-center gap-2 rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition",
-                        "ring-1 ring-white/20 backdrop-blur",
-                        active
-                          ? "bg-white text-blue-800 shadow-sm"
-                          : "bg-white/10 text-white hover:bg-white/15",
-                      )}
-                    >
-                      <span>{cat.name}</span>
-                      <span
-                        className={cn(
-                          "min-w-[32px] text-center rounded-full px-2 py-0.5 text-[11px]",
-                          active
-                            ? "bg-blue-600/10 text-blue-800"
-                            : "bg-white/15 text-white",
-                        )}
-                      >
-                        {cat.count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+              return (
+                <button
+                  key={cat.key}
+                  onClick={() => setCategory(cat.key)}
+                  type="button"
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-semibold transition-all duration-300 sm:px-4 sm:text-sm",
+                    active
+                      ? "border-white bg-white text-blue-700 shadow-[0_8px_24px_rgba(255,255,255,0.16)]"
+                      : "border-white/15 bg-white/10 text-white backdrop-blur-md hover:border-white/25 hover:bg-white/16",
+                  )}
+                >
+                  <span>{cat.name}</span>
+                  <span
+                    className={cn(
+                      "min-w-[30px] rounded-full px-2 py-0.5 text-[11px]",
+                      active
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-white/10 text-white/90",
+                    )}
+                  >
+                    {cat.count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-white/55 sm:text-sm">
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md">
+          Tư vấn nhanh
+        </span>
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md">
+          Bảo mật thông tin
+        </span>
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md">
+          Giao diện tra cứu trực quan
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
       {/* LIST */}
-      <div className="relative py-10 lg:py-16 bg-gradient-to-b from-slate-50 to-white">
+      <div className="relative bg-gradient-to-b from-slate-50 to-white py-10 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+              <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
                 Danh sách dịch vụ
               </h2>
               <p className="text-sm text-slate-600">
@@ -308,17 +324,17 @@ const Services: React.FC = () => {
           </div>
 
           {filteredPackages.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8 xl:grid-cols-3">
               {filteredPackages.map((pkg) => (
                 <PackageCard key={pkg.id} pkg={pkg} onBook={setSelectedPkg} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-10 px-6 bg-white rounded-3xl ring-1 ring-blue-900/10 shadow-sm max-w-lg mx-auto">
+            <div className="mx-auto max-w-lg rounded-3xl bg-white px-6 py-10 text-center shadow-sm ring-1 ring-blue-900/10">
               <h3 className="text-lg font-semibold text-slate-900">
                 Không tìm thấy dịch vụ phù hợp
               </h3>
-              <p className="text-slate-600 mt-2">
+              <p className="mt-2 text-slate-600">
                 Vui lòng thử đổi danh mục hoặc từ khóa tìm kiếm.
               </p>
             </div>
@@ -329,7 +345,6 @@ const Services: React.FC = () => {
       <ConsultationModal
         isOpen={!!selectedPkg}
         onClose={() => setSelectedPkg(null)}
-        // defaultService={selectedPkg?.name}
       />
     </section>
   );
