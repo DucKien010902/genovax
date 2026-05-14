@@ -149,7 +149,7 @@ export default function CasesPage() {
     if (!d.salesOwner?.trim()) errs.push("Thiếu NVKD phụ trách.");
     if (!d.serviceCode?.trim()) errs.push("Chưa chọn dịch vụ (mã).");
     if (!d.serviceName?.trim()) errs.push("Chưa có tên dịch vụ.");
-    if (!d.collectedAmount || d.collectedAmount <= 0)
+    if (!d.collectedAmount || d.collectedAmount < 0)
       errs.push("Tiền thu chưa được tính (giá = 0).");
     if (!d.transferStatus?.trim()) errs.push("Thiếu trạng thái chuyển lab.");
     if (!d.receiveStatus?.trim()) errs.push("Thiếu trạng thái tiếp nhận.");

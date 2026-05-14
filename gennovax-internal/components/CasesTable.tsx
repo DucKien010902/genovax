@@ -189,7 +189,7 @@ export default function CasesTable({
               <col className="w-[140px]" />
               <col className="w-[140px]" />
               <col className="w-[80px]" />
-              <col className="w-[90px]" />
+              <col className="w-[120px]" />
               <col className="w-[160px]" />
               <col className="w-[64px]" />
               {isAccountingAdmin && <col className="w-[100px]" />}
@@ -378,7 +378,9 @@ export default function CasesTable({
                               ? "rose"
                               : r.serviceType === "ADN"
                                 ? "blue"
-                                : "emerald"
+                                : r.serviceType === "Sàng Lọc UTCTC"
+                                  ? "emerald"
+                                  : "amber"
                           }
                         />
                       </td>
@@ -491,10 +493,6 @@ export default function CasesTable({
         </div>
 
         <div className="flex shrink-0 items-center justify-between border-t border-sky-100 bg-sky-50/50 px-4 py-3 text-[11px] text-slate-500">
-          <div>
-            Tip: Click vào dòng để xem ca (dòng đang chọn màu{" "}
-            <b>xanh lam nhạt</b>). Click vào ô STT để <b>ghim</b>.
-          </div>
           <div>
             Tổng: <b className="text-slate-900">{rows.length}</b>
           </div>

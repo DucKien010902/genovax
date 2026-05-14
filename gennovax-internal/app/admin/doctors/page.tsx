@@ -125,7 +125,7 @@ export default function AdminDoctorsPage() {
         fullName: form.fullName.trim(),
         phone: (form.phone || "").trim(),
         address: (form.address || "").trim(),
-        salesOwner: (form.salesOwner || user?.name || "").trim(),
+        salesOwner: (form.salesOwner ?? "").trim(),
         note: (form.note || "").trim(),
         isActive: form.isActive !== false,
       };
@@ -173,7 +173,7 @@ export default function AdminDoctorsPage() {
     <div className="min-h-[calc(100vh-96px)] bg-[linear-gradient(180deg,#f8fbff_0%,#eef5ff_38%,#ffffff_100%)]">
       {(loading || saving) && <LoadingOverlay isLoading={loading || saving} />}
 
-      <div className="mx-auto max-w-[90%] space-y-6 p-4 sm:p-6">
+      <div className="mx-auto max-w-[95%] space-y-6 p-4 sm:p-6">
         <section className="overflow-hidden rounded-[28px] border border-sky-100 bg-white shadow-[0_24px_80px_-48px_rgba(14,116,144,0.45)]">
           <div className="flex flex-col gap-5 bg-[radial-gradient(circle_at_top_left,#e0f2fe_0,#ffffff_50%)] p-5 sm:p-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-3">
@@ -194,9 +194,8 @@ export default function AdminDoctorsPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-semibold tracking-tight text-sky-700 sm:text-3xl">
-                  Dành cho phòng khám, bác sỹ, CTV  
+                  Dành cho phòng khám, bác sỹ, CTV
                 </h1>
-                
               </div>
             </div>
 
@@ -231,7 +230,9 @@ export default function AdminDoctorsPage() {
         <section className="rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-[0_18px_50px_-38px_rgba(15,23,42,0.35)] sm:p-6">
           <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">Bảng nguồn thu mẫu</div>
+              <div className="text-sm font-semibold text-slate-900">
+                Bảng nguồn thu mẫu
+              </div>
               <div className="mt-1 text-xs text-slate-500">
                 {loading ? "Đang tải..." : `${filteredDoctors.length} nguồn`}
               </div>
@@ -271,14 +272,20 @@ export default function AdminDoctorsPage() {
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredDoctors.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-6 py-12 text-center text-sm text-slate-400">
+                    <td
+                      colSpan={9}
+                      className="px-6 py-12 text-center text-sm text-slate-400"
+                    >
                       Không có dữ liệu phù hợp.
                     </td>
                   </tr>
                 ) : (
                   filteredDoctors.map((doctor, index) => {
                     return (
-                      <tr key={doctor._id} className="transition hover:bg-sky-50/40">
+                      <tr
+                        key={doctor._id}
+                        className="transition hover:bg-sky-50/40"
+                      >
                         <td className="px-4 py-4 text-center font-medium text-slate-400">
                           {index + 1}
                         </td>
@@ -288,7 +295,9 @@ export default function AdminDoctorsPage() {
                           </span>
                         </td>
                         <td className="px-4 py-4">
-                          <div className="font-semibold text-slate-900">{doctor.fullName}</div>
+                          <div className="font-semibold text-slate-900">
+                            {doctor.fullName}
+                          </div>
                         </td>
                         <td className="px-4 py-4">
                           <div className="font-medium text-slate-700">
@@ -320,13 +329,17 @@ export default function AdminDoctorsPage() {
                               Xem
                             </button>
                           ) : (
-                            <span className="text-xs text-slate-400">Không có</span>
+                            <span className="text-xs text-slate-400">
+                              Không có
+                            </span>
                           )}
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex items-center justify-end gap-2">
                             <button
-                              onClick={() => router.push(`/admin/doctors/${doctor._id}`)}
+                              onClick={() =>
+                                router.push(`/admin/doctors/${doctor._id}`)
+                              }
                               className={cn(
                                 "inline-flex h-9 items-center rounded-xl px-3 text-xs font-semibold transition",
                                 actionButtonTone("primary"),
@@ -406,14 +419,18 @@ export default function AdminDoctorsPage() {
               />
               <Field
                 label="NVKD phụ trách"
-                value={form.salesOwner || user.name || ""}
-                onChange={(v) => setForm((prev) => ({ ...prev, salesOwner: v }))}
+                value={form.salesOwner ?? ""}
+                onChange={(v) =>
+                  setForm((prev) => ({ ...prev, salesOwner: v }))
+                }
               />
               {editingId && (
                 <Field
                   label="Mã phòng khám"
                   value={form.agentTierLabel || ""}
-                  onChange={(v) => setForm((prev) => ({ ...prev, agentTierLabel: v }))}
+                  onChange={(v) =>
+                    setForm((prev) => ({ ...prev, agentTierLabel: v }))
+                  }
                 />
               )}
               <div className="md:col-span-2">
@@ -427,7 +444,9 @@ export default function AdminDoctorsPage() {
               <div className="md:col-span-2">
                 <label className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                   <div>
-                    <div className="text-sm font-semibold text-slate-900">Trạng thái hiển thị</div>
+                    <div className="text-sm font-semibold text-slate-900">
+                      Trạng thái hiển thị
+                    </div>
                     <div className="text-xs text-slate-400">
                       Tắt nếu muốn ẩn nguồn khỏi danh sách đang hoạt động.
                     </div>
@@ -436,7 +455,10 @@ export default function AdminDoctorsPage() {
                     type="checkbox"
                     checked={form.isActive !== false}
                     onChange={(e) =>
-                      setForm((prev) => ({ ...prev, isActive: e.target.checked }))
+                      setForm((prev) => ({
+                        ...prev,
+                        isActive: e.target.checked,
+                      }))
                     }
                     className="h-5 w-5 cursor-pointer accent-sky-600"
                   />
@@ -467,8 +489,12 @@ export default function AdminDoctorsPage() {
           <div className="w-full max-w-2xl overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_40px_120px_-48px_rgba(15,23,42,0.55)]">
             <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
               <div>
-                <div className="text-lg font-semibold text-slate-900">Ghi chú phòng khám</div>
-                <div className="mt-1 text-xs text-slate-400">{notePreview.title}</div>
+                <div className="text-lg font-semibold text-slate-900">
+                  Ghi chú phòng khám
+                </div>
+                <div className="mt-1 text-xs text-slate-400">
+                  {notePreview.title}
+                </div>
               </div>
               <button
                 onClick={() => setNotePreview(null)}

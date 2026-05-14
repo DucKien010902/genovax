@@ -16,7 +16,13 @@ import {
 } from "lucide-react";
 
 // 1. Định nghĩa TypeScript Interfaces
-type TestCategory = "ALL" | "NIPT" | "ADN" | "HPV" | "CELL";
+type TestCategory =
+  | "ALL"
+  | "NIPT"
+  | "ADN"
+  | "Sàng Lọc UTCTC"
+  | "Sinh Hóa"
+  | "XN Khác";
 type StockStatus = "IN_STOCK" | "LOW_STOCK" | "OUT_OF_STOCK" | "EXPIRED";
 
 interface InventoryItem {
@@ -59,7 +65,7 @@ const mockData: InventoryItem[] = [
     id: "3",
     name: "Chổi lấy mẫu tế bào cổ tử cung",
     sku: "BRS-HPV-01",
-    category: "HPV",
+    category: "Sàng Lọc UTCTC",
     quantity: 1200,
     unit: "Cái",
     status: "IN_STOCK",
@@ -70,7 +76,7 @@ const mockData: InventoryItem[] = [
     id: "4",
     name: "Lam kính soi tế bào (Slide Glass)",
     sku: "SLD-CEL-05",
-    category: "CELL",
+    category: "Sinh Hóa",
     quantity: 0,
     unit: "Hộp",
     status: "OUT_OF_STOCK",
@@ -234,8 +240,9 @@ export default function InventoryManagementPage() {
               <option value="ALL">Tất cả danh mục</option>
               <option value="NIPT">Xét nghiệm NIPT</option>
               <option value="ADN">Huyết thống (ADN)</option>
-              <option value="HPV">Tầm soát HPV</option>
-              <option value="CELL">Tế bào học (CELL)</option>
+              <option value="Sàng Lọc UTCTC">Sàng Lọc UTCTC</option>
+              <option value="Sinh Hóa">Sinh Hóa</option>
+              <option value="XN Khác">XN Khác</option>
             </select>
           </div>
         </div>

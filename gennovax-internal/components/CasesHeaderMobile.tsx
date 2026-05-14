@@ -124,8 +124,9 @@ export default function CasesHeaderMobile(props: MobileHeaderProps) {
   const serviceOptions: { label: string; value: ServiceType }[] = [
     { label: "NIPT", value: "NIPT" },
     { label: "ADN", value: "ADN" },
-    { label: "HPV", value: "HPV" },
-    { label: "CELL", value: "CELL" },
+    { label: "Sàng Lọc UTCTC", value: "Sàng Lọc UTCTC" },
+    { label: "Sinh Hóa", value: "Sinh Hóa" },
+    { label: "XN Khác", value: "XN Khác" },
   ];
 
   return (

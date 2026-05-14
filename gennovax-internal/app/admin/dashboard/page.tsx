@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import { caseApi } from "@/lib/api";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import { SERVICE_TYPES } from "@/lib/types";
 
 function cn(...a: Array<string | false | null | undefined>) {
   return a.filter(Boolean).join(" ");
@@ -35,21 +36,26 @@ function pct(n: number) {
   return `${Math.round((n || 0) * 100)}%`;
 }
 
-function getRecentMonths(count = 12) {
-  const arr = [];
-  const d = new Date();
-  for (let i = 0; i < count; i++) {
-    const m = d.getMonth() + 1;
-    const y = d.getFullYear();
-    arr.push(`${y}-${m.toString().padStart(2, "0")}`);
-    d.setMonth(d.getMonth() - 1);
+function getMonthsSince(startYm = "2025-05") {
+  const [startYear, startMonth] = startYm.split("-").map(Number);
+  const start = new Date(startYear, startMonth - 1, 1);
+  const cursor = new Date();
+  cursor.setDate(1);
+
+  const months: string[] = [];
+  while (cursor >= start) {
+    const year = cursor.getFullYear();
+    const month = String(cursor.getMonth() + 1).padStart(2, "0");
+    months.push(`${year}-${month}`);
+    cursor.setMonth(cursor.getMonth() - 1);
   }
-  return arr;
+
+  return months;
 }
 
 const MONTH_OPTIONS = [
   { label: "Tất cả thời gian", value: "ALL" },
-  ...getRecentMonths().map((m) => ({
+  ...getMonthsSince("2025-05").map((m) => ({
     label: `Tháng ${m.split("-")[1]}/${m.split("-")[0]}`,
     value: m,
   })),
@@ -57,10 +63,7 @@ const MONTH_OPTIONS = [
 
 const SERVICE_OPTIONS = [
   { label: "Tất cả dịch vụ", value: "" },
-  { label: "NIPT", value: "NIPT" },
-  { label: "ADN", value: "ADN" },
-  { label: "HPV", value: "HPV" },
-  { label: "CELL", value: "CELL" },
+  ...SERVICE_TYPES.map((type) => ({ label: type, value: type })),
 ];
 
 const COLOR_NET = "#0ea5e9";
@@ -132,8 +135,9 @@ export default function AdminDashboardPage() {
                     Tổng quan doanh thu và nguồn
                   </h1>
                   <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
-                    Giữ nguyên logic thống kê hiện tại, chỉ đồng bộ lại màu sắc và
-                    chi tiết hiển thị để giống hệ giao diện analytics phòng khám.
+                    Giữ nguyên logic thống kê hiện tại, chỉ đồng bộ lại màu sắc
+                    và chi tiết hiển thị để giống hệ giao diện analytics phòng
+                    khám.
                   </p>
                 </div>
               </div>
@@ -202,7 +206,10 @@ export default function AdminDashboardPage() {
                   <tbody>
                     {bySource.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="py-8 text-center text-slate-400">
+                        <td
+                          colSpan={4}
+                          className="py-8 text-center text-slate-400"
+                        >
                           Không có dữ liệu
                         </td>
                       </tr>
@@ -213,11 +220,15 @@ export default function AdminDashboardPage() {
                           className="border-t border-slate-100 hover:bg-sky-50/40"
                         >
                           <Td className="w-8 text-slate-400">{i + 1}</Td>
-                          <Td className="font-semibold text-slate-900">{x.source}</Td>
+                          <Td className="font-semibold text-slate-900">
+                            {x.source}
+                          </Td>
                           <Td right className="font-semibold text-sky-700">
                             {money(x.netRevenue)}
                           </Td>
-                          <Td right>{x.source.includes("2025") ? "#" : x.cases}</Td>
+                          <Td right>
+                            {x.source.includes("2025") ? "#" : x.cases}
+                          </Td>
                         </tr>
                       ))
                     )}
@@ -245,7 +256,11 @@ export default function AdminDashboardPage() {
                     data={displayMonthlyTrend}
                     margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#dbeafe" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="#dbeafe"
+                    />
                     <XAxis dataKey="ym" tick={{ fontSize: 12 }} />
                     <YAxis
                       tickFormatter={(v) => moneyMil(v)}
@@ -291,8 +306,8 @@ export default function AdminDashboardPage() {
                     Phân tích dịch vụ riêng
                   </h2>
                   <p className="mt-1 text-sm text-slate-500">
-                    So sánh doanh thu và xếp hạng giữa các gói xét nghiệm trong cùng
-                    một loại dịch vụ.
+                    So sánh doanh thu và xếp hạng giữa các gói xét nghiệm trong
+                    cùng một loại dịch vụ.
                   </p>
                 </div>
               </div>
@@ -323,7 +338,11 @@ export default function AdminDashboardPage() {
                     layout="vertical"
                     margin={{ top: 0, right: 50, left: 40, bottom: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#dbeafe" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      horizontal={false}
+                      stroke="#dbeafe"
+                    />
                     <XAxis
                       type="number"
                       tickFormatter={(v) => moneyMil(v)}
@@ -383,7 +402,10 @@ export default function AdminDashboardPage() {
                   <tbody>
                     {byService.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="py-8 text-center text-slate-400">
+                        <td
+                          colSpan={4}
+                          className="py-8 text-center text-slate-400"
+                        >
                           Không có dữ liệu
                         </td>
                       </tr>
@@ -394,7 +416,9 @@ export default function AdminDashboardPage() {
                           className="border-t border-slate-100 hover:bg-sky-50/40"
                         >
                           <Td className="text-xs">{x.serviceCode || "—"}</Td>
-                          <Td className="text-xs">{x.serviceName || "Chưa xác định"}</Td>
+                          <Td className="text-xs">
+                            {x.serviceName || "Chưa xác định"}
+                          </Td>
                           <Td right className="font-semibold text-sky-700">
                             {money(x.netRevenue)}
                           </Td>
@@ -465,7 +489,9 @@ function KpiCard({
       <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
         {title}
       </div>
-      <div className={cn("mt-3 text-2xl font-bold tabular-nums", toneMap[tone])}>
+      <div
+        className={cn("mt-3 text-2xl font-bold tabular-nums", toneMap[tone])}
+      >
         {value}
       </div>
       <div className="mt-1 text-xs text-slate-500">{sub}</div>

@@ -27,14 +27,13 @@ function Select({
   onChange: (v: string) => void;
   items: { label: string; value: string }[];
   placeholder?: string;
-  tone?: "slate" | "blue" | "rose" | "emerald" | "sky";
+  tone?: "slate" | "blue" | "rose" | "sky" | "sky";
   disabled?: boolean;
 }) {
   const toneCls: Record<typeof tone, string> = {
     slate: "border-slate-200 focus:border-sky-300 focus:ring-sky-100",
     blue: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
     rose: "border-rose-200 focus:border-rose-300 focus:ring-rose-100",
-    emerald: "border-emerald-200 focus:border-emerald-300 focus:ring-emerald-100",
     sky: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
   };
 
@@ -104,12 +103,8 @@ function Field({
 
   return (
     <div className="min-w-0">
-      <div className="mb-1.5 text-[11px] font-semibold  tracking-[0.14em] text-slate-400">
-        {isRequired ? (
-          <span className="text-sky-600">{label}</span>
-        ) : (
-          label
-        )}
+      <div className="mb-1.5 text-[11px] font-semibold tracking-[0.14em] text-slate-400">
+        {isRequired ? <span className="text-sky-600">{label}</span> : label}
       </div>
       {children}
     </div>
@@ -126,14 +121,13 @@ function Input({
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  tone?: "slate" | "blue" | "rose" | "emerald" | "sky";
+  tone?: "slate" | "blue" | "rose" | "sky";
   disabled?: boolean;
 }) {
   const toneCls: Record<typeof tone, string> = {
     slate: "border-slate-200 focus:border-sky-300 focus:ring-sky-100",
     blue: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
     rose: "border-rose-200 focus:border-rose-300 focus:ring-rose-100",
-    emerald: "border-emerald-200 focus:border-emerald-300 focus:ring-emerald-100",
     sky: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
   };
 
@@ -163,14 +157,13 @@ function Textarea({
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  tone?: "slate" | "blue" | "rose" | "emerald" | "sky";
+  tone?: "slate" | "blue" | "rose" | "sky" | "sky";
   rows?: number;
 }) {
   const toneCls: Record<typeof tone, string> = {
     slate: "border-slate-200 focus:border-sky-300 focus:ring-sky-100",
     blue: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
     rose: "border-rose-200 focus:border-rose-300 focus:ring-rose-100",
-    emerald: "border-emerald-200 focus:border-emerald-300 focus:ring-emerald-100",
     sky: "border-sky-200 focus:border-sky-300 focus:ring-sky-100",
   };
 
@@ -537,7 +530,10 @@ export default function CaseDrawer({
 
   return (
     <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
       <div className="absolute inset-0 flex items-center justify-center p-4">
         <div
@@ -557,7 +553,7 @@ export default function CaseDrawer({
                 </div>
 
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
-                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-bold text-emerald-700 ring-1 ring-emerald-200">
+                  <span className="rounded-full bg-sky-50 px-2 py-0.5 font-bold text-sky-700 ring-1 ring-sky-200">
                     {agent.level || "Chưa xác định cấp"}
                   </span>
                   <span className="rounded-full bg-sky-50 px-2 py-0.5 font-bold text-sky-700 ring-1 ring-sky-200">
@@ -644,7 +640,7 @@ export default function CaseDrawer({
                       value={form.lab}
                       onChange={(v) => patchForm({ lab: v })}
                       items={opt("labs")}
-                      tone="emerald"
+                      tone="sky"
                     />
                   </Field>
 
@@ -685,7 +681,7 @@ export default function CaseDrawer({
                             ? "Chọn dịch vụ theo nguồn..."
                             : "Chọn nguồn trước..."
                         }
-                        tone="emerald"
+                        tone="sky"
                       />
                     </Field>
 
@@ -701,7 +697,7 @@ export default function CaseDrawer({
                   <Field label="* Tài chính">
                     <div className="rounded-[24px] border border-sky-100 bg-sky-100 p-4">
                       <div className="mb-2 flex items-center justify-between gap-2">
-                        <div className="text-[11px] font-semibold text-emerald-700">
+                        <div className="text-[11px] font-semibold text-sky-700">
                           Thông tin doanh thu {isAccountingAdmin && "& Giá vốn"}
                         </div>
                         <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-bold text-sky-700 ring-1 ring-sky-100">
@@ -763,9 +759,9 @@ export default function CaseDrawer({
                               patchForm({ collectedAmount: n });
                               setCollectedAmountManual(true);
                             }}
-                            tone="emerald"
+                            tone="sky"
                           />
-                          <div className="mt-1 text-[13px] font-bold text-emerald-700">
+                          <div className="mt-1 text-[13px] font-bold text-sky-700">
                             {fmtMoney(form.collectedAmount ?? 0)}
                           </div>
                         </div>
@@ -852,7 +848,7 @@ export default function CaseDrawer({
                         value={form.receiveStatus}
                         onChange={(v) => patchForm({ receiveStatus: v })}
                         items={opt("receiveStatus")}
-                        tone="emerald"
+                        tone="sky"
                       />
                     </Field>
                   </div>
@@ -945,7 +941,7 @@ export default function CaseDrawer({
                           disabled={false}
                           popoverWidth="lg"
                           months={1}
-                        buttonClassName="w-full rounded-2xl border border-sky-200 bg-sky-50 px-3 py-2.5 text-left text-[12px] shadow-sm"
+                          buttonClassName="w-full rounded-2xl border border-sky-200 bg-sky-50 px-3 py-2.5 text-left text-[12px] shadow-sm"
                         />
                       </div>
                     </Field>

@@ -6,7 +6,7 @@ const ServiceSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     serviceType: {
       type: String,
-      enum: ['NIPT', 'ADN', 'HPV', 'CELL'],
+      enum: ['NIPT', 'ADN', 'Sàng Lọc UTCTC', 'Sinh Hóa', 'XN Khác'],
       required: true,
     },
     turnaroundHours: { type: Number, default: 48 },

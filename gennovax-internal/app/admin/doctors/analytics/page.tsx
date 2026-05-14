@@ -17,6 +17,7 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import type { DoctorRevenueAnalyticsResponse, ServiceType } from "@/lib/types";
+import { SERVICE_TYPES } from "@/lib/types";
 
 function cn(...a: Array<string | false | null | undefined>) {
   return a.filter(Boolean).join(" ");
@@ -73,10 +74,7 @@ const MONTH_OPTIONS = [
 
 const SERVICE_OPTIONS: { label: string; value: ServiceType | "" }[] = [
   { label: "Tất cả dịch vụ", value: "" },
-  { label: "NIPT", value: "NIPT" },
-  { label: "ADN", value: "ADN" },
-  { label: "HPV", value: "HPV" },
-  { label: "CELL", value: "CELL" },
+  ...SERVICE_TYPES.map((type) => ({ label: type, value: type })),
 ];
 
 const emptyData: DoctorRevenueAnalyticsResponse = {
@@ -141,7 +139,8 @@ export default function DoctorRevenueAnalyticsPage() {
   }, [month, serviceType, salesOwner, canSeeAllSalesOwners, user]);
 
   const monthlyTrend = useMemo(
-    () => [...(data.monthlyTrend || [])].sort((a, b) => a.ym.localeCompare(b.ym)),
+    () =>
+      [...(data.monthlyTrend || [])].sort((a, b) => a.ym.localeCompare(b.ym)),
     [data.monthlyTrend],
   );
 
@@ -168,8 +167,9 @@ export default function DoctorRevenueAnalyticsPage() {
                     Thống kê doanh thu phòng khám
                   </h1>
                   <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
-                    Phân tích doanh thu theo tháng, theo phòng khám và tổng hợp theo
-                    NVKD. Dữ liệu đang tính theo đúng tên phòng khám và tên NVKD trong ca.
+                    Phân tích doanh thu theo tháng, theo phòng khám và tổng hợp
+                    theo NVKD. Dữ liệu đang tính theo đúng tên phòng khám và tên
+                    NVKD trong ca.
                   </p>
                 </div>
               </div>
@@ -211,7 +211,9 @@ export default function DoctorRevenueAnalyticsPage() {
               ) : (
                 <InfoTile
                   label="Phạm vi xem"
-                  value={user.role === "sales" ? "Phòng khám của bạn" : "Toàn bộ"}
+                  value={
+                    user.role === "sales" ? "Phòng khám của bạn" : "Toàn bộ"
+                  }
                 />
               )}
               <InfoTile
@@ -222,8 +224,15 @@ export default function DoctorRevenueAnalyticsPage() {
           </section>
 
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
-            <KpiCard title="Tổng doanh thu" value={money(data.kpis.totalRevenue)} />
-            <KpiCard title="Tổng chi phí" value={money(data.kpis.totalCost)} tone="rose" />
+            <KpiCard
+              title="Tổng doanh thu"
+              value={money(data.kpis.totalRevenue)}
+            />
+            <KpiCard
+              title="Tổng chi phí"
+              value={money(data.kpis.totalCost)}
+              tone="rose"
+            />
             <KpiCard
               title="Lợi nhuận dự kiến"
               value={money(data.kpis.totalNetRevenue)}
@@ -248,10 +257,21 @@ export default function DoctorRevenueAnalyticsPage() {
             <Card title="Biểu đồ doanh thu theo tháng">
               <div className="h-[360px] w-full pt-4">
                 <ResponsiveContainer>
-                  <BarChart data={monthlyTrend} margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#dbeafe" />
+                  <BarChart
+                    data={monthlyTrend}
+                    margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="#dbeafe"
+                    />
                     <XAxis dataKey="ym" tick={{ fontSize: 12 }} />
-                    <YAxis tickFormatter={(v) => moneyMil(v)} width={65} tick={{ fontSize: 12 }} />
+                    <YAxis
+                      tickFormatter={(v) => moneyMil(v)}
+                      width={65}
+                      tick={{ fontSize: 12 }}
+                    />
                     <Tooltip
                       formatter={(v) => chartMoney(v)}
                       cursor={{ fill: "rgba(224,242,254,0.35)" }}
@@ -267,10 +287,19 @@ export default function DoctorRevenueAnalyticsPage() {
                         dataKey="netRevenue"
                         position="top"
                         formatter={(v) => chartMoneyMil(v)}
-                        style={{ fontSize: "10px", fill: "#64748b", fontWeight: 600 }}
+                        style={{
+                          fontSize: "10px",
+                          fill: "#64748b",
+                          fontWeight: 600,
+                        }}
                       />
                     </Bar>
-                    <Bar dataKey="revenue" name="Doanh thu" fill="#7dd3fc" radius={[8, 8, 0, 0]} />
+                    <Bar
+                      dataKey="revenue"
+                      name="Doanh thu"
+                      fill="#7dd3fc"
+                      radius={[8, 8, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -284,8 +313,16 @@ export default function DoctorRevenueAnalyticsPage() {
                     layout="vertical"
                     margin={{ top: 0, right: 30, left: 10, bottom: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#dbeafe" />
-                    <XAxis type="number" tickFormatter={(v) => moneyMil(v)} tick={{ fontSize: 11 }} />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      horizontal={false}
+                      stroke="#dbeafe"
+                    />
+                    <XAxis
+                      type="number"
+                      tickFormatter={(v) => moneyMil(v)}
+                      tick={{ fontSize: 11 }}
+                    />
                     <YAxis
                       type="category"
                       dataKey="salesOwner"
@@ -329,9 +366,14 @@ export default function DoctorRevenueAnalyticsPage() {
                       <EmptyRow colSpan={6} />
                     ) : (
                       data.byClinic.map((item, index) => (
-                        <tr key={`${item.clinicName}-${index}`} className="border-t border-slate-100 hover:bg-sky-50/40">
+                        <tr
+                          key={`${item.clinicName}-${index}`}
+                          className="border-t border-slate-100 hover:bg-sky-50/40"
+                        >
                           <Td className="text-slate-400">{index + 1}</Td>
-                          <Td className="font-semibold text-slate-900">{item.clinicName}</Td>
+                          <Td className="font-semibold text-slate-900">
+                            {item.clinicName}
+                          </Td>
                           <Td>{item.salesOwner || "—"}</Td>
                           <Td right className="font-semibold text-slate-800">
                             {money(item.revenue)}
@@ -366,9 +408,14 @@ export default function DoctorRevenueAnalyticsPage() {
                       <EmptyRow colSpan={6} />
                     ) : (
                       data.bySalesOwner.map((item, index) => (
-                        <tr key={`${item.salesOwner}-${index}`} className="border-t border-slate-100 hover:bg-sky-50/40">
+                        <tr
+                          key={`${item.salesOwner}-${index}`}
+                          className="border-t border-slate-100 hover:bg-sky-50/40"
+                        >
                           <Td className="text-slate-400">{index + 1}</Td>
-                          <Td className="font-semibold text-slate-900">{item.salesOwner}</Td>
+                          <Td className="font-semibold text-slate-900">
+                            {item.salesOwner}
+                          </Td>
                           <Td right>{item.clinicCount}</Td>
                           <Td right className="font-semibold text-slate-800">
                             {money(item.revenue)}
@@ -444,7 +491,9 @@ function KpiCard({
       <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
         {title}
       </div>
-      <div className={cn("mt-3 text-2xl font-bold tabular-nums", toneMap[tone])}>
+      <div
+        className={cn("mt-3 text-2xl font-bold tabular-nums", toneMap[tone])}
+      >
         {value}
       </div>
       {sub && <div className="mt-1 text-xs text-slate-500">{sub}</div>}
@@ -496,7 +545,13 @@ function InfoTile({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Th({ children, right = false }: { children: React.ReactNode; right?: boolean }) {
+function Th({
+  children,
+  right = false,
+}: {
+  children: React.ReactNode;
+  right?: boolean;
+}) {
   return (
     <th
       className={cn(
@@ -519,14 +574,19 @@ function Td({
   className?: string;
 }) {
   return (
-    <td className={cn("px-4 py-3", right && "text-right", className)}>{children}</td>
+    <td className={cn("px-4 py-3", right && "text-right", className)}>
+      {children}
+    </td>
   );
 }
 
 function EmptyRow({ colSpan }: { colSpan: number }) {
   return (
     <tr>
-      <td colSpan={colSpan} className="px-4 py-10 text-center text-sm text-slate-400">
+      <td
+        colSpan={colSpan}
+        className="px-4 py-10 text-center text-sm text-slate-400"
+      >
         Không có dữ liệu.
       </td>
     </tr>

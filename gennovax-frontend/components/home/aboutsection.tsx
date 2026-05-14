@@ -4,6 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { motion } from "framer-motion";
 import {
   CpuFill,
   Journals,
@@ -118,6 +119,19 @@ MAIN
 const AboutGennovax: React.FC = () => {
   const imageUrl =
     "https://res.cloudinary.com/da6f4dmql/image/upload/v1764750460/shutterstock_1770401555_hmmobk.jpg";
+  const revealVariants = {
+    hidden: { opacity: 0, y: 96 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const listVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.14,
+      },
+    },
+  };
 
   return (
     <section className="relative py-10 lg:py-16">
@@ -127,7 +141,15 @@ const AboutGennovax: React.FC = () => {
 
       <div className="relative mx-auto max-w-7xl px-4">
         {/* Header đồng bộ */}
-        <div className="mx-auto max-w-3xl text-center">
+        <motion.div
+          className="mx-auto max-w-3xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.12, margin: "0px 0px 120px 0px" }}
+          variants={revealVariants}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          style={{ willChange: "opacity, transform" }}
+        >
           <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 ring-1 ring-blue-900/10 shadow-sm">
             <span className="h-2 w-2 rounded-full bg-blue-600" />
             <span className="text-xs sm:text-sm font-semibold text-blue-700">
@@ -143,12 +165,23 @@ const AboutGennovax: React.FC = () => {
             Tiên phong ứng dụng NGS và AI trong y học chính xác, hướng tới chăm
             sóc sức khỏe chủ động cho người Việt.
           </p>
-        </div>
+        </motion.div>
 
         {/* Grid nội dung */}
-        <div className="mt-8 lg:mt-12 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+        <motion.div
+          className="mt-8 lg:mt-12 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.08, margin: "0px 0px 140px 0px" }}
+          variants={listVariants}
+        >
           {/* LEFT: Image + quick links + CTA (đưa CTA sang trái cho cân) */}
-          <div className="flex flex-col gap-6">
+          <motion.div
+            className="flex flex-col gap-6"
+            variants={revealVariants}
+            transition={{ duration: 1.55, ease: [0.16, 1, 0.3, 1] }}
+            style={{ willChange: "opacity, transform" }}
+          >
             {/* Image card */}
             <div
               className="
@@ -221,10 +254,15 @@ const AboutGennovax: React.FC = () => {
                 nhân hóa.
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* RIGHT: text + pillars */}
-          <div className="pt-1">
+          <motion.div
+            className="pt-1"
+            variants={revealVariants}
+            transition={{ duration: 1.55, ease: [0.16, 1, 0.3, 1] }}
+            style={{ willChange: "opacity, transform" }}
+          >
             <h3 className="text-2xl lg:text-4xl font-extrabold text-slate-900 leading-tight">
               Tiên phong Tương lai Y học qua{" "}
               <span className="text-blue-700">Lăng kính Di truyền</span>
@@ -261,8 +299,8 @@ const AboutGennovax: React.FC = () => {
                 xu hướng y học toàn cầu.
               </PillarItem>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

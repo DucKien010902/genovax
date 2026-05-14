@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Star, Clock, Zap, Check, Handshake } from "lucide-react";
 
 const commitments = [
@@ -66,6 +67,19 @@ function CommitmentCard({ icon: Icon, title, details }: CommitmentItem) {
 
 export default function OurServiceSystem() {
   const PartnerIcon = partnership.icon;
+  const revealVariants = {
+    hidden: { opacity: 0, y: 96 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const listVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.14,
+      },
+    },
+  };
 
   return (
     <section id="he-thong-dich-vu" className="relative py-14 lg:py-20">
@@ -73,7 +87,15 @@ export default function OurServiceSystem() {
       <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),transparent_65%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4">
-        <div className="mx-auto max-w-3xl text-center">
+        <motion.div
+          className="mx-auto max-w-3xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.12, margin: "0px 0px 120px 0px" }}
+          variants={revealVariants}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          style={{ willChange: "opacity, transform" }}
+        >
           <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 ring-1 ring-sky-200 shadow-sm">
             <span className="h-2 w-2 rounded-full bg-sky-500" />
             <span className="text-xs font-semibold text-sky-700 sm:text-sm">
@@ -89,10 +111,18 @@ export default function OurServiceSystem() {
             Cam kết chất lượng, tốc độ xử lý và đồng hành cùng đối tác trên mọi
             điểm chạm dịch vụ.
           </p>
-        </div>
+        </motion.div>
 
         <div className="mt-8 grid grid-cols-1 items-start gap-8 md:mt-12 md:grid-cols-5 md:gap-10">
-          <div className="md:col-span-2">
+          <motion.div
+            className="md:col-span-2"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.18, margin: "0px 0px 120px 0px" }}
+            variants={revealVariants}
+            transition={{ duration: 1.55, ease: [0.16, 1, 0.3, 1] }}
+            style={{ willChange: "opacity, transform" }}
+          >
             <div className="group relative overflow-hidden rounded-[2rem] border border-white/80 bg-white shadow-[0_24px_70px_rgba(148,163,184,0.18)]">
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-500 via-cyan-400 to-blue-700" />
 
@@ -115,24 +145,42 @@ export default function OurServiceSystem() {
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           <div className="md:col-span-3">
-            <div
+            <motion.div
               className="mt-0 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:pb-0"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.12, margin: "0px 0px 120px 0px" }}
+              variants={listVariants}
             >
               {commitments.map((item) => (
-                <CommitmentCard
+                <motion.div
                   key={item.title}
-                  icon={item.icon}
-                  title={item.title}
-                  details={item.details}
-                />
+                  variants={revealVariants}
+                  transition={{ duration: 1.55, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ willChange: "opacity, transform" }}
+                >
+                  <CommitmentCard
+                    icon={item.icon}
+                    title={item.title}
+                    details={item.details}
+                  />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
-            <div className="relative mt-6 overflow-hidden rounded-[2rem] bg-gradient-to-r from-sky-700 to-blue-900 p-6 ring-1 ring-blue-900/20 shadow-[0_24px_80px_rgba(14,116,144,0.24)] sm:mt-8 sm:p-7">
+            <motion.div
+              className="relative mt-6 overflow-hidden rounded-[2rem] bg-gradient-to-r from-sky-700 to-blue-900 p-6 ring-1 ring-blue-900/20 shadow-[0_24px_80px_rgba(14,116,144,0.24)] sm:mt-8 sm:p-7"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.22, margin: "0px 0px 100px 0px" }}
+              variants={revealVariants}
+              transition={{ duration: 1.55, ease: [0.16, 1, 0.3, 1] }}
+              style={{ willChange: "opacity, transform" }}
+            >
               <div className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-cyan-400/20 blur-2xl" />
               <div className="pointer-events-none absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-sky-300/20 blur-2xl" />
 
@@ -182,7 +230,7 @@ export default function OurServiceSystem() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

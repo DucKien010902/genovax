@@ -3,11 +3,25 @@
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { doctorsData, Doctor } from "@/data/doctors";
 import { MapPin, UserRound, BadgeCheck } from "lucide-react";
 
 export default function DoctorsList() {
   const [searchTerm] = useState("");
+  const revealVariants = {
+    hidden: { opacity: 0, y: 96 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const listVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.14,
+      },
+    },
+  };
 
   const filteredDoctors = useMemo(() => {
     const t = searchTerm.toLowerCase().trim();
@@ -27,7 +41,15 @@ export default function DoctorsList() {
       <div className="absolute inset-x-0 top-8 h-64 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.09),transparent_58%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4">
-        <div className="mx-auto max-w-3xl text-center">
+        <motion.div
+          className="mx-auto max-w-3xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.12, margin: "0px 0px 120px 0px" }}
+          variants={revealVariants}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          style={{ willChange: "opacity, transform" }}
+        >
           <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 ring-1 ring-sky-200 shadow-sm">
             <span className="h-2 w-2 rounded-full bg-sky-500" />
             <span className="text-xs font-semibold text-sky-700 sm:text-sm">
@@ -43,22 +65,29 @@ export default function DoctorsList() {
             Kinh nghiệm thực tiễn, quy trình chuẩn hóa và tư vấn theo hướng cá
             nhân hóa cho từng trường hợp.
           </p>
-        </div>
+        </motion.div>
 
         {topDoctors.length > 0 ? (
-          <div
+          <motion.div
             className="mt-8 flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory lg:mt-12 lg:grid lg:grid-cols-3 lg:gap-8 lg:overflow-visible lg:pb-0"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.08, margin: "0px 0px 140px 0px" }}
+            variants={listVariants}
           >
             {topDoctors.map((doctor) => (
-              <div
+              <motion.div
                 key={doctor.id}
                 className="w-[85vw] flex-shrink-0 snap-center sm:w-auto"
+                variants={revealVariants}
+                transition={{ duration: 1.55, ease: [0.16, 1, 0.3, 1] }}
+                style={{ willChange: "opacity, transform" }}
               >
                 <DoctorCard doctor={doctor} />
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : (
           <div className="mt-10 py-16 text-center">
             <UserRound className="mx-auto mb-4 h-16 w-16 text-slate-300" />
@@ -68,14 +97,22 @@ export default function DoctorsList() {
           </div>
         )}
 
-        <div className="mt-8 flex justify-center sm:mt-10">
+        <motion.div
+          className="mt-8 flex justify-center sm:mt-10"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2, margin: "0px 0px 100px 0px" }}
+          variants={revealVariants}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          style={{ willChange: "opacity, transform" }}
+        >
           <Link
             href="/gioi-thieu/doi-ngu-bac-sy"
             className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-sky-700 ring-1 ring-sky-100 shadow-sm transition hover:bg-sky-50 sm:text-base"
           >
             Xem thêm chuyên gia →
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

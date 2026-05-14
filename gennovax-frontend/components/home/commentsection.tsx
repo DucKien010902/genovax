@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
 
 interface Expert {
@@ -58,6 +59,10 @@ const allExperts: Expert[] = [
 export default function ExpertOpinions() {
   const [currentPage, setCurrentPage] = useState(0);
   const totalPages = Math.ceil(allExperts.length / 2);
+  const revealVariants = {
+    hidden: { opacity: 0, y: 96 },
+    visible: { opacity: 1, y: 0 },
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -82,7 +87,15 @@ export default function ExpertOpinions() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.18),transparent_30%),radial-gradient(circle_at_80%_18%,rgba(96,165,250,0.16),transparent_24%)]" />
 
       <div className="container relative z-10 mx-auto max-w-6xl px-4">
-        <div className="text-left">
+        <motion.div
+          className="text-left"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.12, margin: "0px 0px 120px 0px" }}
+          variants={revealVariants}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          style={{ willChange: "opacity, transform" }}
+        >
           <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-sm font-semibold text-cyan-100 backdrop-blur-md">
             <span className="h-2 w-2 rounded-full bg-cyan-300" />
             Chuyên gia đồng hành
@@ -91,10 +104,18 @@ export default function ExpertOpinions() {
             Ý kiến chuyên gia
           </h2>
           <div className="mt-4 h-1.5 w-24 rounded-full bg-cyan-400"></div>
-        </div>
+        </motion.div>
 
         <div className="mt-8 grid grid-cols-1 gap-8 md:mt-12 md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] md:gap-12">
-          <div className="flex flex-col justify-center rounded-[2rem] border border-white/10 bg-white/6 p-6 text-white backdrop-blur-md md:p-8">
+          <motion.div
+            className="flex flex-col justify-center rounded-[2rem] border border-white/10 bg-white/6 p-6 text-white backdrop-blur-md md:p-8"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.18, margin: "0px 0px 120px 0px" }}
+            variants={revealVariants}
+            transition={{ duration: 1.55, ease: [0.16, 1, 0.3, 1] }}
+            style={{ willChange: "opacity, transform" }}
+          >
             <Quote
               className="h-12 w-12 text-cyan-400/50 lg:h-16 lg:w-16"
               fill="currentColor"
@@ -112,9 +133,17 @@ export default function ExpertOpinions() {
               Section tối được giữ lại để tạo nhịp thị giác, nhưng chuyển sang
               chất liệu glass và ánh sáng mềm để mượt hơn bản cũ.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-col overflow-hidden">
+          <motion.div
+            className="flex flex-col overflow-hidden"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.18, margin: "0px 0px 120px 0px" }}
+            variants={revealVariants}
+            transition={{ duration: 1.55, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            style={{ willChange: "opacity, transform" }}
+          >
             <div
               className="
                 flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory
@@ -172,7 +201,7 @@ export default function ExpertOpinions() {
                 />
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

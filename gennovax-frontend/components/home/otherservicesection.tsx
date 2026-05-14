@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   ArrowRightCircle,
   BriefcaseFill,
@@ -106,13 +107,35 @@ function ServiceCard({ service }: { service: Service }) {
 }
 
 const OtherServices: React.FC = () => {
+  const revealVariants = {
+    hidden: { opacity: 0, y: 96 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const listVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.14,
+      },
+    },
+  };
+
   return (
     <section className="relative py-14 lg:py-20">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,#ffffff_0%,#f8fcff_48%,#f1f8fb_100%)]" />
       <div className="absolute inset-x-0 top-10 h-72 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.09),transparent_60%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4">
-        <div className="mx-auto max-w-3xl text-center">
+        <motion.div
+          className="mx-auto max-w-3xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.12, margin: "0px 0px 120px 0px" }}
+          variants={revealVariants}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          style={{ willChange: "opacity, transform" }}
+        >
           <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 ring-1 ring-sky-200 shadow-sm">
             <span className="h-2 w-2 rounded-full bg-sky-500" />
             <span className="text-xs font-semibold text-sky-700 sm:text-sm">
@@ -128,30 +151,45 @@ const OtherServices: React.FC = () => {
             Hệ sinh thái dịch vụ hỗ trợ từ tư vấn, chăm sóc thai kỳ đến hợp tác
             nghiên cứu và phát triển.
           </p>
-        </div>
+        </motion.div>
 
-        <div
+        <motion.div
           className="mt-8 flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory lg:mt-12 lg:grid lg:grid-cols-3 lg:gap-7 lg:overflow-visible lg:pb-0"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.08, margin: "0px 0px 140px 0px" }}
+          variants={listVariants}
         >
           {serviceData.map((service) => (
-            <div
+            <motion.div
               key={service.id}
               className="w-[85vw] flex-shrink-0 snap-center sm:w-[60vw] md:w-auto"
+              variants={revealVariants}
+              transition={{ duration: 1.55, ease: [0.16, 1, 0.3, 1] }}
+              style={{ willChange: "opacity, transform" }}
             >
               <ServiceCard service={service} />
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="mt-10 flex justify-center">
+        <motion.div
+          className="mt-10 flex justify-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2, margin: "0px 0px 100px 0px" }}
+          variants={revealVariants}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          style={{ willChange: "opacity, transform" }}
+        >
           <Link
             href="/dich-vu"
             className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-sky-700 ring-1 ring-sky-100 shadow-sm transition hover:bg-sky-50 sm:text-base"
           >
             Xem toàn bộ dịch vụ →
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

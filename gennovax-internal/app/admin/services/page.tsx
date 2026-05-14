@@ -5,8 +5,7 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import type { CatalogServiceItem, ServiceType } from "@/lib/types";
-
-const SERVICE_TYPES: ServiceType[] = ["NIPT", "ADN", "HPV", "CELL"];
+import { SERVICE_TYPES } from "@/lib/types";
 
 type FormState = {
   serviceCode: string;
@@ -38,8 +37,10 @@ function statusTone(active: boolean) {
 
 function typeTone(type: ServiceType) {
   if (type === "NIPT") return "bg-rose-50 text-rose-700 ring-rose-200";
-  if (type === "HPV") return "bg-emerald-50 text-emerald-700 ring-emerald-200";
-  if (type === "CELL") return "bg-amber-50 text-amber-700 ring-amber-200";
+  if (type === "Sàng Lọc UTCTC")
+    return "bg-emerald-50 text-emerald-700 ring-emerald-200";
+  if (type === "Sinh Hóa") return "bg-amber-50 text-amber-700 ring-amber-200";
+  if (type === "XN Khác") return "bg-violet-50 text-violet-700 ring-violet-200";
   return "bg-sky-50 text-sky-700 ring-sky-200";
 }
 
@@ -118,7 +119,9 @@ export default function AdminServicesPage() {
 
       if (editingId) {
         const updated = await api.serviceUpdate(editingId, payload);
-        setItems((prev) => prev.map((item) => (item._id === editingId ? updated : item)));
+        setItems((prev) =>
+          prev.map((item) => (item._id === editingId ? updated : item)),
+        );
       } else {
         const created = await api.serviceCreate(payload);
         setItems((prev) => [created, ...prev]);
@@ -166,8 +169,9 @@ export default function AdminServicesPage() {
                   Danh mục dịch vụ tổng
                 </h1>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
-                  Bảng hiển thị lại theo kiểu gọn, sáng và dễ quét hơn: tách riêng STT,
-                  mã dịch vụ, tên, nhóm, TAT và trạng thái; ghi chú chỉ giữ ở dạng mô tả ngắn.
+                  Bảng hiển thị lại theo kiểu gọn, sáng và dễ quét hơn: tách
+                  riêng STT, mã dịch vụ, tên, nhóm, TAT và trạng thái; ghi chú
+                  chỉ giữ ở dạng mô tả ngắn.
                 </p>
               </div>
             </div>
@@ -193,7 +197,9 @@ export default function AdminServicesPage() {
         <section className="rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-[0_18px_50px_-38px_rgba(15,23,42,0.35)] sm:p-6">
           <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">Bảng dịch vụ</div>
+              <div className="text-sm font-semibold text-slate-900">
+                Bảng dịch vụ
+              </div>
               <div className="mt-1 text-xs text-slate-500">
                 {filteredItems.length} dịch vụ trong danh mục hiện tại
               </div>
@@ -223,19 +229,29 @@ export default function AdminServicesPage() {
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredItems.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-sm text-slate-400">
+                    <td
+                      colSpan={7}
+                      className="px-6 py-12 text-center text-sm text-slate-400"
+                    >
                       Không có dịch vụ phù hợp.
                     </td>
                   </tr>
                 ) : (
                   filteredItems.map((item, index) => (
-                    <tr key={item._id} className="transition hover:bg-sky-50/40">
+                    <tr
+                      key={item._id}
+                      className="transition hover:bg-sky-50/40"
+                    >
                       <td className="px-4 py-4 text-center font-medium text-slate-400">
                         {index + 1}
                       </td>
-                      <td className="px-4 py-4 font-semibold text-slate-900">{item.serviceCode}</td>
+                      <td className="px-4 py-4 font-semibold text-slate-900">
+                        {item.serviceCode}
+                      </td>
                       <td className="px-4 py-4">
-                        <div className="font-medium text-slate-900">{item.name}</div>
+                        <div className="font-medium text-slate-900">
+                          {item.name}
+                        </div>
                         {item.note && (
                           <div className="mt-1 max-w-[260px] truncate text-xs text-slate-400">
                             {item.note}
@@ -252,7 +268,9 @@ export default function AdminServicesPage() {
                           {item.serviceType}
                         </span>
                       </td>
-                      <td className="px-4 py-4 text-center">{item.turnaroundHours}h</td>
+                      <td className="px-4 py-4 text-center">
+                        {item.turnaroundHours}h
+                      </td>
                       <td className="px-4 py-4 text-center">
                         <span
                           className={cn(
@@ -312,7 +330,9 @@ export default function AdminServicesPage() {
               <Field
                 label="Mã dịch vụ"
                 value={form.serviceCode}
-                onChange={(v) => setForm((prev) => ({ ...prev, serviceCode: v }))}
+                onChange={(v) =>
+                  setForm((prev) => ({ ...prev, serviceCode: v }))
+                }
               />
               <Field
                 label="Tên dịch vụ"
@@ -327,7 +347,10 @@ export default function AdminServicesPage() {
                 <select
                   value={form.serviceType}
                   onChange={(e) =>
-                    setForm((prev) => ({ ...prev, serviceType: e.target.value as ServiceType }))
+                    setForm((prev) => ({
+                      ...prev,
+                      serviceType: e.target.value as ServiceType,
+                    }))
                   }
                   className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition focus:border-sky-300 focus:bg-white focus:ring-4 focus:ring-sky-100"
                 >
@@ -361,7 +384,9 @@ export default function AdminServicesPage() {
               <div className="md:col-span-2">
                 <label className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                   <div>
-                    <div className="text-sm font-semibold text-slate-900">Trạng thái hiển thị</div>
+                    <div className="text-sm font-semibold text-slate-900">
+                      Trạng thái hiển thị
+                    </div>
                     <div className="text-xs text-slate-400">
                       Dùng để bật hoặc ẩn dịch vụ trong danh mục tổng.
                     </div>
@@ -369,7 +394,12 @@ export default function AdminServicesPage() {
                   <input
                     type="checkbox"
                     checked={form.isActive}
-                    onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.checked }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        isActive: e.target.checked,
+                      }))
+                    }
                     className="h-5 w-5 cursor-pointer accent-sky-600"
                   />
                 </label>

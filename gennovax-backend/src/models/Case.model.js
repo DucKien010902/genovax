@@ -14,7 +14,7 @@ const CaseSchema = new mongoose.Schema(
   {
     serviceType: {
       type: String,
-      enum: ['NIPT', 'ADN', 'HPV', 'CELL'],
+      enum: ['NIPT', 'ADN', 'Sàng Lọc UTCTC', 'Sinh Hóa', 'XN Khác'],
       required: true,
     },
 

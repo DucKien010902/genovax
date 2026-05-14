@@ -231,7 +231,9 @@ export default function AdminUsersPage() {
       <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-6">
         <div className="text-center">
           <ShieldAlert className="mx-auto mb-3 h-12 w-12 text-rose-500" />
-          <h2 className="text-xl font-bold text-neutral-800">Truy cập bị từ chối</h2>
+          <h2 className="text-xl font-bold text-neutral-800">
+            Truy cập bị từ chối
+          </h2>
           <p className="mt-1 text-neutral-500">
             Bạn không có quyền truy cập trang quản trị này.
           </p>
@@ -261,7 +263,6 @@ export default function AdminUsersPage() {
                   <Users className="h-8 w-8" />
                   Quản lý tài khoản nội bộ
                 </h1>
-
               </div>
             </div>
 
@@ -278,9 +279,13 @@ export default function AdminUsersPage() {
         <section className="rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-[0_18px_50px_-38px_rgba(15,23,42,0.35)] sm:p-6">
           <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">Danh sách tài khoản</div>
+              <div className="text-sm font-semibold text-slate-900">
+                Danh sách tài khoản
+              </div>
               <div className="mt-1 text-xs text-slate-500">
-                {loading ? "Đang tải..." : `${filteredUsers.length} tài khoản phù hợp`}
+                {loading
+                  ? "Đang tải..."
+                  : `${filteredUsers.length} tài khoản phù hợp`}
               </div>
             </div>
 
@@ -327,7 +332,10 @@ export default function AdminUsersPage() {
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-sm text-slate-400">
+                    <td
+                      colSpan={5}
+                      className="px-6 py-12 text-center text-sm text-slate-400"
+                    >
                       Không có dữ liệu phù hợp.
                     </td>
                   </tr>
@@ -367,7 +375,9 @@ export default function AdminUsersPage() {
                           </div>
                         </td>
 
-                        <td className="px-4 py-4 font-medium text-slate-600">{u.email}</td>
+                        <td className="px-4 py-4 font-medium text-slate-600">
+                          {u.email}
+                        </td>
 
                         <td className="px-4 py-4 text-center">
                           <span
@@ -439,7 +449,9 @@ export default function AdminUsersPage() {
           <div className="w-full max-w-xl overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_40px_120px_-48px_rgba(15,23,42,0.55)]">
             <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
               <div>
-                <div className="text-lg font-semibold text-slate-900">Tạo tài khoản mới</div>
+                <div className="text-lg font-semibold text-slate-900">
+                  Tạo tài khoản mới
+                </div>
                 <div className="mt-1 text-xs text-slate-400">
                   Giữ nguyên logic cấp quyền hiện tại khi tạo user mới.
                 </div>
@@ -456,20 +468,26 @@ export default function AdminUsersPage() {
               <Field
                 label="Tên hiển thị"
                 value={form.name}
-                onChange={(value) => setForm((prev) => ({ ...prev, name: value }))}
+                onChange={(value) =>
+                  setForm((prev) => ({ ...prev, name: value }))
+                }
                 placeholder="VD: Nguyễn Văn A"
               />
               <Field
                 label="Email đăng nhập"
                 value={form.email}
-                onChange={(value) => setForm((prev) => ({ ...prev, email: value }))}
+                onChange={(value) =>
+                  setForm((prev) => ({ ...prev, email: value }))
+                }
                 placeholder="admin@gennovax.vn"
               />
               <Field
                 label="Mật khẩu"
                 type="password"
                 value={form.password}
-                onChange={(value) => setForm((prev) => ({ ...prev, password: value }))}
+                onChange={(value) =>
+                  setForm((prev) => ({ ...prev, password: value }))
+                }
                 placeholder="••••••••"
               />
               <div>
@@ -478,8 +496,14 @@ export default function AdminUsersPage() {
                 </div>
                 <select
                   value={form.role}
-                  onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
-                  disabled={!["super_admin", "admin", "accounting_admin"].includes(user?.role)}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, role: e.target.value }))
+                  }
+                  disabled={
+                    !["super_admin", "admin", "accounting_admin"].includes(
+                      user?.role,
+                    )
+                  }
                   className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition focus:border-sky-300 focus:bg-white focus:ring-4 focus:ring-sky-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
                 >
                   <option value="staff">Nhân viên (Staff)</option>
@@ -487,7 +511,9 @@ export default function AdminUsersPage() {
                   {user?.role === "super_admin" && (
                     <>
                       <option value="admin">Quản trị viên (Admin)</option>
-                      <option value="accounting_admin">Kế toán (Accounting Admin)</option>
+                      <option value="accounting_admin">
+                        Kế toán (Accounting Admin)
+                      </option>
                       <option value="super_admin">Super Admin</option>
                     </>
                   )}

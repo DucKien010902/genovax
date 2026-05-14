@@ -65,7 +65,8 @@ export default function LoginPage() {
 
             <div className="relative z-10">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-white/90 backdrop-blur-md">
-                Gennovax <span className="text-white/50">•</span> Case Management
+                Gennovax <span className="text-white/50">•</span> Case
+                Management
               </div>
 
               <div className="mt-12 flex items-center gap-5">
@@ -73,7 +74,9 @@ export default function LoginPage() {
                   <Lock className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <div className="text-lg font-bold text-white">Secure Access</div>
+                  <div className="text-lg font-bold text-white">
+                    Secure Access
+                  </div>
                   <div className="text-sm font-medium text-white/70">
                     Bảo mật và phân quyền nội bộ
                   </div>
@@ -89,8 +92,8 @@ export default function LoginPage() {
               </h1>
 
               <div className="mt-8 rounded-2xl border border-white/10 bg-black/10 px-5 py-4 text-sm font-medium leading-relaxed text-white/90 backdrop-blur-sm">
-                Dữ liệu được mã hóa và đồng bộ theo thời gian thực, đảm bảo luồng
-                công việc giữa các phòng ban luôn thông suốt.
+                Dữ liệu được mã hóa và đồng bộ theo thời gian thực, đảm bảo
+                luồng công việc giữa các phòng ban luôn thông suốt.
               </div>
             </div>
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { CalendarCheckFill, InfoCircleFill } from "react-bootstrap-icons";
 import ConsultationModal from "./ConsultationModal";
 
@@ -149,6 +150,20 @@ const PopularPackages: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
 
+  const revealVariants = {
+    hidden: { opacity: 0, y: 96 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const gridVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.14,
+      },
+    },
+  };
+
   const title = useMemo(
     () => ({
       badge: "Gói xét nghiệm",
@@ -164,7 +179,18 @@ const PopularPackages: React.FC = () => {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-200 to-transparent" />
 
       <div className="relative mx-auto max-w-7xl px-4">
-        <div className="mx-auto max-w-3xl text-center">
+        <motion.div
+          className="mx-auto max-w-3xl text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.12, margin: "0px 0px 120px 0px" }}
+          variants={revealVariants}
+          transition={{
+            duration: 1.4,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+          style={{ willChange: "opacity, transform" }}
+        >
             <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 ring-1 ring-sky-200 shadow-sm">
               <span className="h-2 w-2 rounded-full bg-sky-500" />
               <span className="text-xs font-semibold text-sky-800 sm:text-sm">
@@ -199,29 +225,55 @@ const PopularPackages: React.FC = () => {
               </p>
             </div>
           </div> */}
-        </div>
+        </motion.div>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 lg:mt-12 lg:grid-cols-2 lg:gap-7">
+        <motion.div
+          className="mt-8 grid grid-cols-1 gap-5 lg:mt-12 lg:grid-cols-2 lg:gap-7"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.08, margin: "0px 0px 140px 0px" }}
+          variants={gridVariants}
+        >
           {popularPackagesData.map((pkg) => (
-            <PackageCard
+            <motion.div
               key={pkg.id}
-              pkg={pkg}
-              onConsult={() => {
-                setSelectedService(pkg.name);
-                setIsModalOpen(true);
+              variants={revealVariants}
+              transition={{
+                duration: 1.55,
+                ease: [0.16, 1, 0.3, 1],
               }}
-            />
+              style={{ willChange: "opacity, transform" }}
+            >
+              <PackageCard
+                pkg={pkg}
+                onConsult={() => {
+                  setSelectedService(pkg.name);
+                  setIsModalOpen(true);
+                }}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="mt-10 flex justify-center">
+        <motion.div
+          className="mt-10 flex justify-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2, margin: "0px 0px 100px 0px" }}
+          variants={revealVariants}
+          transition={{
+            duration: 1.4,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+          style={{ willChange: "opacity, transform" }}
+        >
           <Link
             href="/dich-vu"
             className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-sky-800 ring-1 ring-sky-100 shadow-[0_18px_40px_rgba(148,163,184,0.12)] transition hover:-translate-y-0.5 hover:bg-sky-50 sm:text-base"
           >
             Xem tất cả gói xét nghiệm →
           </Link>
-        </div>
+        </motion.div>
       </div>
 
       <ConsultationModal

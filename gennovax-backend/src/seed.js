@@ -508,9 +508,9 @@ async function run() {
       isActive: true,
     },
 
-    // ===== HPV =====
+    // ===== Sàng Lọc UTCTC =====
     {
-      serviceType: 'HPV',
+      serviceType: 'Sàng Lọc UTCTC',
       serviceCode: 'HPV40',
       name: 'Sàng lọc ung thư cổ tử cung HPV',
       turnaroundHours: 48, // 1-2 ngày
@@ -522,7 +522,7 @@ async function run() {
       isActive: true,
     },
     {
-      serviceType: 'HPV',
+      serviceType: 'Sàng Lọc UTCTC',
       serviceCode: 'HPV23',
       name: 'Sàng lọc ung thư cổ tử cung HPV',
       turnaroundHours: 48, // 1-2 ngày

@@ -1,4 +1,17 @@
-export type ServiceType = "NIPT" | "ADN" | "HPV" | "CELL";
+export type ServiceType =
+  | "NIPT"
+  | "ADN"
+  | "Sàng Lọc UTCTC"
+  | "Sinh Hóa"
+  | "XN Khác";
+
+export const SERVICE_TYPES: ServiceType[] = [
+  "NIPT",
+  "ADN",
+  "Sàng Lọc UTCTC",
+  "Sinh Hóa",
+  "XN Khác",
+];
 
 export type OptionItem = { label: string; value: string };
 export type OptionsMap = Record<string, OptionItem[]>;

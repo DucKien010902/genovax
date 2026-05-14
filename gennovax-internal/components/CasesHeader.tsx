@@ -20,15 +20,20 @@ const serviceMeta: Record<
     desc: "Sàng lọc trước sinh",
     pill: "bg-rose-600 text-white",
   },
-  HPV: {
-    title: "HPV",
-    desc: "Tế bào / HPV / combo",
+  "Sàng Lọc UTCTC": {
+    title: "Sàng Lọc UTCTC",
+    desc: "Tầm soát ung thư cổ tử cung",
     pill: "bg-emerald-600 text-white",
   },
-  CELL: {
-    title: "CELL",
-    desc: "Tế bào / CELL / combo",
+  "Sinh Hóa": {
+    title: "Sinh Hóa",
+    desc: "Xét nghiệm sinh hóa",
     pill: "bg-orange-600 text-white",
+  },
+  "XN Khác": {
+    title: "XN Khác",
+    desc: "Các xét nghiệm khác",
+    pill: "bg-violet-600 text-white",
   },
 };
 
@@ -142,7 +147,7 @@ export default function CasesHeader(props: {
 
   return (
     <div className="border-b border-black/5 bg-white/80 backdrop-blur sticky top-0 z-10 shadow-sm">
-      <div className="px-4 py-3">
+      <div className="px-4 py-4">
         {/* LAYOUT: TỰ ĐỘNG CO GIÃN */}
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
           {/* ================= CỘT TRÁI: TITLE & LEGEND (Thu nhỏ lại) ================= */}

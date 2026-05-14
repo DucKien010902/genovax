@@ -220,7 +220,7 @@ router.get('/', async (req, res, next) => {
 
     // Khởi tạo filter mặc định: Loại bỏ các ca có serviceName chứa "2025"
     const filter = {
-      serviceName: { $not: /2025/ },
+      serviceName: { $not: /2025pp/ },
     };
 
     if (serviceType) filter.serviceType = serviceType;

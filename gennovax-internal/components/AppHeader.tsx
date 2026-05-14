@@ -86,9 +86,12 @@ export default function AppHeader() {
 
   const isSales = user.role === "sales";
   const homeRoute = isSales ? "/admin/doctors" : "/";
-  const showAdminMenu = ["admin", "super_admin", "accounting_admin", "sales"].includes(
-    user.role,
-  );
+  const showAdminMenu = [
+    "admin",
+    "super_admin",
+    "accounting_admin",
+    "sales",
+  ].includes(user.role);
 
   const adminMenuConfig: AdminMenuItem[] = [
     {
@@ -199,39 +202,39 @@ export default function AppHeader() {
     .filter(Boolean) as AdminMenuItem[];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-sky-100/80 bg-white/80 shadow-[0_10px_40px_rgba(14,165,233,0.12)] backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full border-b border-sky-100/80 bg-white/80 shadow-[0_10px_40px_rgba(14,165,233,0.12)] backdrop-blur-xl ">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute left-[-10%] top-[-60%] h-[220px] w-[220px] rounded-full bg-sky-300/25 blur-3xl" />
         <div className="absolute right-[-5%] top-[-30%] h-[240px] w-[240px] rounded-full bg-cyan-300/20 blur-3xl" />
         <div className="absolute inset-0 bg-gradient-to-r from-sky-50/90 via-white/80 to-cyan-50/90" />
       </div>
 
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
+      <div className="mx-auto max-w-[1600px] px-4 sm:px-6 border-b-1 border-blue-200">
         <div className="relative flex h-20 items-center justify-between gap-4 lg:h-24">
           <div
-            className="group flex cursor-pointer items-center gap-3"
-            onClick={() => router.push(homeRoute)}
-          >
-            <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-sky-100 transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg">
-              <img
-                src="https://res.cloudinary.com/da6f4dmql/image/upload/v1773128350/genbio1-1_hf0tjp.png"
-                alt="Logo"
-                className="h-full w-full object-contain p-1.5"
-              />
-            </div>
+  className="group flex cursor-pointer items-center gap-1 lg:gap-2"
+  onClick={() => router.push(homeRoute)}
+>
+  <div className="flex items-center">
+    <img
+      src="https://res.cloudinary.com/da6f4dmql/image/upload/v1773128350/genbio1-1_hf0tjp.png"
+      alt="Gen Solutions Logo"
+      className="h-6 object-contain transition duration-300 group-hover:-translate-y-0.5 lg:h-14"
+    />
+  </div>
 
-            <div className="leading-tight">
-              <div className="text-sm font-bold tracking-tight text-slate-900">
-                Danh mục quản lý
-              </div>
-              <div className="mt-0.5 text-xs text-slate-500">Gennovax Lab</div>
-            </div>
+  <div className="mb-1 flex flex-col items-start leading-tight">
+    <img
+      src="/genbio1-2.png"
+      alt="GENNOVAX Logo"
+      className="h-4 w-auto object-contain opacity-90 transition-all lg:h-7"
+    />
 
-            <span className="hidden items-center rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 shadow-sm md:inline-flex">
-              <span className="mr-1.5 h-2 w-2 rounded-full bg-sky-500" />
-              Online
-            </span>
-          </div>
+    <span className="text-[11px] font-bold text-blue-800 transition-colors lg:text-[14px]">
+      Đích đến của niềm tin
+    </span>
+  </div>
+</div>
 
           {!isSales && (
             <div className="absolute left-1/2 hidden -translate-x-1/2 lg:flex">
@@ -239,8 +242,12 @@ export default function AppHeader() {
                 onClick={() => router.push("/")}
                 className="group flex cursor-pointer items-center gap-3 rounded-2xl border border-sky-100/70 bg-white/85 px-5 py-3 shadow-lg shadow-sky-100/50 ring-1 ring-sky-100/60 backdrop-blur"
               >
-                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-500 text-white shadow-sm">
-                  <Sparkles className="h-5 w-5" />
+                <div className="h-10 w-10 overflow-hidden rounded-2xl shadow-sm">
+                  <img
+                    src="https://medpro.vn/_next/image?url=https%3A%2F%2Fcdn-pkh.longvan.net%2Fprod-partner%2F4fff6c05-f49b-4f4a-a532-f2de15060877-5.svg&w=1920&q=75"
+                    alt="Logo"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
 
                 <div className="leading-tight">
@@ -278,15 +285,22 @@ export default function AppHeader() {
 
                   <div className="hidden text-left sm:block">
                     <div className="text-sm font-semibold text-slate-900">
-                      {user.role === "accounting_admin" ? "Nghiệp vụ" : "Quản trị"}
+                      {user.role === "accounting_admin"
+                        ? "Nghiệp vụ"
+                        : "Quản trị"}
                     </div>
                     <div className="text-xs text-slate-500">
-                      {user.role === "accounting_admin" ? "Công cụ kế toán" : "Admin tools"}
+                      {user.role === "accounting_admin"
+                        ? "Công cụ kế toán"
+                        : "Công cụ"}
                     </div>
                   </div>
 
                   <ChevronDown
-                    className={cn("h-4 w-4 text-slate-500 transition", openAdmin && "rotate-180")}
+                    className={cn(
+                      "h-4 w-4 text-slate-500 transition",
+                      openAdmin && "rotate-180",
+                    )}
                   />
                 </button>
 
@@ -317,7 +331,8 @@ export default function AppHeader() {
                                 : "Khu vực quản trị hệ thống"}
                             </div>
                             <div className="mt-0.5 text-[11px] text-slate-500">
-                              Danh mục được chia nhóm cha con, hiển thị nhanh theo 2 cột.
+                              Danh mục được chia nhóm cha con, hiển thị nhanh
+                              theo 2 cột.
                             </div>
                           </div>
                         </div>
@@ -335,7 +350,9 @@ export default function AppHeader() {
                                 key={item.label}
                                 onClick={() => {
                                   if (item.href === "#") {
-                                    alert("Tính năng này đang được phát triển!");
+                                    alert(
+                                      "Tính năng này đang được phát triển!",
+                                    );
                                     return;
                                   }
                                   setOpenAdmin(false);
@@ -357,14 +374,19 @@ export default function AppHeader() {
                                       : "bg-white text-slate-500 ring-sky-100 group-hover:-translate-y-0.5 group-hover:text-sky-600 group-hover:shadow-sm",
                                   )}
                                 >
-                                  <item.icon className="h-5 w-5" strokeWidth={active ? 2.5 : 2} />
+                                  <item.icon
+                                    className="h-5 w-5"
+                                    strokeWidth={active ? 2.5 : 2}
+                                  />
                                 </div>
 
                                 <div className="min-w-0 flex-1">
                                   <div
                                     className={cn(
                                       "truncate text-sm font-semibold",
-                                      active ? "text-sky-700" : "text-slate-900",
+                                      active
+                                        ? "text-sky-700"
+                                        : "text-slate-900",
                                     )}
                                   >
                                     {item.label}
@@ -413,14 +435,19 @@ export default function AppHeader() {
 
                               <div className="grid grid-cols-2 gap-1">
                                 {item.children.map((child) => {
-                                  const active = isRouteActive(pathname, child.href);
+                                  const active = isRouteActive(
+                                    pathname,
+                                    child.href,
+                                  );
 
                                   return (
                                     <button
                                       key={child.label}
                                       onClick={() => {
                                         if (child.href === "#") {
-                                          alert("Tính năng này đang được phát triển!");
+                                          alert(
+                                            "Tính năng này đang được phát triển!",
+                                          );
                                           return;
                                         }
                                         setOpenAdmin(false);
@@ -472,21 +499,6 @@ export default function AppHeader() {
                           );
                         })}
                       </div>
-
-                      <div className="px-4 pb-4">
-                        <div className="flex items-center justify-between rounded-2xl border border-sky-100 bg-gradient-to-r from-sky-50 to-cyan-50 px-4 py-3">
-                          <div className="min-w-0">
-                            <div className="text-xs font-semibold text-slate-900">Mẹo sử dụng</div>
-                            <div className="text-[11px] text-slate-600">
-                              Các tab được rút gọn còn icon và title, chia 2 cột để thao tác
-                              nhanh hơn.
-                            </div>
-                          </div>
-                          <span className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-2xl bg-white text-sky-700 ring-1 ring-sky-100">
-                            ✓
-                          </span>
-                        </div>
-                      </div>
                     </div>
                   </>
                 )}
@@ -506,7 +518,9 @@ export default function AppHeader() {
                   <div className="text-sm font-semibold text-slate-900">
                     {user.name || user.email}
                   </div>
-                  <div className="text-xs text-slate-500">{roleLabel(user.role)}</div>
+                  <div className="text-xs text-slate-500">
+                    {roleLabel(user.role)}
+                  </div>
                 </div>
                 <ChevronDown className="h-4 w-4 text-slate-500" />
               </button>
